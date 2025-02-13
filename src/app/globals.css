@@ -2,9 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #000000;
+  }
+}
+
+/* Additional global styles */
+.prose {
+  @apply max-w-none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,5 +24,4 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
