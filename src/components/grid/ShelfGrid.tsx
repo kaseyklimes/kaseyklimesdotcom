@@ -12,20 +12,19 @@ interface ShelfGridProps {
 function ShelfGridItem({ item }: { item: ContentMeta }) {
   return (
     <Link href={`/shelf/${item.slug}`} className="block">
-      <div className="h-full flex flex-col">
+      <div className="h-full">
         {item.heroImage && (
-          <div className="w-full mb-2 bg-gray-50 dark:bg-gray-900/50">
+          <div className="relative aspect-[3/4] mb-2">
             <Image
               src={item.heroImage}
               alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
-              width={400}
-              height={400}
-              className="w-full h-auto"
+              fill
+              className="object-cover"
               sizes="(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw"
             />
           </div>
         )}
-        <div className="flex-1">
+        <div>
           <h3 className="text-sm leading-tight">
             {item.title}
           </h3>
