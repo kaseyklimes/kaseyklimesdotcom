@@ -68,6 +68,21 @@ export default {
             'code::after': {
               content: '""',
             },
+            img: {
+              '& + p[style*="text-align: center"]': {
+                marginTop: '0.5rem',
+                fontSize: '0.875rem',
+                fontStyle: 'italic',
+                opacity: '0.8',
+                marginBottom: '1.5em',
+                '&:has(em)': {
+                  marginTop: '0.5rem',
+                },
+              },
+              '&:has(+ p[style*="text-align: center"])': {
+                marginBottom: '0',
+              },
+            },
           },
         },
         untitled: {

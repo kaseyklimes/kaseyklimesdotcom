@@ -8,7 +8,7 @@ const PRECACHE_ASSETS = [
   '/blog',
   '/work',
   '/photography',
-  '/projects',
+  '/shelf',
   '/manifest.json',
   '/favicon.ico'
 ];

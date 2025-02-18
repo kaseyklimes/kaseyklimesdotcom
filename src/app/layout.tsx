@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./fonts.css";
 
@@ -6,11 +6,12 @@ export const metadata: Metadata = {
   title: "Portfolio Website",
   description: "A showcase of work, writing, photography, and other content.",
   metadataBase: new URL('http://localhost:3000'),
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: '#ffffff',
 };
 
@@ -38,7 +39,10 @@ export default function RootLayout({
         {/* Add favicon */}
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="min-h-screen flex flex-col antialiased font-['Untitled_Sans']">
+      <body 
+        className="min-h-screen flex flex-col antialiased font-['Untitled_Sans']"
+        style={{ isolation: 'isolate' }}
+      >
         {children}
       </body>
     </html>

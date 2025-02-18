@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --background: #ffffff;
-    --foreground: #000000;
+    --foreground: #222222;
   }
 }
 
@@ -16,12 +16,69 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #222222;
+    --foreground: #ffffff;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+}
+
+/* Audio player styles */
+.audio-player {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: transparent;
+}
+
+.audio-player::-webkit-media-controls-panel {
+  background-color: transparent;
+}
+
+.audio-player::-webkit-media-controls-play-button,
+.audio-player::-webkit-media-controls-timeline,
+.audio-player::-webkit-media-controls-current-time-display,
+.audio-player::-webkit-media-controls-time-remaining-display,
+.audio-player::-webkit-media-controls-timeline-container,
+.audio-player::-webkit-media-controls-volume-slider-container,
+.audio-player::-webkit-media-controls-volume-slider,
+.audio-player::-webkit-media-controls-seek-back-button,
+.audio-player::-webkit-media-controls-seek-forward-button,
+.audio-player::-webkit-media-controls-fullscreen-button,
+.audio-player::-webkit-media-controls-rewind-button,
+.audio-player::-webkit-media-controls-return-to-realtime-button,
+.audio-player::-webkit-media-controls-toggle-closed-captions-button {
+  opacity: 0.8;
+  color: white;
+}
+
+.audio-player::-webkit-media-controls-play-button:hover,
+.audio-player::-webkit-media-controls-timeline:hover,
+.audio-player::-webkit-media-controls-volume-slider:hover {
+  opacity: 1;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .audio-player::-webkit-media-controls-panel {
+    background-color: transparent;
+  }
+}
+
+/* Additional audio player styles for white theme */
+.audio-player::-webkit-media-controls-timeline,
+.audio-player::-webkit-media-controls-volume-slider {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.audio-player::-webkit-media-controls-timeline::-webkit-slider-thumb,
+.audio-player::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+  background-color: white;
+}
+
+.audio-player::-webkit-media-controls-current-time-display,
+.audio-player::-webkit-media-controls-time-remaining-display {
+  color: white;
 }

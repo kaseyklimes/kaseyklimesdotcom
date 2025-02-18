@@ -8,7 +8,7 @@ const navigation = [
   { name: 'Work', href: '/work' },
   { name: 'Blog', href: '/blog' },
   { name: 'Photography', href: '/photography' },
-  { name: 'Projects', href: '/projects' },
+  { name: 'Shelf', href: '/shelf' },
 ];
 
 export default function Header() {

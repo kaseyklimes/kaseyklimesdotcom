@@ -65,7 +65,7 @@ content/
   photography/
     collection-1.md
     collection-2.md
-  projects/
+  shelf/
     project-1.md
     project-2.md
 ```

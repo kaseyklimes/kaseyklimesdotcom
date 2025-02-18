@@ -28,10 +28,32 @@ function ContentLoading() {
 }
 
 export default async function Home() {
-  const content = await getAllContent({ 
+  // Get all content
+  const allContent = await getAllContent({ 
     sortBy: 'stars', 
     order: 'desc' 
   });
+
+  // Get shelf items separately
+  const shelfItems = await getAllContent({ category: 'shelf' });
+
+  // Create the shelf grid item
+  const shelfGrid = {
+    title: 'Shelf',
+    description: 'A collection of books, albums, and other media that have influenced my thinking.',
+    category: 'shelf',
+    date: '2024-01-01', // Static date instead of dynamic
+    stars: 5, // Make it span full width
+    slug: 'shelf',
+    items: shelfItems,
+    tags: ['shelf'], // Add required tags property
+  };
+
+  // Add the shelf grid to the content, excluding individual shelf items
+  const content = [
+    ...allContent.filter(item => item.category !== 'shelf'),
+    shelfGrid
+  ];
 
   return (
     <Layout>
@@ -39,12 +61,12 @@ export default async function Home() {
         {/* Header Section - Viewport height minus padding */}
         <section className="flex items-center lg:w-1/3" style={{ height: 'calc(100vh - 20px - 2rem)' }}>
           <div>
-            <h1 className="text-2xl mb-8">
+            <h2 className="text-2xl mb-8">
               Our environments shape us.<br/>
               We are the first species on earth
               with the power to shape our environment.<br/>
               So, what do we want to become?
-            </h1>
+            </h2>
             <p className="text-xs">
               Hello! I'm a design researcher & technologist based in Brooklyn, and this unwieldy question is the most succinct way I can describe the common thread across the work I do. All of my work focuses, in some way, on the reciprocal relationship between us and the worlds we inhabit. It's the nature of our species to dream, design, and build, but we are also subjects of the systems that our interventions inform. At times we have used this power to make incredible leaps. At others we've become victims to our own creations.
               <br/>
@@ -56,8 +78,6 @@ export default async function Home() {
               <br/>
               <br/>
               /K
-
-
             </p>
           </div>
         </section>

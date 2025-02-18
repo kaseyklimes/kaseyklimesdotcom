@@ -1,13 +1,49 @@
-export type ContentCategory = 'blog' | 'work' | 'photography' | 'projects';
+export type ContentCategory = 'blog' | 'work' | 'photography' | 'shelf' | 'tweet';
 
 export interface ContentMeta {
   title: string;
-  category: ContentCategory;
   date: string;
+  category: string;
   stars: number;
-  heroImage: string;
-  description: string;
+  description?: string;
   slug: string;
+  heroImage?: string;
+  hasContent?: boolean;
+  location?: string;
+  span?: number;
+  private?: boolean;
+  clickThroughUrl?: string;
+  audioUrl?: string;
+  iframeUrl?: string;
+  iframeRows?: number;  // Number of grid rows for iframe height
+  iframeWidth?: number; // Fixed width in pixels for responsive calculations
+  // New field for tags
+  tags: string[];
+  // Shelf-specific fields
+  items?: ContentMeta[];
+  // Tweet-specific fields
+  tweetId?: string;
+  tweetUrl?: string;
+  likes?: number;
+  profile?: {
+    name: string;
+    username: string;
+    profile_image_url: string;
+    description: string;
+  };
+  media?: Array<{
+    url: string;
+    type: string;
+  }>;
+  quoted_tweet?: {
+    id: string;
+    text: string;
+    author?: {
+      name: string;
+      username: string;
+      profile_image_url: string;
+    };
+  };
 }
 
 export interface ContentItem extends ContentMeta {
@@ -23,4 +59,12 @@ export interface FilterOptions {
 export interface GridItem extends ContentMeta {
   aspectRatio?: number;
   priority?: boolean;
+}
+
+export interface MasonryGridPage {
+  title: string;
+  description?: string;
+  items: ContentMeta[];
+  category: ContentCategory;
+  layout: 'masonry';
 } 

@@ -4,10 +4,24 @@ import matter from 'gray-matter';
 import { ContentCategory, ContentItem, ContentMeta, FilterOptions } from '@/types/content';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
+const VALID_CATEGORIES = ['blog', 'work', 'photography', 'shelf', 'tweet'];
 
 export async function getContentBySlug(category: ContentCategory, slug: string): Promise<ContentItem | null> {
   try {
+    // Validate category
+    if (!VALID_CATEGORIES.includes(category)) {
+      console.warn(`Invalid category: ${category}`);
+      return null;
+    }
+
     const fullPath = path.join(CONTENT_DIR, category, `${slug}.md`);
+    
+    // Check if file exists
+    if (!fs.existsSync(fullPath)) {
+      console.warn(`File not found: ${fullPath}`);
+      return null;
+    }
+
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
 
@@ -23,30 +37,34 @@ export async function getContentBySlug(category: ContentCategory, slug: string):
 }
 
 export async function getAllContent(options?: FilterOptions): Promise<ContentMeta[]> {
-  const categories = options?.category ? [options.category] : ['blog', 'work', 'photography', 'projects'];
+  const categories = options?.category ? [options.category] : VALID_CATEGORIES;
   let allContent: ContentMeta[] = [];
 
   for (const category of categories) {
     const categoryPath = path.join(CONTENT_DIR, category);
     
     try {
-      if (!fs.existsSync(categoryPath)) continue;
+      if (!fs.existsSync(categoryPath)) {
+        console.warn(`Category directory not found: ${categoryPath}`);
+        continue;
+      }
       
-      const files = fs.readdirSync(categoryPath);
-      const categoryContent = files
-        .filter(file => file.endsWith('.md'))
-        .map(file => {
-          const fullPath = path.join(categoryPath, file);
-          const fileContents = fs.readFileSync(fullPath, 'utf8');
-          const { data } = matter(fileContents);
-          const slug = file.replace(/\.md$/, '');
+      const files = fs.readdirSync(categoryPath)
+        .filter(file => file.endsWith('.md'));
 
-          return {
-            ...(data as ContentMeta),
-            slug,
-            category: category as ContentCategory,
-          };
-        });
+      const categoryContent = await Promise.all(files.map(async file => {
+        const fullPath = path.join(categoryPath, file);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const { data, content } = matter(fileContents);
+        const slug = file.replace(/\.md$/, '');
+
+        return {
+          ...(data as ContentMeta),
+          slug,
+          category: category as ContentCategory,
+          hasContent: content.trim().length > 0
+        };
+      }));
 
       allContent = [...allContent, ...categoryContent];
     } catch (error) {
@@ -73,10 +91,19 @@ export async function getAllContent(options?: FilterOptions): Promise<ContentMet
 }
 
 export async function getContentPaths(category: ContentCategory): Promise<string[]> {
+  // Validate category
+  if (!VALID_CATEGORIES.includes(category)) {
+    console.warn(`Invalid category: ${category}`);
+    return [];
+  }
+
   const categoryPath = path.join(CONTENT_DIR, category);
   
   try {
-    if (!fs.existsSync(categoryPath)) return [];
+    if (!fs.existsSync(categoryPath)) {
+      console.warn(`Category directory not found: ${categoryPath}`);
+      return [];
+    }
     
     return fs.readdirSync(categoryPath)
       .filter(file => file.endsWith('.md'))
