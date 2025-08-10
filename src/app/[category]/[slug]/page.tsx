@@ -145,7 +145,7 @@ export default async function ContentPage({ params }: PageProps) {
         <div className="mb-4 mt-4">
           <Link 
             href="/" 
-            className="inline-flex items-center text-sm hover:underline"
+            className="inline-flex items-center text-xs hover:underline"
           >
             <svg 
               className="mr-2 w-4 h-4" 
@@ -168,21 +168,21 @@ export default async function ContentPage({ params }: PageProps) {
         <header className="mb-8">
           {category !== 'shelf' && (
             <div className="flex items-center gap-4 mb-4">
-              <span className="text-sm">
+              <span className="text-xs">
                 {content.category}
               </span>
               {content.location && (
                 <>
-                  <span className="text-sm text-gray-400">/</span>
-                  <span className="text-sm">
+                  <span className="text-xs text-gray-400">/</span>
+                  <span className="text-xs">
                     {content.location}
                   </span>
                 </>
               )}
-              <span className="text-sm text-gray-400">/</span>
+              <span className="text-xs text-gray-400">/</span>
               <time
                 dateTime={content.date}
-                className="text-sm"
+                className="text-xs"
               >
                 {formatContentDate(content.date)}
               </time>
@@ -295,11 +295,11 @@ export default async function ContentPage({ params }: PageProps) {
                           />
                         </div>
                       )}
-                      <h3 className="text-lg group-hover:underline">
+                      <h3 className="text-lg leading-normal group-hover:underline">
                         {item.title}
                       </h3>
                       {item.description && (
-                        <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">
+                        <p className="text-xs mt-1 text-gray-600 dark:text-gray-400">
                           {item.description}
                         </p>
                       )}

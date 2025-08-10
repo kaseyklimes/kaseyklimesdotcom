@@ -5,11 +5,11 @@ date: 12-22-2024
 stars: 1
 tags: ["blog"]
 description: Every gift you give this holiday season will (most likely) be disposable garbage. Most likely, so will every gift you receive. That’s not your fault or the f...
-heroImage: /images/universalheirloom-62.png
+heroImage: /images/universalheirloom.png
 ---
 
 # What if everything you touched was made to last?
-![](/images/universalheirloom-63.png)
+![](/images/universalheirloom.png)
 Every gift you give this holiday season will (most likely) be disposable garbage. Most likely, so will every gift you receive. That’s not your fault or the fault of your loved ones—there simply aren’t many other options. This isn't an accident, it's the result of a profound shift in how we create and capture economic value that began nearly a century ago. It’s also a shift I think we can reverse with a fairly simple solution, should we so choose.
 
 We can trace planned obsolescence to the 1920s, when the “Phoebus cartel”—comprising the world's largest lightbulb manufacturers—made a rather extraordinary decision: They deliberately reduced their lightbulbs' lifespan from 2,500 to 1,000 hours while raising prices. The cartel even fined member companies whose bulbs lasted "too long." Meanwhile, in a California fire station, a lightbulb manufactured in 1901 has burned continuously _to this day_.

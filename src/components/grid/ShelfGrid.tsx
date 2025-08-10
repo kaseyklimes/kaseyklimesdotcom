@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,41 +9,90 @@ interface ShelfGridProps {
   items: ContentMeta[];
 }
 
-function ShelfGridItem({ item }: { item: ContentMeta }) {
+function ShelfGridItem({ item, index }: { item: ContentMeta; index: number }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
   return (
     <Link href={`/shelf/${item.slug}`} className="block">
-      <div className="h-full">
+      <div>
         {item.heroImage && (
-          <div className="relative aspect-[3/4] mb-2">
+          <div className="relative w-full mb-2 image-container">
             <Image
               src={item.heroImage}
               alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
-              fill
-              className="object-cover"
+              width={1200}
+              height={800}
+              className={`w-full h-auto ${imageLoaded ? 'loaded' : ''}`}
               sizes="(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw"
+              onLoad={handleImageLoad}
+              priority={index < 4}
+              loading={index < 4 ? "eager" : "lazy"}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             />
           </div>
         )}
-        <div>
-          <h3 className="text-sm leading-tight">
-            {item.title}
-          </h3>
-          {item.description && (
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug">
-              {item.description}
-            </p>
-          )}
-        </div>
       </div>
     </Link>
   );
 }
 
 export default function ShelfGrid({ items }: ShelfGridProps) {
+  const [maxColumns, setMaxColumns] = useState(5);
+  const [columns, setColumns] = useState<ContentMeta[][]>([]);
+
+  // Calculate max columns based on window width - same as MasonryGrid
+  useEffect(() => {
+    function handleResize() {
+      const width = window.innerWidth;
+      // Subtract padding/margins (48px = 3rem for gap-x-6)
+      const availableWidth = width - 48;
+      // Each column needs minimum 200px
+      const possibleColumns = Math.floor(availableWidth / 200);
+      // Clamp between 1 and 5 columns
+      setMaxColumns(Math.max(1, Math.min(5, possibleColumns)));
+    }
+
+    // Initial calculation
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Distribute items into columns for masonry layout
+  useEffect(() => {
+    const newColumns: ContentMeta[][] = Array.from({ length: maxColumns }, () => []);
+    
+    items.forEach((item, index) => {
+      const columnIndex = index % maxColumns;
+      newColumns[columnIndex].push(item);
+    });
+    
+    setColumns(newColumns);
+  }, [items, maxColumns]);
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      {items.map((item) => (
-        <ShelfGridItem key={item.slug} item={item} />
+    <div 
+      className="flex gap-6"
+    >
+      {columns.map((column, columnIndex) => (
+        <div key={columnIndex} className="flex-1 flex flex-col gap-6">
+          {column.map((item, itemIndex) => (
+            <ShelfGridItem 
+              key={item.slug}
+              item={item} 
+              index={columnIndex * maxColumns + itemIndex}
+            />
+          ))}
+        </div>
       ))}
     </div>
   );

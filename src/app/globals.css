@@ -82,3 +82,22 @@ body {
 .audio-player::-webkit-media-controls-time-remaining-display {
   color: white;
 }
+
+/* Masonry Grid Styles */
+.grid-item {
+  transition: transform 0.3s ease;
+}
+
+.grid-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Prevent image flash during load */
+.grid-item img {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.grid-item img.loaded {
+  opacity: 1;
+}

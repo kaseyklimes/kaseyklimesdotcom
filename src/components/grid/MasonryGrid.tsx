@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { ContentMeta } from '@/types/content';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -32,22 +32,35 @@ declare global {
   }
 }
 
+// Memoized calculation cache
+const rowSpanCache = new Map<string, number>();
+
 function calculateRowSpan(stars: number, description: string | undefined, category: string, imageWidth?: number, imageHeight?: number, manualSpan?: number) {
+  // Create cache key from all parameters
+  const cacheKey = `${stars}-${description?.length || 0}-${category}-${imageWidth || 0}-${imageHeight || 0}-${manualSpan || 0}`;
+
+  // Return cached result if available
+  if (rowSpanCache.has(cacheKey)) {
+    return rowSpanCache.get(cacheKey)!;
+  }
   // If manual span override is provided, use it
   if (typeof manualSpan === 'number') {
+    rowSpanCache.set(cacheKey, manualSpan);
     return manualSpan;
   }
 
   // Special handling for tweets - always use 1 column and fixed height
   if (category === 'tweet') {
-    return 8; // Smaller fixed height for tweets
+    const tweetRows = 8; // Smaller fixed height for tweets
+    rowSpanCache.set(cacheKey, tweetRows);
+    return tweetRows;
   }
 
   const rowHeight = 40;
   const colSpan = Math.min(stars, 5);
   const columnWidth = 200; // Width of one column in pixels
   const containerWidth = colSpan * columnWidth;
-  
+
   // Calculate image height
   let imageHeightPx;
   if ((category === 'photography' || category === 'shelf') && imageWidth && imageHeight) {
@@ -57,25 +70,25 @@ function calculateRowSpan(stars: number, description: string | undefined, catego
     // Use 3:2 aspect ratio for other content
     imageHeightPx = (containerWidth * 2) / 3;
   }
-  
+
   // Calculate text content height more precisely
   const titleHeightPx = description || (category !== 'photography' && category !== 'shelf') ? 28 : 0; // Only count title height if there's a description or it's not photography/shelf
-  
+
   // Calculate description height based on content
   const charsPerLine = Math.floor((colSpan * 75));
   const descriptionLines = description ? Math.ceil(description.length / charsPerLine) : 0;
-  const descriptionHeightPx = descriptionLines * 20; // text-sm line height
-  
+  const descriptionHeightPx = descriptionLines * 20; // text-xs line height
+
   // Metadata height (single line of text-xs plus margins)
   const metadataHeightPx = 20;
-  
+
   // Account for margins (mt-2 = 0.5rem = 8px)
   const marginHeightPx = description ? 16 : 8; // Less margin if no description
-  
+
   // Calculate total content height and convert to rows
   const totalHeightPx = imageHeightPx + titleHeightPx + descriptionHeightPx + metadataHeightPx + marginHeightPx;
   let totalRows = Math.ceil(totalHeightPx / rowHeight);
-  
+
   // Special handling for 2-column photography items
   if (category === 'photography' && colSpan === 2) {
     if (description && description.length < 100) {
@@ -97,7 +110,7 @@ function calculateRowSpan(stars: number, description: string | undefined, catego
   else if ((category === 'photography' || category === 'shelf') && !description) {
     totalRows = Math.floor(totalRows * 0.9); // Reduce by 10% for more compact layout
   }
-  
+
   // For non-photography/shelf items, ensure we don't overallocate rows
   if (category !== 'photography' && category !== 'shelf') {
     const maxRowsBySpan: Record<number, number> = {
@@ -107,21 +120,23 @@ function calculateRowSpan(stars: number, description: string | undefined, catego
       4: 12,  // 4 column items max 12 rows
       5: 13   // 5 column items max 13 rows
     };
-    
+
     // For 2-column items with short descriptions, reduce rows further
     if (colSpan === 2 && (!description || description.length < 100)) {
       totalRows = Math.min(totalRows, 8);
     }
-    
+
     totalRows = Math.min(totalRows, maxRowsBySpan[colSpan] || totalRows);
   }
-  
+
+  // Cache the result and return
+  rowSpanCache.set(cacheKey, totalRows);
   return totalRows;
 }
 
 function formatDateOrRange(dateString: string) {
   'use client';
-  
+
   try {
     // Handle undefined or invalid dates
     if (!dateString || typeof dateString !== 'string') {
@@ -179,10 +194,10 @@ function CustomTweet({ item }: { item: ContentMeta }) {
   };
 
   return (
-    <a 
+    <a
       href={item.tweetUrl}
       target="_blank"
-      rel="noopener noreferrer" 
+      rel="noopener noreferrer"
       className="block p-4 bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-lg"
     >
       <div className="flex items-center gap-3 mb-3">
@@ -200,16 +215,16 @@ function CustomTweet({ item }: { item: ContentMeta }) {
           )}
         </div>
         <div>
-          <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">{profile.name}</div>
+          <div className="font-medium text-gray-900 dark:text-gray-100 text-xs">{profile.name}</div>
           <div className="text-gray-500 dark:text-gray-400 text-xs">@{profile.username}</div>
         </div>
       </div>
-      
+
       {/* Tweet text */}
-      <div className="text-sm mb-3 text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
+      <div className="text-xs mb-3 text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
         {item.description}
       </div>
-      
+
       {/* Quoted tweet */}
       {item.quoted_tweet && (
         <div className="mb-3 p-3 border border-gray-200 dark:border-gray-700 rounded bg-gray-50/50 dark:bg-gray-800/50">
@@ -234,12 +249,12 @@ function CustomTweet({ item }: { item: ContentMeta }) {
               </span>
             </div>
           )}
-          <div className="text-sm text-gray-900 dark:text-gray-100">
+          <div className="text-xs text-gray-900 dark:text-gray-100">
             {item.quoted_tweet.text}
           </div>
         </div>
       )}
-      
+
       {/* Media */}
       {item.media && item.media.length > 0 && (
         <div className="mb-3 rounded-lg overflow-hidden">
@@ -257,7 +272,7 @@ function CustomTweet({ item }: { item: ContentMeta }) {
           ))}
         </div>
       )}
-      
+
       {/* Date and metrics */}
       <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
         <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
@@ -273,10 +288,10 @@ function CustomTweet({ item }: { item: ContentMeta }) {
   );
 }
 
-function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number }) {
+const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: ContentMeta; maxColumns: number; index: number }) {
   // For tweets, always use 1 column regardless of stars
-  const colSpan = item.category === 'tweet' 
-    ? 1 
+  const colSpan = item.category === 'tweet'
+    ? 1
     : Math.min(item.stars, maxColumns); // Limit column span to available columns
   const [dimensions, setDimensions] = useState<{ width?: number; height?: number }>({});
 
@@ -285,10 +300,10 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
     const img = event.target as HTMLImageElement;
     setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
   };
-  
+
   const rowSpan = React.useMemo(() => calculateRowSpan(
-    item.stars, 
-    item.description, 
+    item.stars,
+    item.description,
     item.category,
     dimensions.width,
     dimensions.height,
@@ -306,7 +321,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
       /youtube\.com\/embed\/([^?]+)/,
       /youtube\.com\/v\/([^?]+)/
     ];
-    
+
     // Vimeo URL patterns
     const vimeoPatterns = [
       /vimeo\.com\/([0-9]+)/,
@@ -333,12 +348,12 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
   };
 
   const videoInfo = React.useMemo(() => isVideoEmbed(item.heroImage || ''), [item.heroImage]);
-  
+
   const style = {
     gridColumn: `span ${colSpan} / span ${colSpan}`,
     gridRow: `span ${rowSpan} / span ${rowSpan}`,
   };
-  
+
   if (item.category === 'tweet') {
     return (
       <div style={style}>
@@ -350,11 +365,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
   // Special case for shelf grid
   if (item.category === 'shelf' && item.items) {
     return (
-      <div style={style} className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-lg">
-        <h2 className="text-xl font-medium mb-4">{item.title}</h2>
-        {item.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">{item.description}</p>
-        )}
+      <div style={style}>
         <ShelfGrid items={item.items} />
       </div>
     );
@@ -376,7 +387,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
     return (
       <div style={iframeStyle}>
         <div className="w-full h-full min-h-[400px] relative overflow-hidden" style={{ aspectRatio }}>
-          <div style={{ 
+          <div style={{
             position: 'absolute',
             top: 0,
             left: 0,
@@ -395,9 +406,9 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
         </div>
         {item.title && (
           <div className="mt-2">
-            <h3 className="text-lg font-medium">{item.title}</h3>
+            <h3 className="text-lg leading-normal font-medium">{item.title}</h3>
             {item.description && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{item.description}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{item.description}</p>
             )}
           </div>
         )}
@@ -410,13 +421,12 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
       {item.clickThroughUrl ? (
         <a href={item.clickThroughUrl} target="_blank" rel="noopener noreferrer">
           <div>
-            <div className={`relative group ${
-              videoInfo.isVideo 
-                ? 'aspect-[3/1]' 
-                : item.category !== 'photography' && item.category !== 'shelf' 
-                  ? 'aspect-[3/2]' 
-                  : ''
-            }`}>
+            <div className={`relative group ${videoInfo.isVideo
+              ? 'aspect-[3/1]'
+              : item.category !== 'photography' && item.category !== 'shelf'
+                ? 'aspect-[3/2]'
+                : ''
+              }`}>
               {videoInfo.isVideo ? (
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   {videoInfo.type === 'youtube' ? (
@@ -453,18 +463,21 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
                     alt={item.title || 'Content image'}
                     {...(item.category === 'photography' || item.category === 'shelf'
                       ? {
-                          width: 1200,
-                          height: 800,
-                          className: "w-full h-auto",
-                          onLoad: handleImageLoad
-                        }
+                        width: 1200,
+                        height: 800,
+                        className: "w-full h-auto",
+                        onLoad: handleImageLoad
+                      }
                       : {
-                          fill: true,
-                          className: "object-cover"
-                        }
+                        fill: true,
+                        className: "object-cover"
+                      }
                     )}
                     sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                    priority={true}
+                    priority={index < 4}
+                    loading={index < 4 ? "eager" : "lazy"}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
                 )
               )}
@@ -482,7 +495,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
               {item.hasContent && (
                 <>
                   {/* Gradient overlay with hover effect */}
-                  <div 
+                  <div
                     className="absolute top-0 right-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-0"
                     style={{
                       width: '90px',
@@ -490,7 +503,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
                       background: 'radial-gradient(circle at top right, rgba(51,51,51,0.2) 0%, rgba(51,51,51,0.1) 15%, rgba(51,51,51,0.05) 25%, transparent 25%)'
                     }}
                   />
-                  <div 
+                  <div
                     className="absolute top-0 right-0 pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                     style={{
                       width: '90px',
@@ -500,15 +513,15 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
                   />
                   {/* Icon */}
                   <div className="absolute top-1.5 right-1.5">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="20" 
-                      height="20" 
-                      viewBox="0 0 24 24" 
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
                       className="text-white"
                     >
-                      <path 
-                        fill="currentColor" 
+                      <path
+                        fill="currentColor"
                         d="M17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"
                       />
                     </svg>
@@ -517,10 +530,10 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
               )}
             </div>
             <div className="mt-2">
-              <h3 className="text-lg">
+              <h3 className="text-lg leading-normal">
                 {item.title}
               </h3>
-              <p className="text-sm">
+              <p className="text-xs">
                 {item.description}
               </p>
               {item.category !== 'shelf' && (
@@ -540,13 +553,12 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
       ) : (
         <Link href={`/${item.category}/${item.slug}`}>
           <div>
-            <div className={`relative group ${
-              videoInfo.isVideo 
-                ? 'aspect-[3/1]' 
-                : item.category !== 'photography' && item.category !== 'shelf' 
-                  ? 'aspect-[3/2]' 
-                  : ''
-            }`}>
+            <div className={`relative group ${videoInfo.isVideo
+              ? 'aspect-[3/1]'
+              : item.category !== 'photography' && item.category !== 'shelf'
+                ? 'aspect-[3/2]'
+                : ''
+              }`}>
               {videoInfo.isVideo ? (
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   {videoInfo.type === 'youtube' ? (
@@ -583,18 +595,21 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
                     alt={item.title || 'Content image'}
                     {...(item.category === 'photography' || item.category === 'shelf'
                       ? {
-                          width: 1200,
-                          height: 800,
-                          className: "w-full h-auto",
-                          onLoad: handleImageLoad
-                        }
+                        width: 1200,
+                        height: 800,
+                        className: "w-full h-auto",
+                        onLoad: handleImageLoad
+                      }
                       : {
-                          fill: true,
-                          className: "object-cover"
-                        }
+                        fill: true,
+                        className: "object-cover"
+                      }
                     )}
                     sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                    priority={true}
+                    priority={index < 4}
+                    loading={index < 4 ? "eager" : "lazy"}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
                 )
               )}
@@ -612,7 +627,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
               {item.hasContent && (
                 <>
                   {/* Gradient overlay with hover effect */}
-                  <div 
+                  <div
                     className="absolute top-0 right-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-0"
                     style={{
                       width: '90px',
@@ -620,7 +635,7 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
                       background: 'radial-gradient(circle at top right, rgba(51,51,51,0.2) 0%, rgba(51,51,51,0.1) 15%, rgba(51,51,51,0.05) 25%, transparent 25%)'
                     }}
                   />
-                  <div 
+                  <div
                     className="absolute top-0 right-0 pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                     style={{
                       width: '90px',
@@ -630,15 +645,15 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
                   />
                   {/* Icon */}
                   <div className="absolute top-1.5 right-1.5">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="20" 
-                      height="20" 
-                      viewBox="0 0 24 24" 
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
                       className="text-white"
                     >
-                      <path 
-                        fill="currentColor" 
+                      <path
+                        fill="currentColor"
                         d="M17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"
                       />
                     </svg>
@@ -647,10 +662,10 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
               )}
             </div>
             <div className="mt-2">
-              <h3 className="text-lg">
+              <h3 className="text-lg leading-normal">
                 {item.title}
               </h3>
-              <p className="text-sm">
+              <p className="text-xs">
                 {item.description}
               </p>
               {item.category !== 'shelf' && (
@@ -670,12 +685,12 @@ function GridItem({ item, maxColumns }: { item: ContentMeta; maxColumns: number 
       )}
     </div>
   );
-}
+});
 
 export default function MasonryGrid({ items }: MasonryGridProps) {
   const [maxColumns, setMaxColumns] = useState(5);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  
+
   // Calculate max columns based on window width
   useEffect(() => {
     function handleResize() {
@@ -703,85 +718,81 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     const allTags = items.flatMap(item => item.tags || []);
     return ['all', ...new Set(allTags)].sort();
   }, [items]);
-  
-  const filteredItems = selectedTag && selectedTag !== 'all'
-    ? items.filter(item => item.tags?.includes(selectedTag) && !item.private)
-    : items.filter(item => !item.private);
 
-  // Sort items by date (most recent first) and then by stars
-  const sortedItems = [...filteredItems].sort((a, b) => {
-    // Always put shelf at the end
-    if (a.category === 'shelf') return 1;
-    if (b.category === 'shelf') return -1;
-
-    const getDate = (dateStr: string | undefined) => {
-      if (!dateStr || typeof dateStr !== 'string') {
-        return new Date(0);
-      }
-
-      try {
-        // Handle "present" as future date
-        if (dateStr.toLowerCase().includes('present')) {
-          return new Date('9999-12-31');
-        }
-
-        // Handle year ranges with either hyphen or forward slash (e.g., "2017-2021" or "1993/2008")
-        if (/^\d{4}[-\/]\d{4}$/.test(dateStr)) {
-          const [startYear, endYear] = dateStr.split(/[-\/]/);
-          // If end year is less than start year, something is wrong
-          if (parseInt(endYear) < parseInt(startYear)) {
-            console.error(`Invalid date range: ${dateStr}`);
-            return new Date(parseInt(startYear), 11, 31);
-          }
-          // For date ranges, use the end year but add a month to ensure it sorts after single years
-          return new Date(parseInt(endYear), 11, 31);
-        }
-
-        // Handle just year (e.g., "2014")
-        if (/^\d{4}$/.test(dateStr)) {
-          // For single years, use January 1st to ensure it sorts before ranges ending in the same year
-          return new Date(parseInt(dateStr), 0, 1);
-        }
-
-        // Handle month-year format (e.g., "07-2024")
-        if (/^\d{2}-\d{4}$/.test(dateStr)) {
-          const [month, year] = dateStr.split('-');
-          return new Date(parseInt(year), parseInt(month) - 1, 0);
-        }
-
-        // Handle full date format (e.g., "10-27-2023")
-        if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
-          const [month, day, year] = dateStr.split('-');
-          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        }
-
-        // If we can't parse it, try to create a date directly
-        const fallbackDate = new Date(dateStr);
-        if (!isNaN(fallbackDate.getTime())) {
-          return fallbackDate;
-        }
-
-        console.error(`Could not parse date: ${dateStr}`);
-        return new Date(0);
-      } catch (error) {
-        console.error('Error parsing date for sorting:', dateStr, error);
-        return new Date(0);
-      }
-    };
-
-    const dateA = getDate(a.date);
-    const dateB = getDate(b.date);
-
-    // Sort by date first (most recent first)
-    const dateCompare = dateB.getTime() - dateA.getTime();
-    
-    // If dates are equal, sort by stars
-    if (dateCompare === 0) {
-      return b.stars - a.stars;
+  // Memoized date parsing function
+  const getDateForSorting = useCallback((dateStr: string | undefined) => {
+    if (!dateStr || typeof dateStr !== 'string') {
+      return new Date(0);
     }
-    
-    return dateCompare;
-  });
+
+    try {
+      // Handle "present" as future date
+      if (dateStr.toLowerCase().includes('present')) {
+        return new Date('9999-12-31');
+      }
+
+      // Handle year ranges with either hyphen or forward slash (e.g., "2017-2021" or "1993/2008")
+      if (/^\d{4}[-\/]\d{4}$/.test(dateStr)) {
+        const [startYear, endYear] = dateStr.split(/[-\/]/);
+        // If end year is less than start year, something is wrong
+        if (parseInt(endYear) < parseInt(startYear)) {
+          console.error(`Invalid date range: ${dateStr}`);
+          return new Date(parseInt(startYear), 11, 31);
+        }
+        // For date ranges, use the end year but add a month to ensure it sorts after single years
+        return new Date(parseInt(endYear), 11, 31);
+      }
+
+      // Handle just year (e.g., "2014")
+      if (/^\d{4}$/.test(dateStr)) {
+        // For single years, use January 1st to ensure it sorts before ranges ending in the same year
+        return new Date(parseInt(dateStr), 0, 1);
+      }
+
+      // Handle month-year format (e.g., "07-2024")
+      if (/^\d{2}-\d{4}$/.test(dateStr)) {
+        const [month, year] = dateStr.split('-');
+        return new Date(parseInt(year), parseInt(month) - 1, 0);
+      }
+
+      // Handle full date format (e.g., "10-27-2023")
+      if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+        const [month, day, year] = dateStr.split('-');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+
+      return new Date(dateStr);
+    } catch (error) {
+      console.error('Error parsing date:', dateStr, error);
+      return new Date(0);
+    }
+  }, []);
+
+  // Memoized filtered and sorted items
+  const sortedItems = useMemo(() => {
+    const filtered = selectedTag && selectedTag !== 'all'
+      ? items.filter(item => item.tags?.includes(selectedTag) && !item.private)
+      : items.filter(item => !item.private);
+
+    return [...filtered].sort((a, b) => {
+      // Always put shelf at the end
+      if (a.category === 'shelf') return 1;
+      if (b.category === 'shelf') return -1;
+
+      const dateA = getDateForSorting(a.date);
+      const dateB = getDateForSorting(b.date);
+
+      // Sort by date first (most recent first)
+      const dateCompare = dateB.getTime() - dateA.getTime();
+
+      // If dates are equal, sort by stars
+      if (dateCompare === 0) {
+        return b.stars - a.stars;
+      }
+
+      return dateCompare;
+    });
+  }, [items, selectedTag, getDateForSorting]);
 
   // Log items to see if tweets are included
   React.useEffect(() => {
@@ -814,11 +825,10 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
           <button
             key={tag}
             onClick={() => setSelectedTag(tag === 'all' ? null : tag)}
-            className={`text-sm mb-2 ${
-              (tag === 'all' && !selectedTag) || tag === selectedTag
-                ? 'underline'
-                : ''
-            }`}
+            className={`text-sm mb-2 ${(tag === 'all' && !selectedTag) || tag === selectedTag
+              ? 'underline'
+              : ''
+              }`}
           >
             {tag.charAt(0).toUpperCase() + tag.slice(1)}
           </button>
@@ -826,22 +836,23 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
       </div>
 
       {/* Grid */}
-      <div 
-        className="grid gap-y-4 gap-x-6" 
-        style={{ 
+      <div
+        className="grid gap-y-4 gap-x-6"
+        style={{
           gridTemplateColumns: `repeat(${maxColumns}, 1fr)`,
           gridAutoRows: '40px',
           gridAutoFlow: 'dense'
         }}
       >
-        {sortedItems.map((item) => (
-          <GridItem 
-            key={`${item.category}-${item.slug}`} 
+        {sortedItems.map((item, index) => (
+          <GridItem
+            key={`${item.category}-${item.slug}`}
             item={item}
             maxColumns={maxColumns}
+            index={index}
           />
         ))}
       </div>
     </div>
   );
-} 
+}

@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-gray-500 text-sm">
+          <div className="text-gray-500 text-xs">
             © {currentYear} Portfolio. All rights reserved.
           </div>
           

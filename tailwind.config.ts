@@ -13,7 +13,7 @@ export default {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        sans: ['Untitled Sans', 'system-ui', 'sans-serif'],
+        sans: ['Berkeley Mono', 'Untitled Sans', 'system-ui', 'monospace'],
       },
       fontWeight: {
         light: '400',    // Light becomes Regular
@@ -35,32 +35,32 @@ export default {
           css: {
             maxWidth: 'none',
             color: 'var(--tw-prose-body)',
-            fontFamily: 'Untitled Sans, system-ui, sans-serif',
+            fontFamily: 'Berkeley Mono, system-ui, monospace',
             h1: {
-              fontFamily: 'Untitled Sans, system-ui, sans-serif',
+              fontFamily: 'Berkeley Mono, system-ui, monospace',
               fontWeight: '500',
             },
             h2: {
-              fontFamily: 'Untitled Sans, system-ui, sans-serif',
+              fontFamily: 'Berkeley Mono, system-ui, monospace',
               fontWeight: '500',
             },
             h3: {
-              fontFamily: 'Untitled Sans, system-ui, sans-serif',
+              fontFamily: 'Berkeley Mono, system-ui, monospace',
               fontWeight: '500',
             },
             h4: {
-              fontFamily: 'Untitled Sans, system-ui, sans-serif',
+              fontFamily: 'Berkeley Mono, system-ui, monospace',
               fontWeight: '500',
             },
             p: {
-              fontFamily: 'Untitled Sans, system-ui, sans-serif',
+              fontFamily: 'Berkeley Mono, system-ui, monospace',
               fontWeight: '400',
             },
             a: {
               color: 'var(--tw-prose-links)',
               textDecoration: 'underline',
               fontWeight: '500',
-              fontFamily: 'Untitled Sans, system-ui, sans-serif',
+              fontFamily: 'Berkeley Mono, system-ui, monospace',
             },
             'code::before': {
               content: '""',
@@ -98,7 +98,7 @@ export default {
             '--tw-prose-hr': 'var(--foreground)',
             '--tw-prose-th-borders': 'var(--foreground)',
             '--tw-prose-td-borders': 'var(--foreground)',
-            fontFamily: 'Untitled Sans, system-ui, sans-serif',
+            fontFamily: 'Berkeley Mono, system-ui, monospace',
             h1: { fontWeight: '500' },
             h2: { fontWeight: '500' },
             h3: { fontWeight: '500' },

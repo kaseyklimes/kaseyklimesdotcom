@@ -27,11 +27,36 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* DNS Prefetching */}
-        <link rel="dns-prefetch" href="https://localhost:3000" />
+        {/* Critical font preloading */}
+        <link 
+          rel="preload" 
+          href="/fonts/Berkeley Mono/BerkeleyMono-Regular.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/Berkeley Mono/BerkeleyMono-Bold.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/Berkeley Mono/BerkeleyMono-Oblique.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="" 
+        />
         
-        {/* Preconnect */}
-        <link rel="preconnect" href="https://localhost:3000" crossOrigin="anonymous" />
+        {/* DNS Prefetching for external resources */}
+        <link rel="dns-prefetch" href="//i.ytimg.com" />
+        <link rel="dns-prefetch" href="//pbs.twimg.com" />
+        <link rel="dns-prefetch" href="//platform.twitter.com" />
+        
+        {/* Preconnect for critical resources */}
+        <link rel="preconnect" href="https://platform.twitter.com" />
         
         {/* Add manifest for PWA */}
         <link rel="manifest" href="/manifest.json" />
@@ -40,7 +65,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body 
-        className="min-h-screen flex flex-col antialiased font-['Untitled_Sans']"
+        className="min-h-screen flex flex-col antialiased font-sans"
         style={{ isolation: 'isolate' }}
       >
         {children}
