@@ -295,7 +295,7 @@ export default async function ContentPage({ params }: PageProps) {
                           />
                         </div>
                       )}
-                      <h3 className="text-lg leading-normal group-hover:underline">
+                      <h3 className="text-lg leading-snug group-hover:underline">
                         {item.title}
                       </h3>
                       {item.description && (

@@ -12,6 +12,7 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.1.7",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "date-fns": "^4.1.0",
     "gray-matter": "^4.0.3",
     "next": "^15.1.7",

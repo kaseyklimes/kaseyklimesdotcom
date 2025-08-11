@@ -405,10 +405,12 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
           </div>
         </div>
         {item.title && (
-          <div className="mt-2">
-            <h3 className="text-lg leading-normal font-medium">{item.title}</h3>
+          <div className="mt-1">
+            <h3 className="text-lg leading-snug font-medium">{item.title}</h3>
             {item.description && (
-              <p className="text-xs text-gray-500 dark:text-gray-400">{item.description}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-4 mt-1">
+                {item.description}
+              </p>
             )}
           </div>
         )}
@@ -529,15 +531,15 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
                 </>
               )}
             </div>
-            <div className="mt-2">
-              <h3 className="text-lg leading-normal">
+            <div className="mt-1">
+              <h3 className="text-lg leading-snug">
                 {item.title}
               </h3>
-              <p className="text-xs">
+              <p className="text-xs line-clamp-4 mt-1">
                 {item.description}
               </p>
               {item.category !== 'shelf' && (
-                <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
                   <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
                   {item.location && (
                     <>
@@ -661,15 +663,15 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
                 </>
               )}
             </div>
-            <div className="mt-2">
-              <h3 className="text-lg leading-normal">
+            <div className="mt-1">
+              <h3 className="text-lg leading-snug">
                 {item.title}
               </h3>
-              <p className="text-xs">
+              <p className="text-xs line-clamp-4 mt-1">
                 {item.description}
               </p>
               {item.category !== 'shelf' && (
-                <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
                   <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
                   {item.location && (
                     <>

@@ -15,7 +15,7 @@ export default function MasonryGridPage({ page }: MasonryGridPageProps) {
         <div className="mb-8">
           <h1 className="text-3xl font-bold">{page.title}</h1>
           {page.description && (
-            <p className="mt-2 text-lg leading-normal text-gray-600 dark:text-gray-400">
+            <p className="mt-1 text-lg leading-snug text-gray-600 dark:text-gray-400">
               {page.description}
             </p>
           )}
