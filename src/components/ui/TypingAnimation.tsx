@@ -71,7 +71,9 @@ export default function TypingAnimation({
       <span className="invisible" dangerouslySetInnerHTML={{ __html: formattedText }}></span>
       <span className="absolute inset-0">
         <span dangerouslySetInnerHTML={{ __html: formattedDisplayText }}></span>
-        <span className={`inline-block w-[8px] h-[1em] bg-current ml-[2px] align-text-bottom ${!isComplete && showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity duration-100`}></span>
+        {!isComplete && showCursor && (
+          <span className="inline-block w-[8px] h-[1em] bg-current ml-[2px] align-text-bottom transition-opacity duration-100"></span>
+        )}
       </span>
     </span>
   );

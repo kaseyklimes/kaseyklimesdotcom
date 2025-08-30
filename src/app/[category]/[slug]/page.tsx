@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import { format, parse } from 'date-fns';
 import { Metadata } from 'next';
+import Carousel from '@/components/ui/Carousel';
 
 interface PageProps {
   params: Promise<{
@@ -25,15 +26,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!content) return {};
 
+  const hero = content.heroImage;
   return {
     title: content.title,
     description: content.description,
     openGraph: {
       title: content.title,
       description: content.description,
-      ...(content.heroImage ? {
+      ...(hero ? {
         images: [{
-          url: content.heroImage,
+          url: hero,
           width: 1200,
           height: 630,
           alt: content.title
@@ -59,7 +61,7 @@ function formatContentDate(dateString: string): string {
       const date = parse(dateString, 'MM-yyyy', new Date());
       return format(date, 'MMMM yyyy');
     }
-    
+
     // Handle date ranges with hyphen
     if (dateString.includes('-')) {
       const [startDate, endDate] = dateString.split('-').map(d => d.trim());
@@ -68,12 +70,12 @@ function formatContentDate(dateString: string): string {
       }
       return `${startDate}–${endDate}`;
     }
-    
+
     // Handle just year
     if (/^\d{4}$/.test(dateString)) {
       return dateString;
     }
-    
+
     // Handle full dates
     const date = new Date(dateString);
     return format(date, 'MMMM d, yyyy');
@@ -94,7 +96,7 @@ const getVideoInfo = (url: string): { isVideo: boolean; type?: 'youtube' | 'vime
     /youtube\.com\/embed\/([^?]+)/,
     /youtube\.com\/v\/([^?]+)/
   ];
-  
+
   // Vimeo URL patterns
   const vimeoPatterns = [
     /vimeo\.com\/([0-9]+)/,
@@ -122,7 +124,7 @@ const getVideoInfo = (url: string): { isVideo: boolean; type?: 'youtube' | 'vime
 
 export default async function ContentPage({ params }: PageProps) {
   const { category, slug } = await params;
-  
+
   const content = await getContentBySlug(category, slug);
 
   if (!content) {
@@ -135,28 +137,35 @@ export default async function ContentPage({ params }: PageProps) {
     order: 'desc',
   });
 
-  // Get video info if heroImage is a video URL
-  const videoInfo = content.heroImage ? getVideoInfo(content.heroImage) : { isVideo: false };
+  // Normalize hero images
+  const heroImages = content.carousel && content.carousel.length > 0
+    ? content.carousel
+    : content.heroImage
+      ? [content.heroImage]
+      : [];
+
+  // Get video info if there is a single hero image that is a video URL
+  const videoInfo = heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false };
 
   return (
     <Layout>
       <article className="max-w-4xl mx-auto">
         {/* Back Button */}
         <div className="mb-4 mt-4">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center text-xs hover:underline"
           >
-            <svg 
-              className="mr-2 w-4 h-4" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="mr-2 w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
               strokeWidth="2"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
@@ -190,14 +199,13 @@ export default async function ContentPage({ params }: PageProps) {
           )}
           {category !== 'blog' && (
             <>
-              {content.heroImage && (
-                <div className={`relative ${
-                  videoInfo.isVideo 
-                    ? 'aspect-[16/9]' 
-                    : category !== 'photography' 
-                      ? 'aspect-[21/9]' 
-                      : 'max-h-[90vh] flex items-center justify-center'
-                } mb-8`}>
+              {heroImages.length > 0 && (
+                <div className={`relative ${videoInfo.isVideo
+                  ? 'aspect-[16/9]'
+                  : category !== 'photography'
+                    ? 'aspect-[21/9]'
+                    : 'max-h-[90vh] flex items-center justify-center'
+                  } mb-8`}>
                   {videoInfo.isVideo ? (
                     <div className="relative w-full h-full">
                       {videoInfo.type === 'youtube' ? (
@@ -228,9 +236,16 @@ export default async function ContentPage({ params }: PageProps) {
                         />
                       )}
                     </div>
+                  ) : heroImages.length > 1 ? (
+                    <Carousel
+                      images={heroImages}
+                      alt={`${content.title}${content.description ? ` - ${content.description}` : ''}`}
+                      contain
+                      priority
+                    />
                   ) : (
                     <Image
-                      src={content.heroImage}
+                      src={heroImages[0]}
                       alt={`${content.title}${content.description ? ` - ${content.description}` : ''}`}
                       {...(category === 'photography' ? {
                         width: 1200,
@@ -272,11 +287,12 @@ export default async function ContentPage({ params }: PageProps) {
                 .filter((item) => item.slug !== slug)
                 .slice(0, 2)
                 .map((item) => {
-                  const videoInfo = item.heroImage ? getVideoInfo(item.heroImage) : { isVideo: false };
+                  const hero = item.heroImage;
+                  const videoInfo = hero ? getVideoInfo(hero) : { isVideo: false };
                   const imageUrl = videoInfo.isVideo && videoInfo.type === 'youtube' && videoInfo.id
                     ? `https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`
-                    : item.heroImage;
-                  
+                    : hero;
+
                   return (
                     <Link
                       key={item.slug}

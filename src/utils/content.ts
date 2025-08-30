@@ -2,12 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { ContentCategory, ContentItem, ContentMeta, FilterOptions } from '@/types/content';
+import { HIDE_TWEETS } from '@/utils/config';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const VALID_CATEGORIES = ['blog', 'work', 'photography', 'shelf', 'tweet'];
 
 export async function getContentBySlug(category: ContentCategory, slug: string): Promise<ContentItem | null> {
   try {
+    // Respect hide-tweets flag
+    if (HIDE_TWEETS && category === 'tweet') {
+      return null;
+    }
     // Validate category
     if (!VALID_CATEGORIES.includes(category)) {
       console.warn(`Invalid category: ${category}`);
@@ -15,7 +20,7 @@ export async function getContentBySlug(category: ContentCategory, slug: string):
     }
 
     const fullPath = path.join(CONTENT_DIR, category, `${slug}.md`);
-    
+
     // Check if file exists
     if (!fs.existsSync(fullPath)) {
       console.warn(`File not found: ${fullPath}`);
@@ -37,18 +42,25 @@ export async function getContentBySlug(category: ContentCategory, slug: string):
 }
 
 export async function getAllContent(options?: FilterOptions): Promise<ContentMeta[]> {
-  const categories = options?.category ? [options.category] : VALID_CATEGORIES;
+  // Build category list, respecting hide-tweets flag
+  const categories = (() => {
+    if (options?.category) {
+      if (HIDE_TWEETS && options.category === 'tweet') return [];
+      return [options.category];
+    }
+    return HIDE_TWEETS ? VALID_CATEGORIES.filter(c => c !== 'tweet') : VALID_CATEGORIES;
+  })();
   let allContent: ContentMeta[] = [];
 
   for (const category of categories) {
     const categoryPath = path.join(CONTENT_DIR, category);
-    
+
     try {
       if (!fs.existsSync(categoryPath)) {
         console.warn(`Category directory not found: ${categoryPath}`);
         continue;
       }
-      
+
       const files = fs.readdirSync(categoryPath)
         .filter(file => file.endsWith('.md'));
 
@@ -78,11 +90,11 @@ export async function getAllContent(options?: FilterOptions): Promise<ContentMet
       const aValue = a[options.sortBy!];
       const bValue = b[options.sortBy!];
       const modifier = options.order === 'desc' ? -1 : 1;
-      
+
       if (options.sortBy === 'date') {
         return modifier * (new Date(aValue).getTime() - new Date(bValue).getTime());
       }
-      
+
       return modifier * ((aValue as number) - (bValue as number));
     });
   }
@@ -97,14 +109,19 @@ export async function getContentPaths(category: ContentCategory): Promise<string
     return [];
   }
 
+  // Respect hide-tweets flag for path generation
+  if (HIDE_TWEETS && category === 'tweet') {
+    return [];
+  }
+
   const categoryPath = path.join(CONTENT_DIR, category);
-  
+
   try {
     if (!fs.existsSync(categoryPath)) {
       console.warn(`Category directory not found: ${categoryPath}`);
       return [];
     }
-    
+
     return fs.readdirSync(categoryPath)
       .filter(file => file.endsWith('.md'))
       .map(file => file.replace(/\.md$/, ''));

@@ -347,7 +347,11 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
     return { isVideo: false };
   };
 
-  const videoInfo = React.useMemo(() => isVideoEmbed(item.heroImage || ''), [item.heroImage]);
+  const heroImages = React.useMemo(() => (item.heroImage ? [item.heroImage] : []), [item.heroImage]);
+
+  const videoInfo = React.useMemo(() => (
+    heroImages.length === 1 ? isVideoEmbed(heroImages[0]) : { isVideo: false }
+  ), [heroImages]);
 
   const style = {
     gridColumn: `span ${colSpan} / span ${colSpan}`,
@@ -459,9 +463,9 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
                   )}
                 </div>
               ) : (
-                item.heroImage && (
+                heroImages[0] && (
                   <Image
-                    src={item.heroImage}
+                    src={heroImages[0]}
                     alt={item.title || 'Content image'}
                     {...(item.category === 'photography' || item.category === 'shelf'
                       ? {
@@ -591,9 +595,9 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
                   )}
                 </div>
               ) : (
-                item.heroImage && (
+                heroImages[0] && (
                   <Image
-                    src={item.heroImage}
+                    src={heroImages[0]}
                     alt={item.title || 'Content image'}
                     {...(item.category === 'photography' || item.category === 'shelf'
                       ? {

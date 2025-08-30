@@ -70,25 +70,25 @@ export default function ShelfGrid({ items }: ShelfGridProps) {
   // Distribute items into columns for masonry layout
   useEffect(() => {
     const newColumns: ContentMeta[][] = Array.from({ length: maxColumns }, () => []);
-    
+
     items.forEach((item, index) => {
       const columnIndex = index % maxColumns;
       newColumns[columnIndex].push(item);
     });
-    
+
     setColumns(newColumns);
   }, [items, maxColumns]);
 
   return (
-    <div 
+    <div
       className="flex gap-6"
     >
       {columns.map((column, columnIndex) => (
         <div key={columnIndex} className="flex-1 flex flex-col gap-6">
           {column.map((item, itemIndex) => (
-            <ShelfGridItem 
+            <ShelfGridItem
               key={item.slug}
-              item={item} 
+              item={item}
               index={columnIndex * maxColumns + itemIndex}
             />
           ))}

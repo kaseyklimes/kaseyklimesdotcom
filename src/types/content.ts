@@ -8,6 +8,7 @@ export interface ContentMeta {
   description?: string;
   slug: string;
   heroImage?: string;
+  carousel?: string[];
   hasContent?: boolean;
   location?: string;
   span?: number;
