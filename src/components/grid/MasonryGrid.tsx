@@ -655,7 +655,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     return (containerWidth - totalGapSpace) / maxColumns;
   }, [containerWidth, maxColumns]);
 
-  // Calculate positions using true masonry algorithm
+  // Calculate positions using true masonry algorithm with gap-filling lookahead
   const { positions, containerHeight } = useMemo(() => {
     if (columnWidth === 0) {
       return { positions: new Map<string, ItemPosition>(), containerHeight: 0 };
@@ -663,28 +663,82 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
 
     const columnHeights = new Array(maxColumns).fill(0);
     const positions = new Map<string, ItemPosition>();
+    const placed = new Set<string>();
 
-    for (const item of sortedItems) {
+    // Helper to place an item and update column heights
+    const placeItem = (item: ContentMeta) => {
       const key = `${item.category}-${item.slug}`;
+      if (placed.has(key)) return;
+
       const colSpan = getColSpan(item, maxColumns);
       const itemWidth = colSpan * columnWidth + (colSpan - 1) * GAP_X;
 
-      // Find best position
       const { startCol, top } = findBestColumnsForItem(columnHeights, colSpan);
       const left = startCol * (columnWidth + GAP_X);
 
       positions.set(key, { left, top, width: itemWidth });
+      placed.add(key);
 
-      // Get item height (use measured height or estimate)
       const measuredHeight = itemHeights.get(key);
       const estimatedHeight = estimateItemHeight(item, itemWidth);
       const height = measuredHeight || estimatedHeight;
 
-      // Update column heights for all columns this item spans
       const newHeight = top + height + GAP_Y;
       for (let c = startCol; c < startCol + colSpan; c++) {
         columnHeights[c] = newHeight;
       }
+    };
+
+    // Helper to get the height variance (gap potential)
+    const getColumnVariance = () => {
+      const min = Math.min(...columnHeights);
+      const max = Math.max(...columnHeights);
+      return max - min;
+    };
+
+    // Process items with lookahead for gap filling
+    const LOOKAHEAD_LIMIT = 8; // How far ahead to look for gap fillers
+    const GAP_THRESHOLD = 100; // Minimum gap (px) to trigger lookahead
+
+    for (let i = 0; i < sortedItems.length; i++) {
+      const item = sortedItems[i];
+      const key = `${item.category}-${item.slug}`;
+
+      if (placed.has(key)) continue;
+
+      const colSpan = getColSpan(item, maxColumns);
+      const { top } = findBestColumnsForItem(columnHeights, colSpan);
+      const minColumnHeight = Math.min(...columnHeights);
+      const gap = top - minColumnHeight;
+
+      // If this item would create a significant gap, look for smaller items to fill it
+      if (gap > GAP_THRESHOLD && colSpan > 1) {
+        // Look ahead for single-column items that could fill the shorter columns
+        for (let j = i + 1; j < Math.min(i + 1 + LOOKAHEAD_LIMIT, sortedItems.length); j++) {
+          const futureItem = sortedItems[j];
+          const futureKey = `${futureItem.category}-${futureItem.slug}`;
+
+          if (placed.has(futureKey)) continue;
+
+          const futureColSpan = getColSpan(futureItem, maxColumns);
+
+          // Only pull forward items that are smaller and would fit in a short column
+          if (futureColSpan < colSpan) {
+            const { top: futureTop } = findBestColumnsForItem(columnHeights, futureColSpan);
+
+            // Place it if it would go in a shorter position than our current item
+            if (futureTop < top) {
+              placeItem(futureItem);
+
+              // Check if we've reduced the variance enough
+              if (getColumnVariance() < GAP_THRESHOLD) break;
+            }
+          }
+        }
+      }
+
+      // Now place the current item
+      placeItem(item);
     }
 
     return {
