@@ -1,11 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import React, { useState, useMemo, useCallback, memo, useRef, useEffect } from 'react';
 import { ContentMeta } from '@/types/content';
 import Link from 'next/link';
 import Image from 'next/image';
-import { format } from 'date-fns';
 import ShelfGrid from './ShelfGrid';
+import { formatDateOrRange } from '@/utils/dateFormatting';
+import { getVideoInfo } from '@/utils/mediaDetection';
+import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
+
+// Gap between items in pixels
+const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
+const GAP_Y = 24; // vertical gap between items
 
 interface MasonryGridProps {
   items: ContentMeta[];
@@ -29,160 +35,6 @@ declare global {
         ) => Promise<HTMLElement>;
       };
     };
-  }
-}
-
-// Memoized calculation cache
-const rowSpanCache = new Map<string, number>();
-
-function calculateRowSpan(stars: number, description: string | undefined, category: string, imageWidth?: number, imageHeight?: number, manualSpan?: number) {
-  // Create cache key from all parameters
-  const cacheKey = `${stars}-${description?.length || 0}-${category}-${imageWidth || 0}-${imageHeight || 0}-${manualSpan || 0}`;
-
-  // Return cached result if available
-  if (rowSpanCache.has(cacheKey)) {
-    return rowSpanCache.get(cacheKey)!;
-  }
-  // If manual span override is provided, use it
-  if (typeof manualSpan === 'number') {
-    rowSpanCache.set(cacheKey, manualSpan);
-    return manualSpan;
-  }
-
-  // Special handling for tweets - always use 1 column and fixed height
-  if (category === 'tweet') {
-    const tweetRows = 8; // Smaller fixed height for tweets
-    rowSpanCache.set(cacheKey, tweetRows);
-    return tweetRows;
-  }
-
-  const rowHeight = 40;
-  const colSpan = Math.min(stars, 5);
-  const columnWidth = 200; // Width of one column in pixels
-  const containerWidth = colSpan * columnWidth;
-
-  // Calculate image height
-  let imageHeightPx;
-  if ((category === 'photography' || category === 'shelf') && imageWidth && imageHeight) {
-    // Use actual image dimensions for photography and shelf items
-    imageHeightPx = (containerWidth * imageHeight) / imageWidth;
-  } else {
-    // Use 3:2 aspect ratio for other content
-    imageHeightPx = (containerWidth * 2) / 3;
-  }
-
-  // Calculate text content height more precisely
-  const titleHeightPx = description || (category !== 'photography' && category !== 'shelf') ? 28 : 0; // Only count title height if there's a description or it's not photography/shelf
-
-  // Calculate description height based on content
-  const charsPerLine = Math.floor((colSpan * 75));
-  const descriptionLines = description ? Math.ceil(description.length / charsPerLine) : 0;
-  const descriptionHeightPx = descriptionLines * 20; // text-xs line height
-
-  // Metadata height (single line of text-xs plus margins)
-  const metadataHeightPx = 20;
-
-  // Account for margins (mt-2 = 0.5rem = 8px)
-  const marginHeightPx = description ? 16 : 8; // Less margin if no description
-
-  // Calculate total content height and convert to rows
-  const totalHeightPx = imageHeightPx + titleHeightPx + descriptionHeightPx + metadataHeightPx + marginHeightPx;
-  let totalRows = Math.ceil(totalHeightPx / rowHeight);
-
-  // Special handling for 2-column photography items
-  if (category === 'photography' && colSpan === 2) {
-    if (description && description.length < 100) {
-      // For items with short descriptions, cap at 9 rows
-      totalRows = Math.min(totalRows, 9);
-    } else if (!description && imageWidth && imageHeight) {
-      // For items with no description, check image aspect ratio
-      const aspectRatio = imageWidth / imageHeight;
-      if (aspectRatio > 1) {
-        // Wider images can be capped at 9 rows
-        totalRows = Math.min(totalRows, 9);
-      } else {
-        // Taller images need more space, minimum 14 rows
-        totalRows = Math.max(totalRows, 14);
-      }
-    }
-  }
-  // For photography/shelf items with no description, reduce the total rows slightly
-  else if ((category === 'photography' || category === 'shelf') && !description) {
-    totalRows = Math.floor(totalRows * 0.9); // Reduce by 10% for more compact layout
-  }
-
-  // For non-photography/shelf items, ensure we don't overallocate rows
-  if (category !== 'photography' && category !== 'shelf') {
-    const maxRowsBySpan: Record<number, number> = {
-      1: 7,   // 1 column items max 7 rows
-      2: 8,   // 2 column items max 8 rows
-      3: 11,  // 3 column items max 11 rows
-      4: 12,  // 4 column items max 12 rows
-      5: 13   // 5 column items max 13 rows
-    };
-
-    // For 2-column items with short descriptions, reduce rows further
-    if (colSpan === 2 && (!description || description.length < 100)) {
-      totalRows = Math.min(totalRows, 8);
-    }
-
-    totalRows = Math.min(totalRows, maxRowsBySpan[colSpan] || totalRows);
-  }
-
-  // Cache the result and return
-  rowSpanCache.set(cacheKey, totalRows);
-  return totalRows;
-}
-
-function formatDateOrRange(dateString: string) {
-  'use client';
-
-  try {
-    // Handle undefined or invalid dates
-    if (!dateString || typeof dateString !== 'string') {
-      return '';
-    }
-
-    // Handle date ranges with "present"
-    if (dateString.toLowerCase().includes('present')) {
-      const startYear = dateString.split('-')[0];
-      return `${startYear}–Present`;
-    }
-
-    // Handle year ranges with either hyphen or forward slash (e.g., "2017-2021" or "1993/2008")
-    if (/^\d{4}[-\/]\d{4}$/.test(dateString)) {
-      const [startYear, endYear] = dateString.split(/[-\/]/);
-      // If end year is less than start year, something is wrong
-      if (parseInt(endYear) < parseInt(startYear)) {
-        console.error(`Invalid date range: ${dateString}`);
-        return startYear;
-      }
-      return `${startYear}–${endYear}`;
-    }
-
-    // Handle month-year format (e.g., "07-2024")
-    if (/^\d{2}-\d{4}$/.test(dateString)) {
-      const [month, year] = dateString.split('-');
-      const date = new Date(parseInt(year), parseInt(month) - 1);
-      return format(date, 'MMMM yyyy');
-    }
-
-    // Handle full date format (e.g., "10-27-2023")
-    if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
-      const [month, day, year] = dateString.split('-');
-      const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      return format(date, 'MMMM d, yyyy');
-    }
-
-    // Handle just year (e.g., "2023")
-    if (/^\d{4}$/.test(dateString)) {
-      return dateString;
-    }
-
-    return dateString;
-  } catch (error) {
-    console.error('Error formatting date:', dateString, error);
-    return dateString;
   }
 }
 
@@ -288,79 +140,67 @@ function CustomTweet({ item }: { item: ContentMeta }) {
   );
 }
 
-const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: ContentMeta; maxColumns: number; index: number }) {
+interface GridItemProps {
+  item: ContentMeta;
+  maxColumns: number;
+  index: number;
+  style?: React.CSSProperties;
+  onHeightMeasured?: (height: number) => void;
+}
+
+const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeightMeasured }: GridItemProps) {
+  const itemRef = useRef<HTMLDivElement>(null);
   // For tweets, always use 1 column regardless of stars
   const colSpan = item.category === 'tweet'
     ? 1
     : Math.min(item.stars, maxColumns); // Limit column span to available columns
-  const [dimensions, setDimensions] = useState<{ width?: number; height?: number }>({});
-
-  // Handle image load to get actual dimensions
-  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = event.target as HTMLImageElement;
-    setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-  };
-
-  const rowSpan = React.useMemo(() => calculateRowSpan(
-    item.stars,
-    item.description,
-    item.category,
-    dimensions.width,
-    dimensions.height,
-    item.span
-  ), [item.stars, item.description, item.category, dimensions.width, dimensions.height, item.span]);
-
-  // Function to determine if URL is a video embed
-  const isVideoEmbed = (url: string): { isVideo: boolean; type?: 'youtube' | 'vimeo'; id?: string } => {
-    if (!url) return { isVideo: false };
-
-    // YouTube URL patterns
-    const youtubePatterns = [
-      /youtube\.com\/watch\?v=([^&]+)/,
-      /youtu\.be\/([^?]+)/,
-      /youtube\.com\/embed\/([^?]+)/,
-      /youtube\.com\/v\/([^?]+)/
-    ];
-
-    // Vimeo URL patterns
-    const vimeoPatterns = [
-      /vimeo\.com\/([0-9]+)/,
-      /player\.vimeo\.com\/video\/([0-9]+)/
-    ];
-
-    // Check YouTube patterns
-    for (const pattern of youtubePatterns) {
-      const match = url.match(pattern);
-      if (match) {
-        return { isVideo: true, type: 'youtube', id: match[1] };
-      }
-    }
-
-    // Check Vimeo patterns
-    for (const pattern of vimeoPatterns) {
-      const match = url.match(pattern);
-      if (match) {
-        return { isVideo: true, type: 'vimeo', id: match[1] };
-      }
-    }
-
-    return { isVideo: false };
-  };
 
   const heroImages = React.useMemo(() => (item.heroImage ? [item.heroImage] : []), [item.heroImage]);
 
   const videoInfo = React.useMemo(() => (
-    heroImages.length === 1 ? isVideoEmbed(heroImages[0]) : { isVideo: false }
+    heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false }
   ), [heroImages]);
 
-  const style = {
-    gridColumn: `span ${colSpan} / span ${colSpan}`,
-    gridRow: `span ${rowSpan} / span ${rowSpan}`,
-  };
+  // Measure height after render and images load
+  useEffect(() => {
+    if (!onHeightMeasured || !itemRef.current) return;
+
+    // Measure after a brief delay to allow images to load
+    const measureHeight = () => {
+      if (itemRef.current) {
+        const height = itemRef.current.getBoundingClientRect().height;
+        onHeightMeasured(height);
+      }
+    };
+
+    // Initial measurement
+    measureHeight();
+
+    // Also measure when images load
+    const images = itemRef.current.querySelectorAll('img');
+    images.forEach(img => {
+      if (!img.complete) {
+        img.addEventListener('load', measureHeight);
+      }
+    });
+
+    // Observe resize changes
+    const resizeObserver = new ResizeObserver(measureHeight);
+    resizeObserver.observe(itemRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+      images.forEach(img => {
+        img.removeEventListener('load', measureHeight);
+      });
+    };
+  }, [onHeightMeasured]);
+
+  const itemStyle = style || {};
 
   if (item.category === 'tweet') {
     return (
-      <div style={style}>
+      <div ref={itemRef} style={itemStyle}>
         <CustomTweet item={item} />
       </div>
     );
@@ -369,19 +209,13 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
   // Special case for shelf grid
   if (item.category === 'shelf' && item.items) {
     return (
-      <div style={style}>
+      <div ref={itemRef} style={itemStyle}>
         <ShelfGrid items={item.items} />
       </div>
     );
   }
 
   if (item.iframeUrl) {
-    // Override rowSpan if iframeRows is specified
-    const iframeStyle = {
-      ...style,
-      gridRow: item.iframeRows ? `span ${item.iframeRows} / span ${item.iframeRows}` : style.gridRow
-    };
-
     // Calculate container width based on column span
     const gridColumnWidth = colSpan * 200; // Each column is 200px
     const containerWidth = item.iframeWidth || gridColumnWidth;
@@ -389,7 +223,7 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
     const aspectRatio = containerWidth / (item.iframeRows ? item.iframeRows * 40 : 400);
 
     return (
-      <div style={iframeStyle}>
+      <div ref={itemRef} style={itemStyle}>
         <div className="w-full h-full min-h-[400px] relative overflow-hidden" style={{ aspectRatio }}>
           <div style={{
             position: 'absolute',
@@ -423,15 +257,13 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
   }
 
   return (
-    <div style={style}>
+    <div ref={itemRef} style={itemStyle}>
       {item.clickThroughUrl ? (
         <a href={item.clickThroughUrl} target="_blank" rel="noopener noreferrer">
           <div>
-            <div className={`relative group ${videoInfo.isVideo
-              ? 'aspect-[3/1]'
-              : item.category !== 'photography' && item.category !== 'shelf'
-                ? 'aspect-[3/2]'
-                : ''
+            <div className={`relative group overflow-hidden ${videoInfo.isVideo
+              ? 'aspect-[16/9]'
+              : ''
               }`}>
               {videoInfo.isVideo ? (
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
@@ -467,18 +299,9 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
                   <Image
                     src={heroImages[0]}
                     alt={item.title || 'Content image'}
-                    {...(item.category === 'photography' || item.category === 'shelf'
-                      ? {
-                        width: 1200,
-                        height: 800,
-                        className: "w-full h-auto",
-                        onLoad: handleImageLoad
-                      }
-                      : {
-                        fill: true,
-                        className: "object-cover"
-                      }
-                    )}
+                    width={1200}
+                    height={800}
+                    className="w-full h-auto"
                     sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
                     priority={index < 4}
                     loading={index < 4 ? "eager" : "lazy"}
@@ -559,11 +382,9 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
       ) : (
         <Link href={`/${item.category}/${item.slug}`}>
           <div>
-            <div className={`relative group ${videoInfo.isVideo
-              ? 'aspect-[3/1]'
-              : item.category !== 'photography' && item.category !== 'shelf'
-                ? 'aspect-[3/2]'
-                : ''
+            <div className={`relative group overflow-hidden ${videoInfo.isVideo
+              ? 'aspect-[16/9]'
+              : ''
               }`}>
               {videoInfo.isVideo ? (
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
@@ -599,18 +420,9 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
                   <Image
                     src={heroImages[0]}
                     alt={item.title || 'Content image'}
-                    {...(item.category === 'photography' || item.category === 'shelf'
-                      ? {
-                        width: 1200,
-                        height: 800,
-                        className: "w-full h-auto",
-                        onLoad: handleImageLoad
-                      }
-                      : {
-                        fill: true,
-                        className: "object-cover"
-                      }
-                    )}
+                    width={1200}
+                    height={800}
+                    className="w-full h-auto"
                     sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
                     priority={index < 4}
                     loading={index < 4 ? "eager" : "lazy"}
@@ -693,31 +505,49 @@ const GridItem = memo(function GridItem({ item, maxColumns, index }: { item: Con
   );
 });
 
-export default function MasonryGrid({ items }: MasonryGridProps) {
-  const [maxColumns, setMaxColumns] = useState(5);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+// Helper to get column span for an item
+function getColSpan(item: ContentMeta, maxColumns: number): number {
+  if (item.category === 'tweet') return 1;
+  return Math.min(item.stars, maxColumns);
+}
 
-  // Calculate max columns based on window width
-  useEffect(() => {
-    function handleResize() {
-      const width = window.innerWidth;
-      // Subtract padding/margins (48px = 3rem for gap-x-6)
-      const availableWidth = width - 48;
-      // Each column needs minimum 200px
-      const possibleColumns = Math.floor(availableWidth / 200);
-      // Clamp between 1 and 5 columns
-      setMaxColumns(Math.max(1, Math.min(5, possibleColumns)));
+// Helper to find best columns for a multi-column item
+function findBestColumnsForItem(
+  columnHeights: number[],
+  colSpan: number
+): { startCol: number; top: number } {
+  const numColumns = columnHeights.length;
+  let bestStartCol = 0;
+  let bestTop = Infinity;
+
+  // For multi-column items, find the position that minimizes the top position
+  for (let startCol = 0; startCol <= numColumns - colSpan; startCol++) {
+    // The top position is the max height among the columns this item would span
+    const columnsToSpan = columnHeights.slice(startCol, startCol + colSpan);
+    const maxHeightInSpan = Math.max(...columnsToSpan);
+
+    if (maxHeightInSpan < bestTop) {
+      bestTop = maxHeightInSpan;
+      bestStartCol = startCol;
     }
+  }
 
-    // Initial calculation
-    handleResize();
+  return { startCol: bestStartCol, top: bestTop };
+}
 
-    // Add event listener
-    window.addEventListener('resize', handleResize);
+interface ItemPosition {
+  left: number;
+  top: number;
+  width: number;
+}
 
-    // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+export default function MasonryGrid({ items }: MasonryGridProps) {
+  const maxColumns = useResponsiveColumns();
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [itemHeights, setItemHeights] = useState<Map<string, number>>(new Map());
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   // Get unique tags from all items
   const tags = React.useMemo(() => {
@@ -800,14 +630,95 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     });
   }, [items, selectedTag, getDateForSorting]);
 
-  // Log items to see if tweets are included
-  React.useEffect(() => {
-    const tweetItems = items.filter(item => item.category === 'tweet');
-    console.log('Tweet items:', tweetItems);
-  }, [items]);
+  // Measure container width
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const measureWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    measureWidth();
+    const resizeObserver = new ResizeObserver(measureWidth);
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Calculate column width
+  const columnWidth = useMemo(() => {
+    if (containerWidth === 0 || maxColumns === 0) return 0;
+    // Total gap space = (maxColumns - 1) * GAP_X
+    const totalGapSpace = (maxColumns - 1) * GAP_X;
+    return (containerWidth - totalGapSpace) / maxColumns;
+  }, [containerWidth, maxColumns]);
+
+  // Calculate positions using true masonry algorithm
+  const { positions, containerHeight } = useMemo(() => {
+    if (columnWidth === 0) {
+      return { positions: new Map<string, ItemPosition>(), containerHeight: 0 };
+    }
+
+    const columnHeights = new Array(maxColumns).fill(0);
+    const positions = new Map<string, ItemPosition>();
+
+    for (const item of sortedItems) {
+      const key = `${item.category}-${item.slug}`;
+      const colSpan = getColSpan(item, maxColumns);
+      const itemWidth = colSpan * columnWidth + (colSpan - 1) * GAP_X;
+
+      // Find best position
+      const { startCol, top } = findBestColumnsForItem(columnHeights, colSpan);
+      const left = startCol * (columnWidth + GAP_X);
+
+      positions.set(key, { left, top, width: itemWidth });
+
+      // Get item height (use measured height or estimate)
+      const measuredHeight = itemHeights.get(key);
+      const estimatedHeight = estimateItemHeight(item, itemWidth);
+      const height = measuredHeight || estimatedHeight;
+
+      // Update column heights for all columns this item spans
+      const newHeight = top + height + GAP_Y;
+      for (let c = startCol; c < startCol + colSpan; c++) {
+        columnHeights[c] = newHeight;
+      }
+    }
+
+    return {
+      positions,
+      containerHeight: Math.max(...columnHeights)
+    };
+  }, [sortedItems, columnWidth, maxColumns, itemHeights]);
+
+  // Mark layout as ready after first calculation
+  useEffect(() => {
+    if (positions.size > 0 && !isLayoutReady) {
+      // Small delay to allow DOM to paint
+      requestAnimationFrame(() => {
+        setIsLayoutReady(true);
+      });
+    }
+  }, [positions, isLayoutReady]);
+
+  // Handle height measurement callback
+  const handleHeightMeasured = useCallback((key: string, height: number) => {
+    setItemHeights(prev => {
+      const existing = prev.get(key);
+      // Only update if height changed significantly (avoid infinite loops)
+      if (existing && Math.abs(existing - height) < 2) {
+        return prev;
+      }
+      const next = new Map(prev);
+      next.set(key, height);
+      return next;
+    });
+  }, []);
 
   // Load Twitter widget script once
-  React.useEffect(() => {
+  useEffect(() => {
     // Skip if already loaded
     if (window.twttr?.widgets || document.querySelector('script[src*="platform.twitter.com"]')) {
       return;
@@ -817,11 +728,14 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     script.src = 'https://platform.twitter.com/widgets.js';
     script.async = true;
     script.charset = 'utf-8';
+    script.onerror = () => {
+      console.error('Failed to load Twitter widget script');
+    };
     script.onload = () => {
       console.log('Twitter script loaded');
     };
     document.head.appendChild(script);
-  }, []); // Only run once on mount
+  }, []);
 
   return (
     <div>
@@ -841,24 +755,76 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
         ))}
       </div>
 
-      {/* Grid */}
+      {/* Masonry Grid */}
       <div
-        className="grid gap-y-4 gap-x-6"
+        ref={containerRef}
+        className="relative"
         style={{
-          gridTemplateColumns: `repeat(${maxColumns}, 1fr)`,
-          gridAutoRows: '40px',
-          gridAutoFlow: 'dense'
+          height: containerHeight || 'auto',
+          opacity: isLayoutReady ? 1 : 0,
+          transition: 'opacity 0.2s ease-in-out'
         }}
       >
-        {sortedItems.map((item, index) => (
-          <GridItem
-            key={`${item.category}-${item.slug}`}
-            item={item}
-            maxColumns={maxColumns}
-            index={index}
-          />
-        ))}
+        {sortedItems.map((item, index) => {
+          const key = `${item.category}-${item.slug}`;
+          const position = positions.get(key);
+
+          if (!position) return null;
+
+          const style: React.CSSProperties = {
+            position: 'absolute',
+            left: position.left,
+            top: position.top,
+            width: position.width,
+            transition: 'left 0.3s ease-out, top 0.3s ease-out, width 0.3s ease-out'
+          };
+
+          return (
+            <GridItem
+              key={key}
+              item={item}
+              maxColumns={maxColumns}
+              index={index}
+              style={style}
+              onHeightMeasured={(height) => handleHeightMeasured(key, height)}
+            />
+          );
+        })}
       </div>
     </div>
   );
+}
+
+// Estimate item height for initial layout before measurement
+function estimateItemHeight(item: ContentMeta, width: number): number {
+  // Base heights
+  const titleHeight = item.title ? 28 : 0;
+  const descriptionLines = item.description
+    ? Math.ceil(item.description.length / (width / 7)) // Approximate chars per line
+    : 0;
+  const descriptionHeight = Math.min(descriptionLines * 20, 80); // Cap at 4 lines
+  const metadataHeight = item.category !== 'shelf' ? 24 : 0;
+  const margins = 12;
+
+  // Image height estimation
+  let imageHeight = 0;
+  if (item.heroImage) {
+    // Estimate based on typical aspect ratios
+    if (item.category === 'photography') {
+      imageHeight = width * 0.75; // Assume 4:3 portrait
+    } else {
+      imageHeight = width * 0.67; // Assume 3:2 landscape
+    }
+  }
+
+  // Special cases
+  if (item.category === 'tweet') {
+    return 200 + descriptionHeight;
+  }
+
+  if (item.iframeUrl) {
+    return 400 + titleHeight + descriptionHeight + margins;
+  }
+
+  return imageHeight + titleHeight + descriptionHeight + metadataHeight + margins;
 }
