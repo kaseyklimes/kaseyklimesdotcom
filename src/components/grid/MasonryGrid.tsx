@@ -644,14 +644,27 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     });
   }, []);
 
+  // Ref for tag filter to scroll to on click
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // Handle tag click with scroll
+  const handleTagClick = useCallback((tag: string) => {
+    setSelectedTag(tag === 'all' ? null : tag);
+    // Scroll filter to 40px below viewport top
+    if (filterRef.current) {
+      const top = filterRef.current.getBoundingClientRect().top + window.scrollY - 40;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, []);
+
   return (
     <div>
       {/* Tag Filter */}
-      <div className="mb-8 flex space-x-4 flex-wrap">
+      <div ref={filterRef} className="mb-8 flex space-x-4 flex-wrap">
         {tags.map(tag => (
           <button
             key={tag}
-            onClick={() => setSelectedTag(tag === 'all' ? null : tag)}
+            onClick={() => handleTagClick(tag)}
             className={`text-sm mb-2 ${(tag === 'all' && !selectedTag) || tag === selectedTag
               ? 'underline'
               : ''
