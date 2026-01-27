@@ -2,12 +2,12 @@
 
 import React, { useState, useMemo, useCallback, memo, useRef, useEffect } from 'react';
 import { ContentMeta } from '@/types/content';
-import Link from 'next/link';
 import Image from 'next/image';
 import ShelfGrid from './ShelfGrid';
 import { formatDateOrRange } from '@/utils/dateFormatting';
 import { getVideoInfo } from '@/utils/mediaDetection';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
+import { PrefetchLink } from '@/components/ui/PrefetchLink';
 
 // Gap between items in pixels
 const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
@@ -17,26 +17,6 @@ interface MasonryGridProps {
   items: ContentMeta[];
 }
 
-// Add type definitions for Twitter widget
-declare global {
-  interface Window {
-    twttr: {
-      widgets: {
-        createTweet: (
-          tweetId: string,
-          element: HTMLElement | null,
-          options?: {
-            theme?: 'light' | 'dark';
-            align?: 'left' | 'center' | 'right';
-            width?: number | string;
-            conversation?: 'none' | 'all';
-            cards?: 'hidden' | 'visible';
-          }
-        ) => Promise<HTMLElement>;
-      };
-    };
-  }
-}
 
 function CustomTweet({ item }: { item: ContentMeta }) {
   const profile = item.profile || {
@@ -140,6 +120,119 @@ function CustomTweet({ item }: { item: ContentMeta }) {
   );
 }
 
+// Shared content component to eliminate duplication
+interface GridItemContentProps {
+  item: ContentMeta;
+  colSpan: number;
+  index: number;
+  videoInfo: { isVideo: boolean; type?: string; id?: string };
+  heroImages: string[];
+}
+
+const GridItemContent = memo(function GridItemContent({ item, colSpan, index, videoInfo, heroImages }: GridItemContentProps) {
+  return (
+    <div>
+      <div className={`relative group overflow-hidden ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>
+        {videoInfo.isVideo ? (
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+            {videoInfo.type === 'youtube' ? (
+              <>
+                <Image
+                  src={`https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`}
+                  alt={`Thumbnail for ${item.title}`}
+                  fill
+                  className="object-cover"
+                  sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
+                />
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src={`https://www.youtube.com/embed/${videoInfo.id}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={item.title}
+                />
+              </>
+            ) : (
+              <iframe
+                className="absolute top-0 left-0 w-full h-full"
+                src={`https://player.vimeo.com/video/${videoInfo.id}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={item.title}
+              />
+            )}
+          </div>
+        ) : (
+          heroImages[0] && (
+            <Image
+              src={heroImages[0]}
+              alt={item.title || 'Content image'}
+              width={1200}
+              height={800}
+              className="w-full h-auto"
+              sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
+              priority={index < 4}
+              loading={index < 4 ? "eager" : "lazy"}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+            />
+          )
+        )}
+        {item.audioUrl && (
+          <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/20 backdrop-blur-sm">
+            <audio controls className="w-full h-6 audio-player">
+              <source src={item.audioUrl} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        )}
+        {item.hasContent && (
+          <>
+            {/* Gradient overlay with hover effect */}
+            <div
+              className="absolute top-0 right-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-0"
+              style={{
+                width: '90px',
+                height: '90px',
+                background: 'radial-gradient(circle at top right, rgba(51,51,51,0.2) 0%, rgba(51,51,51,0.1) 15%, rgba(51,51,51,0.05) 25%, transparent 25%)'
+              }}
+            />
+            <div
+              className="absolute top-0 right-0 pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+              style={{
+                width: '90px',
+                height: '90px',
+                background: 'radial-gradient(circle at top right, rgba(51,51,51,0.4) 0%, rgba(51,51,51,0.3) 15%, rgba(51,51,51,0.15) 25%, transparent 25%)'
+              }}
+            />
+            {/* Icon */}
+            <div className="absolute top-1.5 right-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" className="text-white">
+                <path fill="currentColor" d="M17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z" />
+              </svg>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="mt-1">
+        <h3 className="text-lg leading-snug">{item.title}</h3>
+        <p className="text-xs line-clamp-4 mt-1">{item.description}</p>
+        {item.category !== 'shelf' && (
+          <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+            <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
+            {item.location && (
+              <>
+                <span className="text-gray-300">•</span>
+                <span>{item.location}</span>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+
 interface GridItemProps {
   item: ContentMeta;
   maxColumns: number;
@@ -155,7 +248,9 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
     ? 1
     : Math.min(item.stars, maxColumns); // Limit column span to available columns
 
-  const heroImages = React.useMemo(() => (item.heroImage ? [item.heroImage] : []), [item.heroImage]);
+  // Use thumbnail for grid display, fall back to heroImage
+  const gridImage = item.thumbnail || item.heroImage;
+  const heroImages = React.useMemo(() => (gridImage ? [gridImage] : []), [gridImage]);
 
   const videoInfo = React.useMemo(() => (
     heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false }
@@ -165,7 +260,6 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
   useEffect(() => {
     if (!onHeightMeasured || !itemRef.current) return;
 
-    // Measure after a brief delay to allow images to load
     const measureHeight = () => {
       if (itemRef.current) {
         const height = itemRef.current.getBoundingClientRect().height;
@@ -216,21 +310,22 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
   }
 
   if (item.iframeUrl) {
-    // Calculate container width based on column span
-    const gridColumnWidth = colSpan * 200; // Each column is 200px
-    const containerWidth = item.iframeWidth || gridColumnWidth;
-    const scale = gridColumnWidth / containerWidth;
-    const aspectRatio = containerWidth / (item.iframeRows ? item.iframeRows * 40 : 400);
+    // Use actual grid width from style, or fall back to estimate
+    const actualGridWidth = typeof style?.width === 'number' ? style.width : colSpan * 200;
+    const iframeNaturalWidth = item.iframeWidth || actualGridWidth;
+    const iframeNaturalHeight = item.iframeRows ? item.iframeRows * 40 : 400;
+    const scale = actualGridWidth / iframeNaturalWidth;
+    const aspectRatio = iframeNaturalWidth / iframeNaturalHeight;
 
     return (
       <div ref={itemRef} style={itemStyle}>
-        <div className="w-full h-full min-h-[400px] relative overflow-hidden" style={{ aspectRatio }}>
+        <div className="w-full relative overflow-hidden" style={{ aspectRatio }}>
           <div style={{
             position: 'absolute',
             top: 0,
             left: 0,
-            width: `${containerWidth}px`,
-            height: '100%',
+            width: `${iframeNaturalWidth}px`,
+            height: `${iframeNaturalHeight}px`,
             transform: `scale(${scale})`,
             transformOrigin: 'top left'
           }}>
@@ -244,7 +339,7 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
         </div>
         {item.title && (
           <div className="mt-1">
-            <h3 className="text-lg leading-snug font-medium">{item.title}</h3>
+            <h3 className="text-lg leading-snug">{item.title}</h3>
             {item.description && (
               <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-4 mt-1">
                 {item.description}
@@ -256,250 +351,18 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
     );
   }
 
+  const contentProps = { item, colSpan, index, videoInfo, heroImages };
+
   return (
     <div ref={itemRef} style={itemStyle}>
       {item.clickThroughUrl ? (
         <a href={item.clickThroughUrl} target="_blank" rel="noopener noreferrer">
-          <div>
-            <div className={`relative group overflow-hidden ${videoInfo.isVideo
-              ? 'aspect-[16/9]'
-              : ''
-              }`}>
-              {videoInfo.isVideo ? (
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  {videoInfo.type === 'youtube' ? (
-                    <>
-                      <Image
-                        src={`https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`}
-                        alt={`Thumbnail for ${item.title}`}
-                        fill
-                        className="object-cover"
-                        sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                      />
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full"
-                        src={`https://www.youtube.com/embed/${videoInfo.id}`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        title={item.title}
-                      />
-                    </>
-                  ) : (
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={`https://player.vimeo.com/video/${videoInfo.id}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      title={item.title}
-                    />
-                  )}
-                </div>
-              ) : (
-                heroImages[0] && (
-                  <Image
-                    src={heroImages[0]}
-                    alt={item.title || 'Content image'}
-                    width={1200}
-                    height={800}
-                    className="w-full h-auto"
-                    sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                    priority={index < 4}
-                    loading={index < 4 ? "eager" : "lazy"}
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                  />
-                )
-              )}
-              {item.audioUrl && (
-                <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/20 backdrop-blur-sm">
-                  <audio
-                    controls
-                    className="w-full h-6 audio-player"
-                  >
-                    <source src={item.audioUrl} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              )}
-              {item.hasContent && (
-                <>
-                  {/* Gradient overlay with hover effect */}
-                  <div
-                    className="absolute top-0 right-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-0"
-                    style={{
-                      width: '90px',
-                      height: '90px',
-                      background: 'radial-gradient(circle at top right, rgba(51,51,51,0.2) 0%, rgba(51,51,51,0.1) 15%, rgba(51,51,51,0.05) 25%, transparent 25%)'
-                    }}
-                  />
-                  <div
-                    className="absolute top-0 right-0 pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                    style={{
-                      width: '90px',
-                      height: '90px',
-                      background: 'radial-gradient(circle at top right, rgba(51,51,51,0.4) 0%, rgba(51,51,51,0.3) 15%, rgba(51,51,51,0.15) 25%, transparent 25%)'
-                    }}
-                  />
-                  {/* Icon */}
-                  <div className="absolute top-1.5 right-1.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      className="text-white"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"
-                      />
-                    </svg>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="mt-1">
-              <h3 className="text-lg leading-snug">
-                {item.title}
-              </h3>
-              <p className="text-xs line-clamp-4 mt-1">
-                {item.description}
-              </p>
-              {item.category !== 'shelf' && (
-                <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                  <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
-                  {item.location && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <span>{item.location}</span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <GridItemContent {...contentProps} />
         </a>
       ) : (
-        <Link href={`/${item.category}/${item.slug}`}>
-          <div>
-            <div className={`relative group overflow-hidden ${videoInfo.isVideo
-              ? 'aspect-[16/9]'
-              : ''
-              }`}>
-              {videoInfo.isVideo ? (
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  {videoInfo.type === 'youtube' ? (
-                    <>
-                      <Image
-                        src={`https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`}
-                        alt={`Thumbnail for ${item.title}`}
-                        fill
-                        className="object-cover"
-                        sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                      />
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full"
-                        src={`https://www.youtube.com/embed/${videoInfo.id}`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        title={item.title}
-                      />
-                    </>
-                  ) : (
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={`https://player.vimeo.com/video/${videoInfo.id}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      title={item.title}
-                    />
-                  )}
-                </div>
-              ) : (
-                heroImages[0] && (
-                  <Image
-                    src={heroImages[0]}
-                    alt={item.title || 'Content image'}
-                    width={1200}
-                    height={800}
-                    className="w-full h-auto"
-                    sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                    priority={index < 4}
-                    loading={index < 4 ? "eager" : "lazy"}
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                  />
-                )
-              )}
-              {item.audioUrl && (
-                <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/20 backdrop-blur-sm">
-                  <audio
-                    controls
-                    className="w-full h-6 audio-player"
-                  >
-                    <source src={item.audioUrl} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              )}
-              {item.hasContent && (
-                <>
-                  {/* Gradient overlay with hover effect */}
-                  <div
-                    className="absolute top-0 right-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-0"
-                    style={{
-                      width: '90px',
-                      height: '90px',
-                      background: 'radial-gradient(circle at top right, rgba(51,51,51,0.2) 0%, rgba(51,51,51,0.1) 15%, rgba(51,51,51,0.05) 25%, transparent 25%)'
-                    }}
-                  />
-                  <div
-                    className="absolute top-0 right-0 pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                    style={{
-                      width: '90px',
-                      height: '90px',
-                      background: 'radial-gradient(circle at top right, rgba(51,51,51,0.4) 0%, rgba(51,51,51,0.3) 15%, rgba(51,51,51,0.15) 25%, transparent 25%)'
-                    }}
-                  />
-                  {/* Icon */}
-                  <div className="absolute top-1.5 right-1.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      className="text-white"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M17 7h-3q-.425 0-.712-.288T13 6t.288-.712T14 5h4q.425 0 .713.288T19 6v4q0 .425-.288.713T18 11t-.712-.288T17 10z"
-                      />
-                    </svg>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="mt-1">
-              <h3 className="text-lg leading-snug">
-                {item.title}
-              </h3>
-              <p className="text-xs line-clamp-4 mt-1">
-                {item.description}
-              </p>
-              {item.category !== 'shelf' && (
-                <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                  <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
-                  {item.location && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <span>{item.location}</span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </Link>
+        <PrefetchLink href={`/${item.category}/${item.slug}`}>
+          <GridItemContent {...contentProps} />
+        </PrefetchLink>
       )}
     </div>
   );
@@ -604,22 +467,32 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     }
   }, []);
 
-  // Memoized filtered and sorted items
+  // Memoized filtered and sorted items with pre-computed date cache
   const sortedItems = useMemo(() => {
     const filtered = selectedTag && selectedTag !== 'all'
       ? items.filter(item => item.tags?.includes(selectedTag) && !item.private)
       : items.filter(item => !item.private);
+
+    // Pre-compute dates ONCE before sorting
+    const dateCache = new Map<string, number>(
+      filtered.map(item => [
+        `${item.category}-${item.slug}`,
+        getDateForSorting(item.date).getTime()
+      ])
+    );
 
     return [...filtered].sort((a, b) => {
       // Always put shelf at the end
       if (a.category === 'shelf') return 1;
       if (b.category === 'shelf') return -1;
 
-      const dateA = getDateForSorting(a.date);
-      const dateB = getDateForSorting(b.date);
+      const keyA = `${a.category}-${a.slug}`;
+      const keyB = `${b.category}-${b.slug}`;
+      const dateA = dateCache.get(keyA) || 0;
+      const dateB = dateCache.get(keyB) || 0;
 
       // Sort by date first (most recent first)
-      const dateCompare = dateB.getTime() - dateA.getTime();
+      const dateCompare = dateB - dateA;
 
       // If dates are equal, sort by stars
       if (dateCompare === 0) {
@@ -771,26 +644,6 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     });
   }, []);
 
-  // Load Twitter widget script once
-  useEffect(() => {
-    // Skip if already loaded
-    if (window.twttr?.widgets || document.querySelector('script[src*="platform.twitter.com"]')) {
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://platform.twitter.com/widgets.js';
-    script.async = true;
-    script.charset = 'utf-8';
-    script.onerror = () => {
-      console.error('Failed to load Twitter widget script');
-    };
-    script.onload = () => {
-      console.log('Twitter script loaded');
-    };
-    document.head.appendChild(script);
-  }, []);
-
   return (
     <div>
       {/* Tag Filter */}
@@ -862,7 +715,7 @@ function estimateItemHeight(item: ContentMeta, width: number): number {
 
   // Image height estimation
   let imageHeight = 0;
-  if (item.heroImage) {
+  if (item.thumbnail || item.heroImage) {
     // Estimate based on typical aspect ratios
     if (item.category === 'photography') {
       imageHeight = width * 0.75; // Assume 4:3 portrait

@@ -1,13 +1,17 @@
-import { getContentBySlug, getAllContent } from '@/utils/content';
+import { getContentBySlug, getAllContent, getRelatedContent } from '@/utils/content';
 import { ContentCategory } from '@/types/content';
 import Layout from '@/components/layout/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
+import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
-import { format, parse } from 'date-fns';
+import rehypeRaw from 'rehype-raw';
 import { Metadata } from 'next';
 import Carousel from '@/components/ui/Carousel';
+import React from 'react';
+import { getVideoInfo } from '@/utils/mediaDetection';
+import { formatDateOrRange } from '@/utils/dateFormatting';
 
 interface PageProps {
   params: Promise<{
@@ -54,73 +58,145 @@ export async function generateStaticParams() {
   }));
 }
 
-function formatContentDate(dateString: string): string {
-  try {
-    // Handle "MM-YYYY" format
-    if (/^\d{2}-\d{4}$/.test(dateString)) {
-      const date = parse(dateString, 'MM-yyyy', new Date());
-      return format(date, 'MMMM yyyy');
-    }
-
-    // Handle date ranges with hyphen
-    if (dateString.includes('-')) {
-      const [startDate, endDate] = dateString.split('-').map(d => d.trim());
-      if (endDate.toLowerCase() === 'present') {
-        return `${startDate}–Present`;
-      }
-      return `${startDate}–${endDate}`;
-    }
-
-    // Handle just year
-    if (/^\d{4}$/.test(dateString)) {
-      return dateString;
-    }
-
-    // Handle full dates
-    const date = new Date(dateString);
-    return format(date, 'MMMM d, yyyy');
-  } catch (error) {
-    console.error('Error formatting date:', dateString, error);
-    return dateString; // Return original string if parsing fails
+// Component to handle column layout in markdown
+function ColumnLayout({ content }: { content: string }) {
+  // First, remove ^^ markers from the content
+  const processedContent = content.replace(/^\^\^/gm, '');
+  
+  // Check if content has ::: markers for columns
+  const hasColumns = processedContent.includes(':::');
+  
+  if (!hasColumns) {
+    // No columns, render normally
+    return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{processedContent}</ReactMarkdown>;
   }
+  
+  // Split content by ::: markers
+  const parts = processedContent.split(/^:::\s*$/m);
+  
+  return (
+    <>
+      {parts.map((part, index) => {
+        // Check if this part should be columns (odd indices after split)
+        if (index % 2 === 1) {
+          // This is column content - split by ### headers
+          const columns = part.trim().split(/(?=^### )/m).filter(col => col.trim());
+          
+          if (columns.length > 1) {
+            const gridClass = columns.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+                            columns.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
+                            'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
+            
+            return (
+              <div key={index} className={`grid ${gridClass} gap-6 not-prose my-8`}>
+                {columns.map((col, colIndex) => (
+                  <div key={colIndex} className="space-y-3">
+                    <ReactMarkdown 
+                      rehypePlugins={[rehypeRaw]}
+                      components={{
+                        h3: ({ children }) => (
+                          <h3 className="text-sm font-bold mb-3 mt-0">{children}</h3>
+                        ),
+                        h4: ({ children }) => (
+                          <h4 className="text-xs font-semibold mb-2 mt-3">{children}</h4>
+                        ),
+                        p: ({ children }) => (
+                          <p className="text-xs mb-2 leading-relaxed">{children}</p>
+                        )
+                      }}
+                    >
+                      {col}
+                    </ReactMarkdown>
+                  </div>
+                ))}
+              </div>
+            );
+          }
+        }
+        
+        // Regular content
+        return (
+          <ReactMarkdown 
+            key={index} 
+            rehypePlugins={[rehypeRaw]}
+            components={{
+              p: ({ children, ...props }) => {
+                // Check if this paragraph contains multiple images
+                const childArray = React.Children.toArray(children);
+                
+                // Count images
+                let imageCount = 0;
+                childArray.forEach(child => {
+                  if (React.isValidElement(child) && (child.type === 'img' || child.props?.src)) {
+                    imageCount++;
+                  }
+                });
+                
+                // If multiple images, render side by side
+                if (imageCount > 1) {
+                  const gridCols = imageCount === 2 ? 'grid-cols-2' : 
+                                  imageCount === 3 ? 'grid-cols-3' : 'grid-cols-4';
+                  return (
+                    <div className={`grid ${gridCols} gap-4 my-8 not-prose`}>
+                      {childArray.filter(child => 
+                        React.isValidElement(child) && (child.type === 'img' || child.props?.src)
+                      )}
+                    </div>
+                  );
+                }
+                
+                // Check for pipe-separated text
+                const textContent = childArray
+                  .map(child => {
+                    if (typeof child === 'string') return child;
+                    if (React.isValidElement(child) && child.type === 'strong') {
+                      return child.props?.children;
+                    }
+                    return '';
+                  })
+                  .join('');
+                
+                if (textContent.includes(' | ')) {
+                  const columns = textContent.split(' | ').map(col => col.trim());
+                  const gridCols = columns.length === 2 ? 'grid-cols-2' : 
+                                  columns.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
+                  
+                  return (
+                    <div className={`grid ${gridCols} gap-4 not-prose`}>
+                      {columns.map((col, idx) => {
+                        const isBold = col.startsWith('**') && col.endsWith('**');
+                        const text = isBold ? col.slice(2, -2) : col;
+                        return (
+                          <div key={idx} className="text-left">
+                            {isBold ? <strong className="font-bold">{text}</strong> : text}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+                
+                // Default paragraph rendering
+                return <p {...props}>{children}</p>;
+              },
+              img: ({ src, alt, ...props }) => (
+                <img 
+                  src={src} 
+                  alt={alt} 
+                  className="w-full h-auto rounded-lg object-cover"
+                  style={{ maxHeight: '300px' }}
+                  {...props} 
+                />
+              )
+            }}
+          >
+            {part}
+          </ReactMarkdown>
+        );
+      })}
+    </>
+  );
 }
-
-// Function to determine if URL is a video embed and get info
-const getVideoInfo = (url: string): { isVideo: boolean; type?: 'youtube' | 'vimeo'; id?: string } => {
-  if (!url) return { isVideo: false };
-
-  // YouTube URL patterns
-  const youtubePatterns = [
-    /youtube\.com\/watch\?v=([^&]+)/,
-    /youtu\.be\/([^?]+)/,
-    /youtube\.com\/embed\/([^?]+)/,
-    /youtube\.com\/v\/([^?]+)/
-  ];
-
-  // Vimeo URL patterns
-  const vimeoPatterns = [
-    /vimeo\.com\/([0-9]+)/,
-    /player\.vimeo\.com\/video\/([0-9]+)/
-  ];
-
-  // Check YouTube patterns
-  for (const pattern of youtubePatterns) {
-    const match = url.match(pattern);
-    if (match) {
-      return { isVideo: true, type: 'youtube', id: match[1] };
-    }
-  }
-
-  // Check Vimeo patterns
-  for (const pattern of vimeoPatterns) {
-    const match = url.match(pattern);
-    if (match) {
-      return { isVideo: true, type: 'vimeo', id: match[1] };
-    }
-  }
-
-  return { isVideo: false };
-};
 
 export default async function ContentPage({ params }: PageProps) {
   const { category, slug } = await params;
@@ -131,11 +207,8 @@ export default async function ContentPage({ params }: PageProps) {
     notFound();
   }
 
-  const relatedContent = await getAllContent({
-    category,
-    sortBy: 'date',
-    order: 'desc',
-  });
+  // Use optimized getRelatedContent instead of fetching entire category
+  const relatedContent = await getRelatedContent(category, slug, 2);
 
   // Normalize hero images
   const heroImages = content.carousel && content.carousel.length > 0
@@ -193,7 +266,7 @@ export default async function ContentPage({ params }: PageProps) {
                 dateTime={content.date}
                 className="text-xs"
               >
-                {formatContentDate(content.date)}
+                {formatDateOrRange(content.date)}
               </time>
             </div>
           )}
@@ -202,9 +275,7 @@ export default async function ContentPage({ params }: PageProps) {
               {heroImages.length > 0 && (
                 <div className={`relative ${videoInfo.isVideo
                   ? 'aspect-[16/9]'
-                  : category !== 'photography'
-                    ? 'aspect-[21/9]'
-                    : 'max-h-[90vh] flex items-center justify-center'
+                  : ''
                   } mb-8`}>
                   {videoInfo.isVideo ? (
                     <div className="relative w-full h-full">
@@ -247,19 +318,19 @@ export default async function ContentPage({ params }: PageProps) {
                     <Image
                       src={heroImages[0]}
                       alt={`${content.title}${content.description ? ` - ${content.description}` : ''}`}
-                      {...(category === 'photography' ? {
-                        width: 1200,
-                        height: 800,
-                        className: "w-full h-auto max-h-[90vh] object-contain"
-                      } : {
-                        fill: true,
-                        className: "object-cover"
-                      })}
+                      width={1200}
+                      height={800}
+                      className="w-full h-auto"
                       priority
                       sizes="(min-width: 1280px) 1200px, 100vw"
                     />
                   )}
                 </div>
+              )}
+              {content.carouselCaption && (
+                <p className="text-xs text-gray-500 -mt-6 mb-8">
+                  {content.carouselCaption}
+                </p>
               )}
               <h1 className="text-4xl mb-4">
                 {content.title}
@@ -273,55 +344,52 @@ export default async function ContentPage({ params }: PageProps) {
 
         {/* Content Body */}
         <div className="prose prose-untitled">
-          <ReactMarkdown>{content.content}</ReactMarkdown>
+          <ColumnLayout content={content.content} />
         </div>
 
         {/* Related Content */}
-        {relatedContent.length > 1 && (
+        {relatedContent.length > 0 && (
           <aside className="mt-16 pt-8 border-t">
             <h2 className="text-2xl mb-6">
               Loosely Related Things
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {relatedContent
-                .filter((item) => item.slug !== slug)
-                .slice(0, 2)
-                .map((item) => {
-                  const hero = item.heroImage;
-                  const videoInfo = hero ? getVideoInfo(hero) : { isVideo: false };
-                  const imageUrl = videoInfo.isVideo && videoInfo.type === 'youtube' && videoInfo.id
-                    ? `https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`
-                    : hero;
+              {relatedContent.map((item) => {
+                const hero = item.heroImage;
+                const videoInfo = hero ? getVideoInfo(hero) : { isVideo: false };
+                const imageUrl = videoInfo.isVideo && videoInfo.type === 'youtube' && videoInfo.id
+                  ? `https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`
+                  : hero;
 
-                  return (
-                    <Link
-                      key={item.slug}
-                      href={`/${item.category}/${item.slug}`}
-                      className="block group"
-                    >
-                      {imageUrl && (
-                        <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-lg">
-                          <Image
-                            src={imageUrl}
-                            alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(min-width: 768px) 50vw, 100vw"
-                            loading="lazy"
-                          />
-                        </div>
-                      )}
-                      <h3 className="text-lg leading-snug group-hover:underline">
-                        {item.title}
-                      </h3>
-                      {item.description && (
-                        <p className="text-xs mt-1 text-gray-600 dark:text-gray-400">
-                          {item.description}
-                        </p>
-                      )}
-                    </Link>
-                  );
-                })}
+                return (
+                  <PrefetchLink
+                    key={item.slug}
+                    href={`/${item.category}/${item.slug}`}
+                    className="block group"
+                  >
+                    {imageUrl && (
+                      <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-lg">
+                        <Image
+                          src={imageUrl}
+                          alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          sizes="(min-width: 768px) 50vw, 100vw"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <h3 className="text-lg leading-snug group-hover:underline">
+                      {item.title}
+                    </h3>
+                    {item.description && (
+                      <p className="text-xs mt-1 text-gray-600 dark:text-gray-400">
+                        {item.description}
+                      </p>
+                    )}
+                  </PrefetchLink>
+                );
+              })}
             </div>
           </aside>
         )}
