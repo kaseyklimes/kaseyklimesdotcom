@@ -14,7 +14,7 @@ export const viewport: Viewport = {
 };
 
 export default async function ShelfPage() {
-  const shelfItems = await getAllContent({ category: 'shelf' });
+  const shelfItems = getAllContent({ category: 'shelf' });
   
   const page = {
     title: 'Shelf',

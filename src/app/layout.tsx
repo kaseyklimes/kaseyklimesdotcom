@@ -5,7 +5,7 @@ import "./fonts.css";
 export const metadata: Metadata = {
   title: "Portfolio Website",
   description: "A showcase of work, writing, photography, and other content.",
-  metadataBase: new URL('http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://kaseyklimes.com'),
 };
 
 export const viewport: Viewport = {

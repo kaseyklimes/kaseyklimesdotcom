@@ -7,15 +7,6 @@ import { Suspense } from 'react';
 export const dynamic = 'force-static';
 export const revalidate = 3600; // Revalidate every hour
 
-// Preload data for faster subsequent navigations
-export const generateStaticParams = async () => {
-  const content = await getAllContent();
-  return content.map((item) => ({
-    category: item.category,
-    slug: item.slug,
-  }));
-};
-
 // Loading component for content
 function ContentLoading() {
   return (
@@ -29,14 +20,14 @@ function ContentLoading() {
 
 
 export default async function Home() {
-  // Get all content
-  const allContent = await getAllContent({
+  // Get all content (single fetch)
+  const allContent = getAllContent({
     sortBy: 'stars',
     order: 'desc'
   });
 
-  // Get shelf items separately
-  const shelfItems = await getAllContent({ category: 'shelf' });
+  // Filter shelf items from already-fetched content (avoids double fetch)
+  const shelfItems = allContent.filter(item => item.category === 'shelf');
 
   return (
     <Layout>

@@ -4,10 +4,11 @@ import React, { useState, useMemo, useCallback, memo, useRef, useEffect } from '
 import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
 import ShelfGrid from './ShelfGrid';
-import { formatDateOrRange } from '@/utils/dateFormatting';
-import { getVideoInfo } from '@/utils/mediaDetection';
+import { formatDateOrRange, parseDateToTimestamp } from '@/utils/dateFormatting';
+import { getVideoInfo, VideoInfo } from '@/utils/mediaDetection';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { PrefetchLink } from '@/components/ui/PrefetchLink';
+import VideoEmbed from '@/components/ui/VideoEmbed';
 
 // Gap between items in pixels
 const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
@@ -125,7 +126,7 @@ interface GridItemContentProps {
   item: ContentMeta;
   colSpan: number;
   index: number;
-  videoInfo: { isVideo: boolean; type?: string; id?: string };
+  videoInfo: VideoInfo;
   heroImages: string[];
 }
 
@@ -135,32 +136,11 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
       <div className={`relative group overflow-hidden ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>
         {videoInfo.isVideo ? (
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-            {videoInfo.type === 'youtube' ? (
-              <>
-                <Image
-                  src={`https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`}
-                  alt={`Thumbnail for ${item.title}`}
-                  fill
-                  className="object-cover"
-                  sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
-                />
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src={`https://www.youtube.com/embed/${videoInfo.id}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title={item.title}
-                />
-              </>
-            ) : (
-              <iframe
-                className="absolute top-0 left-0 w-full h-full"
-                src={`https://player.vimeo.com/video/${videoInfo.id}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={item.title}
-              />
-            )}
+            <VideoEmbed
+              videoInfo={videoInfo}
+              title={item.title}
+              sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
+            />
           </div>
         ) : (
           heroImages[0] && (
@@ -418,55 +398,6 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     return ['all', ...new Set(allTags)].sort();
   }, [items]);
 
-  // Memoized date parsing function
-  const getDateForSorting = useCallback((dateStr: string | undefined) => {
-    if (!dateStr || typeof dateStr !== 'string') {
-      return new Date(0);
-    }
-
-    try {
-      // Handle "present" as future date
-      if (dateStr.toLowerCase().includes('present')) {
-        return new Date('9999-12-31');
-      }
-
-      // Handle year ranges with either hyphen or forward slash (e.g., "2017-2021" or "1993/2008")
-      if (/^\d{4}[-\/]\d{4}$/.test(dateStr)) {
-        const [startYear, endYear] = dateStr.split(/[-\/]/);
-        // If end year is less than start year, something is wrong
-        if (parseInt(endYear) < parseInt(startYear)) {
-          console.error(`Invalid date range: ${dateStr}`);
-          return new Date(parseInt(startYear), 11, 31);
-        }
-        // For date ranges, use the end year but add a month to ensure it sorts after single years
-        return new Date(parseInt(endYear), 11, 31);
-      }
-
-      // Handle just year (e.g., "2014")
-      if (/^\d{4}$/.test(dateStr)) {
-        // For single years, use January 1st to ensure it sorts before ranges ending in the same year
-        return new Date(parseInt(dateStr), 0, 1);
-      }
-
-      // Handle month-year format (e.g., "07-2024")
-      if (/^\d{2}-\d{4}$/.test(dateStr)) {
-        const [month, year] = dateStr.split('-');
-        return new Date(parseInt(year), parseInt(month) - 1, 0);
-      }
-
-      // Handle full date format (e.g., "10-27-2023")
-      if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
-        const [month, day, year] = dateStr.split('-');
-        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      }
-
-      return new Date(dateStr);
-    } catch (error) {
-      console.error('Error parsing date:', dateStr, error);
-      return new Date(0);
-    }
-  }, []);
-
   // Memoized filtered and sorted items with pre-computed date cache
   const sortedItems = useMemo(() => {
     const filtered = selectedTag && selectedTag !== 'all'
@@ -477,7 +408,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
     const dateCache = new Map<string, number>(
       filtered.map(item => [
         `${item.category}-${item.slug}`,
-        getDateForSorting(item.date).getTime()
+        parseDateToTimestamp(item.date)
       ])
     );
 
@@ -501,7 +432,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
 
       return dateCompare;
     });
-  }, [items, selectedTag, getDateForSorting]);
+  }, [items, selectedTag]);
 
   // Measure container width
   useEffect(() => {

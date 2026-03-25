@@ -7,8 +7,10 @@ export interface ContentMeta {
   stars: number;
   description?: string;
   slug: string;
-  heroImage?: string;
+  thumbnail?: string;  // Image for grid display (falls back to heroImage)
+  heroImage?: string;  // Image for detail page
   carousel?: string[];
+  carouselCaption?: string;
   hasContent?: boolean;
   location?: string;
   span?: number;
@@ -55,11 +57,6 @@ export interface FilterOptions {
   category?: ContentCategory;
   sortBy?: 'date' | 'stars';
   order?: 'asc' | 'desc';
-}
-
-export interface GridItem extends ContentMeta {
-  aspectRatio?: number;
-  priority?: boolean;
 }
 
 export interface MasonryGridPage {

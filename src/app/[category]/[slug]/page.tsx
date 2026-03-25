@@ -12,6 +12,7 @@ import Carousel from '@/components/ui/Carousel';
 import React from 'react';
 import { getVideoInfo } from '@/utils/mediaDetection';
 import { formatDateOrRange } from '@/utils/dateFormatting';
+import VideoEmbed from '@/components/ui/VideoEmbed';
 
 interface PageProps {
   params: Promise<{
@@ -26,7 +27,7 @@ export const revalidate = 3600; // Revalidate every hour
 // Generate static metadata for better SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { category, slug } = await params;
-  const content = await getContentBySlug(category, slug);
+  const content = getContentBySlug(category, slug);
 
   if (!content) return {};
 
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 // Pre-render all known paths at build time
 export async function generateStaticParams() {
-  const content = await getAllContent();
+  const content = getAllContent();
   return content.map((item) => ({
     category: item.category,
     slug: item.slug,
@@ -201,14 +202,14 @@ function ColumnLayout({ content }: { content: string }) {
 export default async function ContentPage({ params }: PageProps) {
   const { category, slug } = await params;
 
-  const content = await getContentBySlug(category, slug);
+  const content = getContentBySlug(category, slug);
 
   if (!content) {
     notFound();
   }
 
   // Use optimized getRelatedContent instead of fetching entire category
-  const relatedContent = await getRelatedContent(category, slug, 2);
+  const relatedContent = getRelatedContent(category, slug, 2);
 
   // Normalize hero images
   const heroImages = content.carousel && content.carousel.length > 0
@@ -279,33 +280,12 @@ export default async function ContentPage({ params }: PageProps) {
                   } mb-8`}>
                   {videoInfo.isVideo ? (
                     <div className="relative w-full h-full">
-                      {videoInfo.type === 'youtube' ? (
-                        <>
-                          <Image
-                            src={`https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`}
-                            alt={`Thumbnail for ${content.title}`}
-                            fill
-                            className="object-cover"
-                            sizes="(min-width: 1280px) 1200px, 100vw"
-                            priority
-                          />
-                          <iframe
-                            className="absolute top-0 left-0 w-full h-full"
-                            src={`https://www.youtube.com/embed/${videoInfo.id}`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            title={content.title}
-                          />
-                        </>
-                      ) : (
-                        <iframe
-                          className="absolute top-0 left-0 w-full h-full"
-                          src={`https://player.vimeo.com/video/${videoInfo.id}`}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          title={content.title}
-                        />
-                      )}
+                      <VideoEmbed
+                        videoInfo={videoInfo}
+                        title={content.title}
+                        sizes="(min-width: 1280px) 1200px, 100vw"
+                        priority
+                      />
                     </div>
                   ) : heroImages.length > 1 ? (
                     <Carousel

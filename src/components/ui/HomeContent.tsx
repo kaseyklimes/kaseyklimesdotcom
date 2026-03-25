@@ -1,10 +1,11 @@
 'use client';
 
 import MasonryGrid from '@/components/grid/MasonryGrid';
+import { ContentMeta } from '@/types/content';
 
 interface HomeContentProps {
-  allContent: any[];
-  shelfItems: any[];
+  allContent: ContentMeta[];
+  shelfItems: ContentMeta[];
 }
 
 export default function HomeContent({ allContent, shelfItems }: HomeContentProps) {
@@ -27,19 +28,21 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
     shelfGrid
   ];
 
-  const headerText = "Hi, I'm Kasey.";
+  const headerText = `Our environments shape us.
+We are the first species on earth with the power to shape our environment.
+So, what do we want to become?`;
   const bodyText = (
     <>
-      I live in Brooklyn. I am the founder of{' '}
-      <a
-        href="https://getprimitive.ai"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline hover:no-underline"
-      >
-        Primitive
-      </a>
-      .
+      <p className="mb-4">
+        Hello! I'm a design researcher & technologist based in Brooklyn, and this unwieldy question is the most succinct way I can describe the common thread across the work I do. All of my work focuses, in some way, on the reciprocal relationship between us and the worlds we inhabit. It's the nature of our species to dream, design, and build, but we are also subjects of the systems that our interventions inform. At times we have used this power to make incredible leaps. At others we've become victims to our own creations.
+      </p>
+      <p className="mb-4">
+        I use the term "environment" loosely to mean the systems beyond ourselves; our cities and natural ecosystems, but also our technology, culture, companies, political structures, policies, and economic systems. In all cases, we shape them and they shape us.
+      </p>
+      <p className="mb-4">
+        This humble corner of the internet is an opportunity to share my work, thoughts, and inspirations, as well as invite collaboration. Please don't hesitate to reach out should you feel so inclined, I'd be eager to learn from you.
+      </p>
+      <p>/K</p>
     </>
   );
 
@@ -48,12 +51,12 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
       {/* Header Section - Viewport height minus padding */}
       <section className="flex items-center lg:w-1/3" style={{ height: 'calc(100vh - 20px - 2rem)' }}>
         <div>
-          <h2 className="text-2xl mb-8">
+          <h2 className="text-2xl mb-8 whitespace-pre-line">
             {headerText}
           </h2>
-          <p className="text-xs">
+          <div className="text-xs">
             {bodyText}
-          </p>
+          </div>
         </div>
       </section>
 

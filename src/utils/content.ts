@@ -3,11 +3,12 @@ import path from 'path';
 import matter from 'gray-matter';
 import { ContentCategory, ContentItem, ContentMeta, FilterOptions } from '@/types/content';
 import { HIDE_TWEETS } from '@/utils/config';
+import { parseDateToTimestamp } from '@/utils/dateFormatting';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const VALID_CATEGORIES = ['blog', 'work', 'photography', 'shelf', 'tweet'];
 
-export async function getContentBySlug(category: ContentCategory, slug: string): Promise<ContentItem | null> {
+export function getContentBySlug(category: ContentCategory, slug: string): ContentItem | null {
   try {
     // Respect hide-tweets flag
     if (HIDE_TWEETS && category === 'tweet') {
@@ -41,7 +42,7 @@ export async function getContentBySlug(category: ContentCategory, slug: string):
   }
 }
 
-export async function getAllContent(options?: FilterOptions): Promise<ContentMeta[]> {
+export function getAllContent(options?: FilterOptions): ContentMeta[] {
   // Build category list, respecting hide-tweets flag
   const categories = (() => {
     if (options?.category) {
@@ -64,7 +65,7 @@ export async function getAllContent(options?: FilterOptions): Promise<ContentMet
       const files = fs.readdirSync(categoryPath)
         .filter(file => file.endsWith('.md'));
 
-      const categoryContent = await Promise.all(files.map(async file => {
+      const categoryContent = files.map(file => {
         const fullPath = path.join(categoryPath, file);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data, content } = matter(fileContents);
@@ -76,7 +77,7 @@ export async function getAllContent(options?: FilterOptions): Promise<ContentMet
           category: category as ContentCategory,
           hasContent: content.trim().length > 0
         };
-      }));
+      });
 
       allContent = [...allContent, ...categoryContent];
     } catch (error) {
@@ -92,7 +93,7 @@ export async function getAllContent(options?: FilterOptions): Promise<ContentMet
       const modifier = options.order === 'desc' ? -1 : 1;
 
       if (options.sortBy === 'date') {
-        return modifier * (new Date(aValue).getTime() - new Date(bValue).getTime());
+        return modifier * (parseDateToTimestamp(aValue as string) - parseDateToTimestamp(bValue as string));
       }
 
       return modifier * ((aValue as number) - (bValue as number));
@@ -102,7 +103,70 @@ export async function getAllContent(options?: FilterOptions): Promise<ContentMet
   return allContent;
 }
 
-export async function getContentPaths(category: ContentCategory): Promise<string[]> {
+/**
+ * Get related content for a given category, excluding the current item.
+ * Optimized to only read the minimum number of files needed (limit + buffer).
+ * This avoids reading the entire category directory for better performance.
+ */
+export function getRelatedContent(
+  category: ContentCategory,
+  excludeSlug: string,
+  limit = 2
+): ContentMeta[] {
+  // Validate category
+  if (!VALID_CATEGORIES.includes(category)) {
+    console.warn(`Invalid category: ${category}`);
+    return [];
+  }
+
+  // Respect hide-tweets flag
+  if (HIDE_TWEETS && category === 'tweet') {
+    return [];
+  }
+
+  const categoryPath = path.join(CONTENT_DIR, category);
+
+  try {
+    if (!fs.existsSync(categoryPath)) {
+      console.warn(`Category directory not found: ${categoryPath}`);
+      return [];
+    }
+
+    const files = fs.readdirSync(categoryPath)
+      .filter(f => f.endsWith('.md') && f !== `${excludeSlug}.md`);
+
+    // Only read enough files to get the limit (plus a small buffer for filtering)
+    const results: ContentMeta[] = [];
+    const maxFilesToRead = Math.min(files.length, limit + 2); // Small buffer
+
+    for (let i = 0; i < maxFilesToRead && results.length < limit; i++) {
+      const file = files[i];
+      const fullPath = path.join(categoryPath, file);
+
+      try {
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const { data, content } = matter(fileContents);
+        const slug = file.replace(/\.md$/, '');
+
+        results.push({
+          ...(data as ContentMeta),
+          slug,
+          category: category as ContentCategory,
+          hasContent: content.trim().length > 0
+        });
+      } catch (error) {
+        console.error(`Error reading file ${file}:`, error);
+      }
+    }
+
+    return results;
+  } catch (error) {
+    console.error(`Error getting related content for ${category}:`, error);
+    return [];
+  }
+}
+
+export function getContentPaths(category: ContentCategory): string[] {
   // Validate category
   if (!VALID_CATEGORIES.includes(category)) {
     console.warn(`Invalid category: ${category}`);

@@ -1,7 +1,3 @@
-'use client';
-
-import React from 'react';
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
@@ -12,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <footer className="py-4">
         <div className="max-w-7xl mx-auto px-4">
           <p className="text-xs">
-            <span suppressHydrationWarning>© {new Date().getFullYear()} Portfolio. All rights reserved.</span>
+            © {new Date().getFullYear()} Portfolio. All rights reserved.
           </p>
         </div>
       </footer>
