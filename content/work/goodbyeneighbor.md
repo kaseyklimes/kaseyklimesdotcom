@@ -3,7 +3,8 @@ title: "Goodbye Neighbor"
 category: "work"
 date: "2014"
 stars: 1
-heroImage: "/images/goodbyeneighbor.gif"
+thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1614100082752-E5W5BKY3FHSVM206VVFE/Chicago.gif"
+heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1500934547949-1CNSZXXYBH864HCVV59Q/Atlanta.gif"
 carousel:
   - "/images/Atlanta.gif"
   - "/images/Austin.gif"
@@ -37,6 +38,7 @@ carousel:
   - "/images/Orlando.gif"
   - "/images/Philadelphia.gif"
   - "/images/Phoenix.gif"
+  - "/images/Pittsburgh.gif"
   - "/images/Portland.gif"
   - "/images/Providence.gif"
   - "/images/Raleigh.gif"
