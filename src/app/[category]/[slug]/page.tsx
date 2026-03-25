@@ -59,40 +59,61 @@ export async function generateStaticParams() {
   }));
 }
 
-// Component to handle column layout in markdown
-function ColumnLayout({ content }: { content: string }) {
-  // First, remove ^^ markers from the content
-  const processedContent = content.replace(/^\^\^/gm, '');
-  
+// Renders markdown content with ::: column blocks (both ||| and ### styles)
+function MarkdownWithColumns({ content }: { content: string }) {
   // Check if content has ::: markers for columns
-  const hasColumns = processedContent.includes(':::');
-  
+  const hasColumns = content.includes(':::');
+
   if (!hasColumns) {
     // No columns, render normally
-    return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{processedContent}</ReactMarkdown>;
+    return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>;
   }
-  
+
   // Split content by ::: markers
-  const parts = processedContent.split(/^:::\s*$/m);
-  
+  const parts = content.split(/^:::\s*$/m);
+
   return (
     <>
       {parts.map((part, index) => {
         // Check if this part should be columns (odd indices after split)
         if (index % 2 === 1) {
-          // This is column content - split by ### headers
+          // Check if content uses ||| separator
+          const hasPipeSeparator = /^\|\|\|\s*$/m.test(part);
+
+          if (hasPipeSeparator) {
+            // Split by ||| separator — general-purpose side-by-side columns
+            const columns = part.split(/^\|\|\|\s*$/m).map(col => col.trim()).filter(col => col);
+
+            if (columns.length > 1) {
+              const gridClass = columns.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+                              columns.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
+                              'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
+
+              return (
+                <div key={index} className={`grid ${gridClass} gap-6 my-8`}>
+                  {columns.map((col, colIndex) => (
+                    <div key={colIndex}>
+                      <ReactMarkdown rehypePlugins={[rehypeRaw]}>{col}</ReactMarkdown>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+          }
+
+          // Fall back to ### header splitting
           const columns = part.trim().split(/(?=^### )/m).filter(col => col.trim());
-          
+
           if (columns.length > 1) {
             const gridClass = columns.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
                             columns.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
                             'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
-            
+
             return (
               <div key={index} className={`grid ${gridClass} gap-6 not-prose my-8`}>
                 {columns.map((col, colIndex) => (
                   <div key={colIndex} className="space-y-3">
-                    <ReactMarkdown 
+                    <ReactMarkdown
                       rehypePlugins={[rehypeRaw]}
                       components={{
                         h3: ({ children }) => (
@@ -114,17 +135,17 @@ function ColumnLayout({ content }: { content: string }) {
             );
           }
         }
-        
+
         // Regular content
         return (
-          <ReactMarkdown 
-            key={index} 
+          <ReactMarkdown
+            key={index}
             rehypePlugins={[rehypeRaw]}
             components={{
               p: ({ children, ...props }) => {
                 // Check if this paragraph contains multiple images
                 const childArray = React.Children.toArray(children);
-                
+
                 // Count images
                 let imageCount = 0;
                 childArray.forEach(child => {
@@ -132,20 +153,22 @@ function ColumnLayout({ content }: { content: string }) {
                     imageCount++;
                   }
                 });
-                
+
                 // If multiple images, render side by side
                 if (imageCount > 1) {
-                  const gridCols = imageCount === 2 ? 'grid-cols-2' : 
-                                  imageCount === 3 ? 'grid-cols-3' : 'grid-cols-4';
+                  const gridCols = imageCount === 2 ? 'grid-cols-2' :
+                                  imageCount === 3 ? 'grid-cols-3' :
+                                  imageCount === 4 ? 'grid-cols-4' :
+                                  imageCount >= 5 ? 'grid-cols-5' : 'grid-cols-4';
                   return (
                     <div className={`grid ${gridCols} gap-4 my-8 not-prose`}>
-                      {childArray.filter(child => 
+                      {childArray.filter(child =>
                         React.isValidElement(child) && (child.type === 'img' || child.props?.src)
                       )}
                     </div>
                   );
                 }
-                
+
                 // Check for pipe-separated text
                 const textContent = childArray
                   .map(child => {
@@ -156,12 +179,12 @@ function ColumnLayout({ content }: { content: string }) {
                     return '';
                   })
                   .join('');
-                
+
                 if (textContent.includes(' | ')) {
                   const columns = textContent.split(' | ').map(col => col.trim());
-                  const gridCols = columns.length === 2 ? 'grid-cols-2' : 
+                  const gridCols = columns.length === 2 ? 'grid-cols-2' :
                                   columns.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
-                  
+
                   return (
                     <div className={`grid ${gridCols} gap-4 not-prose`}>
                       {columns.map((col, idx) => {
@@ -176,17 +199,17 @@ function ColumnLayout({ content }: { content: string }) {
                     </div>
                   );
                 }
-                
+
                 // Default paragraph rendering
                 return <p {...props}>{children}</p>;
               },
               img: ({ src, alt, ...props }) => (
-                <img 
-                  src={src} 
-                  alt={alt} 
+                <img
+                  src={src}
+                  alt={alt}
                   className="w-full h-auto rounded-lg object-cover"
                   style={{ maxHeight: '300px' }}
-                  {...props} 
+                  {...props}
                 />
               )
             }}
@@ -194,6 +217,68 @@ function ColumnLayout({ content }: { content: string }) {
             {part}
           </ReactMarkdown>
         );
+      })}
+    </>
+  );
+}
+
+// Entry point: strips ^^ markers, splits out inline carousels, renders segments
+function ColumnLayout({ content }: { content: string }) {
+  // First, remove ^^ markers from the content
+  const processedContent = content.replace(/^\^\^/gm, '');
+
+  // Split content around <carousel>...</carousel> blocks
+  const carouselRegex = /<carousel>([\s\S]*?)<\/carousel>/g;
+  const segments: { type: 'markdown' | 'carousel'; content: string }[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = carouselRegex.exec(processedContent)) !== null) {
+    // Add preceding markdown segment if any
+    if (match.index > lastIndex) {
+      const md = processedContent.slice(lastIndex, match.index);
+      if (md.trim()) {
+        segments.push({ type: 'markdown', content: md });
+      }
+    }
+    // Add carousel segment (the captured image URLs)
+    segments.push({ type: 'carousel', content: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add trailing markdown segment if any
+  if (lastIndex < processedContent.length) {
+    const md = processedContent.slice(lastIndex);
+    if (md.trim()) {
+      segments.push({ type: 'markdown', content: md });
+    }
+  }
+
+  // If no carousels were found, just render with columns
+  if (segments.length === 0) {
+    return <MarkdownWithColumns content={processedContent} />;
+  }
+
+  return (
+    <>
+      {segments.map((segment, i) => {
+        if (segment.type === 'carousel') {
+          const images = segment.content
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+
+          if (images.length > 0) {
+            return (
+              <div key={i} className="my-8 not-prose">
+                <Carousel images={images} alt="Inline carousel" />
+              </div>
+            );
+          }
+          return null;
+        }
+
+        return <MarkdownWithColumns key={i} content={segment.content} />;
       })}
     </>
   );

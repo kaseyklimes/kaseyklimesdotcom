@@ -77,11 +77,18 @@ Create new content files using the following format:
 ```yaml
 ---
 title: "Your Title"
-category: "blog" # blog, work, photography, or projects
-date: "2024-02-13"
-stars: 4 # 1-5 rating
+category: "blog" # blog, work, photography, shelf, or tweet
+date: "2024-02-13" # supports: MM-DD-YYYY, MM-YYYY, YYYY, YYYY-YYYY, YYYY-present
+stars: 4 # 1-5, controls column span in masonry grid
 heroImage: "/images/your-image.jpg"
-description: "Brief description of your content"
+thumbnail: "/images/grid-thumb.jpg" # optional, falls back to heroImage
+carousel: ["/images/a.jpg", "/images/b.jpg"] # optional, hero image carousel
+carouselCaption: "Caption text" # optional
+description: "Brief description"
+location: "City, Country" # optional
+tags: ["work", "design"] # for grid filtering
+private: true # optional, hides from grid
+clickThroughUrl: "https://..." # optional, links grid card externally
 ---
 
 Your markdown content here...
@@ -91,6 +98,78 @@ Your markdown content here...
 
 1. Place images in the `public/images` directory
 2. Reference images in content using the path: `/images/your-image.jpg`
+
+### Markdown Layout Features
+
+The markdown renderer supports several layout extensions beyond standard markdown.
+
+#### Side-by-side columns (`:::` + `|||`)
+
+Use `:::` to open/close a column block, and `|||` to separate columns. Any markdown content works inside columns — blockquotes, images, text, etc.
+
+```markdown
+:::
+
+> First quote here
+
+|||
+
+> Second quote alongside it
+
+:::
+```
+
+This renders as a responsive grid (stacks on mobile, side-by-side on desktop). Add more `|||` separators for 3+ columns.
+
+#### Structured columns (`:::` + `###` headers)
+
+For structured multi-column layouts (like course outlines), `:::` blocks that contain `### ` headers are automatically split into columns — one per `### ` heading. These render with compact typography (text-xs).
+
+```markdown
+:::
+
+### Column 1
+#### Subheading
+^^Body text here
+
+### Column 2
+#### Subheading
+^^Body text here
+
+:::
+```
+
+The `^^` prefix on lines is stripped during rendering (used to prevent markdown treating the line as a new paragraph).
+
+#### Inline carousel
+
+Embed an image carousel anywhere in the body content with `<carousel>` tags. List one image URL per line.
+
+```markdown
+<carousel>
+/images/slide1.jpg
+/images/slide2.jpg
+/images/slide3.jpg
+</carousel>
+```
+
+#### Multi-image grids
+
+Multiple images on a single line auto-layout into a grid (up to 5 columns):
+
+```markdown
+![Alt 1](/img/a.jpg) ![Alt 2](/img/b.jpg) ![Alt 3](/img/c.jpg)
+```
+
+#### Pipe-separated text columns
+
+Text with ` | ` separators renders as side-by-side columns:
+
+```markdown
+**Name 1** | **Name 2** | **Name 3**
+
+Description 1 | Description 2 | Description 3
+```
 
 ## Development
 
