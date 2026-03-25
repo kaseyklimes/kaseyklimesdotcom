@@ -20,12 +20,6 @@ interface MasonryGridProps {
 
 
 function CustomTweet({ item }: { item: ContentMeta }) {
-  const profile = item.profile || {
-    name: 'Kasey Klimes',
-    username: 'kaseyklimes',
-    profile_image_url: ''
-  };
-
   return (
     <a
       href={item.tweetUrl}
@@ -33,25 +27,7 @@ function CustomTweet({ item }: { item: ContentMeta }) {
       rel="noopener noreferrer"
       className="block p-4 bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-lg"
     >
-      <div className="flex items-center gap-3 mb-3">
-        <div className="flex-shrink-0">
-          {profile.profile_image_url ? (
-            <Image
-              src={profile.profile_image_url}
-              alt={`Profile picture of ${profile.name}`}
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700" />
-          )}
-        </div>
-        <div>
-          <div className="font-medium text-gray-900 dark:text-gray-100 text-xs">{profile.name}</div>
-          <div className="text-gray-500 dark:text-gray-400 text-xs">@{profile.username}</div>
-        </div>
-      </div>
+      <div className="text-gray-500 dark:text-gray-400 text-xs mb-3">@kaseyklimes</div>
 
       {/* Tweet text */}
       <div className="text-xs mb-3 text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
