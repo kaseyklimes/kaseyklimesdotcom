@@ -36,6 +36,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.squarespace-cdn.com',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.perfectday.nyc',
+        pathname: '/**',
       }
     ],
     formats: ['image/avif', 'image/webp'],
