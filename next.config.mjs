@@ -31,6 +31,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'i.ytimg.com',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.squarespace-cdn.com',
+        pathname: '/**',
       }
     ],
     formats: ['image/avif', 'image/webp'],
