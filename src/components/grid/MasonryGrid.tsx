@@ -378,7 +378,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
   const sortedItems = useMemo(() => {
     const filtered = selectedTag && selectedTag !== 'all'
       ? items.filter(item => item.tags?.includes(selectedTag) && !item.private)
-      : items.filter(item => !item.private);
+      : items.filter(item => !item.private && item.category !== 'shelf');
 
     // Pre-compute dates ONCE before sorting
     const dateCache = new Map<string, number>(
