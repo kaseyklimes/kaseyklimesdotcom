@@ -40,7 +40,7 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
       <p className="mb-4">
         Kasey Klimes · design researcher & technologist · Brooklyn
       </p>
-      <p>Currently building AI infrastructure for human collaboration.</p>
+      <p>Currently building agentic infrastructure for human coordination.</p>
     </>
   );
 

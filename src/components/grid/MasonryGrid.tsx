@@ -25,7 +25,7 @@ function CustomTweet({ item }: { item: ContentMeta }) {
       href={item.tweetUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-4 bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-lg"
+      className="block p-4 bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-md"
     >
       <div className="text-gray-500 dark:text-gray-400 text-xs mb-3">@kaseyklimes</div>
 
@@ -36,7 +36,7 @@ function CustomTweet({ item }: { item: ContentMeta }) {
 
       {/* Quoted tweet */}
       {item.quoted_tweet && (
-        <div className="mb-3 p-3 border border-gray-200 dark:border-gray-700 rounded bg-gray-50/50 dark:bg-gray-800/50">
+        <div className="mb-3 p-3 border border-gray-200 dark:border-gray-700 rounded-sm bg-gray-50/50 dark:bg-gray-800/50">
           {item.quoted_tweet.author && (
             <div className="flex items-center gap-2 mb-2">
               {item.quoted_tweet.author.profile_image_url ? (
@@ -66,7 +66,7 @@ function CustomTweet({ item }: { item: ContentMeta }) {
 
       {/* Media */}
       {item.media && item.media.length > 0 && (
-        <div className="mb-3 rounded-lg overflow-hidden">
+        <div className="mb-3 rounded-md overflow-hidden">
           {item.media.map((media, index) => (
             media.type === 'photo' ? (
               <Image
@@ -109,7 +109,7 @@ interface GridItemContentProps {
 const GridItemContent = memo(function GridItemContent({ item, colSpan, index, videoInfo, heroImages }: GridItemContentProps) {
   return (
     <div>
-      <div className={`relative group overflow-hidden rounded ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>
+      <div className={`relative group overflow-hidden rounded-sm ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>
         {videoInfo.isVideo ? (
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
             <VideoEmbed
@@ -125,7 +125,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
               alt={item.title || 'Content image'}
               width={1200}
               height={800}
-              className="w-full h-auto rounded"
+              className="w-full h-auto rounded-sm"
               sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
               priority={index < 4}
               loading={index < 4 ? "eager" : "lazy"}
@@ -287,7 +287,7 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
           }}>
             <iframe
               src={item.iframeUrl}
-              className="w-full h-full border border-[#444] rounded-lg"
+              className="w-full h-full border border-[#444] rounded-md"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
