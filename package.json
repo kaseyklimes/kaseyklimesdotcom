@@ -15,10 +15,11 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "date-fns": "^4.1.0",
     "gray-matter": "^4.0.3",
-    "next": "^15.1.7",
+    "next": "^16.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^9.0.3",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {

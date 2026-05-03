@@ -109,7 +109,7 @@ interface GridItemContentProps {
 const GridItemContent = memo(function GridItemContent({ item, colSpan, index, videoInfo, heroImages }: GridItemContentProps) {
   return (
     <div>
-      <div className={`relative group overflow-hidden ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>
+      <div className={`relative group overflow-hidden rounded ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>
         {videoInfo.isVideo ? (
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
             <VideoEmbed
@@ -125,7 +125,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
               alt={item.title || 'Content image'}
               width={1200}
               height={800}
-              className="w-full h-auto"
+              className="w-full h-auto rounded"
               sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
               priority={index < 4}
               loading={index < 4 ? "eager" : "lazy"}
@@ -297,9 +297,20 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
           <div className="mt-1">
             <h3 className="text-lg leading-snug">{item.title}</h3>
             {item.description && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-4 mt-1">
+              <p className="text-xs line-clamp-4 mt-1">
                 {item.description}
               </p>
+            )}
+            {item.category !== 'shelf' && (
+              <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
+                {item.location && (
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <span>{item.location}</span>
+                  </>
+                )}
+              </div>
             )}
           </div>
         )}
