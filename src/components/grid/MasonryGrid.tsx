@@ -107,6 +107,41 @@ interface GridItemContentProps {
 }
 
 const GridItemContent = memo(function GridItemContent({ item, colSpan, index, videoInfo, heroImages }: GridItemContentProps) {
+  const isSvgHero = !videoInfo.isVideo && heroImages[0]?.endsWith('.svg');
+
+  if (isSvgHero) {
+    return (
+      <div>
+        <div className="relative group p-4 bg-[#f5f5f5] dark:bg-[#141414]">
+          <div className="overflow-hidden rounded-[24px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImages[0]}
+              alt={item.title || 'Content image'}
+              className="block w-full h-auto"
+              loading={index < 4 ? "eager" : "lazy"}
+            />
+          </div>
+        </div>
+        <div className="mt-1">
+          <h3 className="text-lg leading-snug">{item.title}</h3>
+          <p className="text-xs line-clamp-4 mt-1">{item.description}</p>
+          {item.category !== 'shelf' && (
+            <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+              <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
+              {item.location && (
+                <>
+                  <span className="text-gray-300">•</span>
+                  <span>{item.location}</span>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className={`relative group overflow-hidden rounded-sm ${videoInfo.isVideo ? 'aspect-[16/9]' : ''}`}>

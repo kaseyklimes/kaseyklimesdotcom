@@ -379,6 +379,13 @@ export default async function ContentPage({ params }: PageProps) {
                       contain
                       priority
                     />
+                  ) : heroImages[0].endsWith('.svg') ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={heroImages[0]}
+                      alt={`${content.title}${content.description ? ` - ${content.description}` : ''}`}
+                      className="w-full h-auto"
+                    />
                   ) : (
                     <Image
                       src={heroImages[0]}
@@ -434,14 +441,24 @@ export default async function ContentPage({ params }: PageProps) {
                   >
                     {imageUrl && (
                       <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-lg">
-                        <Image
-                          src={imageUrl}
-                          alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                          sizes="(min-width: 768px) 50vw, 100vw"
-                          loading="lazy"
-                        />
+                        {imageUrl.endsWith('.svg') ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={imageUrl}
+                            alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <Image
+                            src={imageUrl}
+                            alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            sizes="(min-width: 768px) 50vw, 100vw"
+                            loading="lazy"
+                          />
+                        )}
                       </div>
                     )}
                     <h3 className="text-lg leading-snug group-hover:underline">
