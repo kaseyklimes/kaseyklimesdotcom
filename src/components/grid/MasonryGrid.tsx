@@ -226,13 +226,14 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
 
 interface GridItemProps {
   item: ContentMeta;
+  itemKey: string;
   maxColumns: number;
   index: number;
   style?: React.CSSProperties;
-  onHeightMeasured?: (height: number) => void;
+  onHeightMeasured?: (key: string, height: number) => void;
 }
 
-const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeightMeasured }: GridItemProps) {
+const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, style, onHeightMeasured }: GridItemProps) {
   const itemRef = useRef<HTMLDivElement>(null);
   // For tweets, always use 1 column regardless of stars
   const colSpan = item.category === 'tweet'
@@ -254,7 +255,7 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
     const measureHeight = () => {
       if (itemRef.current) {
         const height = itemRef.current.getBoundingClientRect().height;
-        onHeightMeasured(height);
+        onHeightMeasured(itemKey, height);
       }
     };
 
@@ -279,7 +280,7 @@ const GridItem = memo(function GridItem({ item, maxColumns, index, style, onHeig
         img.removeEventListener('load', measureHeight);
       });
     };
-  }, [onHeightMeasured]);
+  }, [onHeightMeasured, itemKey]);
 
   const itemStyle = style || {};
 
@@ -655,11 +656,12 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
           return (
             <GridItem
               key={key}
+              itemKey={key}
               item={item}
               maxColumns={maxColumns}
               index={index}
               style={style}
-              onHeightMeasured={(height) => handleHeightMeasured(key, height)}
+              onHeightMeasured={handleHeightMeasured}
             />
           );
         })}
