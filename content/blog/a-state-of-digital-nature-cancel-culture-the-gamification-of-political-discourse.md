@@ -18,12 +18,6 @@ The natural state of men, before they entered into society, was a mere war, and 
 
 –Thomas Hobbes, _De Cive_, 1642
 
-_Status hominum naturalis antequam in societatem coiretur, bellum fuerit; neque hoc simpliciter, sed bellum omnium in omnes._
-
-The natural state of men, before they entered into society, was a mere war, and that not simply, but a war of all men against all men.
-
-–Thomas Hobbes, _De Cive_, 1642
-
 Humanity has spent the last several thousand years distancing ourselves from a state of nature, crafting structures of accountability and cooperation, balancing power, and designing rules to keep our worst tendencies in check. The internet era brought us back to square one.
 
 # **The Environment**

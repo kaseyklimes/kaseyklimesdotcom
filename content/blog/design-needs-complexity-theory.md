@@ -5,7 +5,7 @@ date: 08-31-2021
 stars: 1
 tags: ["blog"]
 description: Despite Christopher Alexander’s notable application of complexity  theory in design during the 60's and 70's, the two fields have  mysteriously grown apart. ...
-heroImage: https://bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com/public/images/78a61b73-94b7-4690-b694-b9c55d9bc9a4_625x856.png
+heroImage: /images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_78a61b73-94b7-4690-b694-b9c55d9bc9a4_625x856.png
 ---
 
 # Design Needs Complexity Theory
@@ -47,8 +47,6 @@ To the modern rationalist thinker, this likely sounds a little woo-woo. But as w
 Persistent in Alexander’s work is a call to make the world more whole through “living structures.” In _Notes on the Synthesis of Form_(1964), this value system is a matter of _form_ having _fit_ within its unique _context._ In _The Timeless Way of Building_, he describes “the quality without a name” which he later calls _life_ or _wholeness._This quality is deeply relational. In _A Pattern Language_, he implores designers:
 
 > 
-_“When  you build a thing, you cannot merely build that thing in isolation. You  must repair the world around it, and within it, so that the larger  world becomes more coherent and more whole; and the thing takes its  place in the web of nature as you make it.”_
-
 _“When  you build a thing, you cannot merely build that thing in isolation. You  must repair the world around it, and within it, so that the larger  world becomes more coherent and more whole; and the thing takes its  place in the web of nature as you make it.”_
 
 To  Alexander, design is a process that is interwoven with the natural world  around it and can, and should, positively contribute to rebuilding and  improving society.
@@ -118,8 +116,6 @@ The  essay’s attempt to bridge between the fields highlights where Alexander  
 > 
 _“In  [fields dealing with complexity] the scientists are passive as to the  issue of creation. In architecture, we are the active proponents.”_ —_New Concepts in Complexity Theory,_ 2003
 
-_“In  [fields dealing with complexity] the scientists are passive as to the  issue of creation. In architecture, we are the active proponents.”_ —_New Concepts in Complexity Theory,_ 2003
-
 Alexander  makes the case that the kind of fitness that arises from complex  systems in nature (the evolution of a bird's beak, for example) can and  must be achieved by designers through new step-by-step adaptive  processes.
 ![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_e3108b10-5aca-4473-982e-774f7d8894b4_1748x1319.jpeg)
 Still, Alexander’s move towards actionable complexity doesn’t fully explain why design and complexity theory no longer overlap.
@@ -139,8 +135,6 @@ Complexity theory suggests a new  conception of design that flies in the face of
 # Why should designers understand complexity theory?
 
 > 
-_“Complexity is the science of the 21st century”_ —Stephen Hawking
-
 _“Complexity is the science of the 21st century”_ —Stephen Hawking
 
 I  believe that complexity science is the beginning of an upcoming (and  deeply necessary) revolution in the cognitive tooling of society. The  mental models of a deterministic machine-like reality have gotten us far  in _complicated_ domains where systems actually operate in this  manner (such as Newtonian physics), but we’ve seen these methods  collapse in the face of systems that are _complex_. Worse still,  the failure of these enlightenment ideas to achieve social progress has  induced a sort of epistemic resignation that the systems surrounding us  are unknowable and uncontrollable, thus rendering our actions  effectively meaningless. This is not true!
@@ -172,14 +166,6 @@ Alexander attempted to leverage this kind of local intelligence by creating wide
 In 1969, Ludwig von Bertalanffy outlined the major aims of general system theory (a precursor to complexity theory):
 
 > 
-_1. There is a general tendency towards integration in the various sciences, natural and social._
-
-_2. Such integration seems to be centered in a general theory of systems._
-
-_3. Such theory may be an important means for aiming at exact theory in the nonphysical fields of science._
-
-_4. Developing  unifying principles running 'vertically' through the universe of the  individual sciences, this theory brings us nearer to the goal of the  unity of science. This can lead to a much-needed integration in  scientific education._
-
 _1. There is a general tendency towards integration in the various sciences, natural and social._
 
 _2. Such integration seems to be centered in a general theory of systems._

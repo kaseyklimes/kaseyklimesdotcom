@@ -116,8 +116,6 @@ Let’s return to Alexander.
 > 
 I don't see why Oakland being able to tell a different story of how it reached Manhattan/London density levels ("it was because we were YIMBYs and deliberately cultivated density to lower prices") would make the end result any different from the real Manhattan or London.
 
-I don't see why Oakland being able to tell a different story of how it reached Manhattan/London density levels ("it was because we were YIMBYs and deliberately cultivated density to lower prices") would make the end result any different from the real Manhattan or London.
-
 In fact, the YIMBY story would make a world of difference in the end result! The story of Manhattan and London is one of housing supply lagging behind a dramatic growth of high-paying jobs. Their housing densities mask an even greater density of jobs. When jobs boom, it can be hard for housing supply to keep up, but it’s not impossible. A story in which housing supply keeps up with job growth creates a housing market [more like that of Tokyo](https://twitter.com/KaseyKlimes/status/1545466542447595520?s=20).
 
 Alexander's argument overlooks the critical role of jobs and income in the housing price equation. The data shows us that it's largely the ratio of aggregate income to housing supply that’s really driving housing prices. The key to our affordability crisis is ensuring that housing supply keeps up with local job markets.

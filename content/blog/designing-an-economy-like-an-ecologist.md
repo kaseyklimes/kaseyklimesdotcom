@@ -33,10 +33,6 @@ Friedrich Hayek described this dynamic lucidly:
 
 —Friedrich Hayek, _The Use of Knowledge in Society_, 1945
 
-"The marvel is that in a case like that of a scarcity of one raw material, without an order being issued, without more than perhaps a handful of people knowing the cause, tens of thousands of people whose identity could not be ascertained by months of investigation, are made to use the material or its products more sparingly; that is, they move in the right direction."
-
-—Friedrich Hayek, _The Use of Knowledge in Society_, 1945
-
 Hayek’s insight into decentralized knowledge in markets helps explain why free market systems outlasted communist planning.
 
 Unfortunately, Hayek’s insight was overshadowed by the second oversimplification.
@@ -73,10 +69,6 @@ The previous economic model had its own clear failings, but if economic growth, 
 Let’s turn to Hayek again.
 
 > 
-“The curious task of economics is to demonstrate to men how little they really know about what they imagine the can **design**.”
-
-—Friedrich Hayek, _The Fatal Conceit_, 1988
-
 “The curious task of economics is to demonstrate to men how little they really know about what they imagine the can **design**.”
 
 —Friedrich Hayek, _The Fatal Conceit_, 1988
@@ -121,10 +113,6 @@ As economist Steve Keen observes,
 
 — Steve Keen, Debunking Economics
 
-“There is one striking empirical fact about this whole literature, and that is that there is not one single empirical fact in it. The entire neoclassical theory of consumer behavior has been derived in ‘armchair philosopher’ mode, with an economist constructing a model of a hypothetical rational consumer in his head, and then deriving rules about how that hypothetical consumer must behave.”
-
-— Steve Keen, Debunking Economics
-
 # How do you get a healthy ecology?
 
 Fortunately, high modernism is not the only approach to design, nor is armchair philosophy the only approach to economics.
@@ -134,10 +122,6 @@ The prescriptions of central control or pure non-intervention are naïve respons
 In 2019 I attended a symposium on complexity economics at the [Santa Fe Institute](https://www.santafe.edu/), where Eric Beinhocker, author of _The_ _Origin of Wealth_, made a comment that framed the problem beautifully:
 
 > 
-“Asking ‘Do you want more market or more state?’ makes about as much sense as asking ‘Do you want more plants or more animals?’ The real question is ‘How do you get a healthy ecology?’”
-
-—Eric Beinhocker, SFI Complexity Economics Symposium, 2019
-
 “Asking ‘Do you want more market or more state?’ makes about as much sense as asking ‘Do you want more plants or more animals?’ The real question is ‘How do you get a healthy ecology?’”
 
 —Eric Beinhocker, SFI Complexity Economics Symposium, 2019

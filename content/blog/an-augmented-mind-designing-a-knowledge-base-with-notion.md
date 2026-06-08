@@ -34,8 +34,6 @@ My knowledge base takes advantage of Notion's relational database functionality,
 > 
 ### _If_**_A_**_is related to_**_B_**_, then_**_B_**_is also related to_**_A_**_._
 
-### _If_**_A_**_is related to_**_B_**_, then_**_B_**_is also related to_**_A_**_._
-
 ---
 
 Ted Nelson saw [the power of two-way links](https://en.wikipedia.org/wiki/Project_Xanadu) in the 60's but his vision was eclipsed by Tim Berners Lee's World Wide Web of one-way links.
@@ -51,8 +49,6 @@ An author may write many books. A book may have many authors.
 Furthermore, [most information does not actually conform well to hierarchical tree-like structures](http://en.bp.ntu.edu.tw/wp-content/uploads/2011/12/06-Alexander-A-city-is-not-a-tree.pdfhttp://en.bp.ntu.edu.tw/wp-content/uploads/2011/12/06-Alexander-A-city-is-not-a-tree.pdf). There can be relationships all over the place.
 
 > 
-### **_A_**_can be related to_**_B_**_and_**_C_**_, and_**_C_**_can be related to_**_A_**_and_**_D_**_._
-
 ### **_A_**_can be related to_**_B_**_and_**_C_**_, and_**_C_**_can be related to_**_A_**_and_**_D_**_._
 
 Since Notion databases allow for multiple blocks within a single cell, we can create many-to-many relations. Christopher Alexander also wrote _The Timeless Way of Building_, and _Notes on the Synthesis of Form_.  Each of those books appears as a block _inside the single cell_ that contains all the resources related to Christopher Alexander. Conversely, _A Pattern Language_ was co-authored by Sara Ishikawa and Murray Silverstein, so they may each appear as blocks inside the single cell that contains all minds related to _A Pattern Language_. These many-to-many two-way links form the basic relationships for all information in the knowledge base.
@@ -113,8 +109,6 @@ This is not, however, a perfect system. There's some yet-to-be developed functio
 Links don't currently proliferate through the entire knowledge base:
 
 > 
-### _If_**_A_**_is related to_**_B_**_and_**_B_**_is related to_**_C_**_, then A and B have a first-order relation while_**_A_**_and_**_C_**_would have_**_a_**_second-order relation._
-
 ### _If_**_A_**_is related to_**_B_**_and_**_B_**_is related to_**_C_**_, then A and B have a first-order relation while_**_A_**_and_**_C_**_would have_**_a_**_second-order relation._
 
 There is currently no ability to automatically generate that second-order relation in the same stroke as the first-order relation. It must be done manually. This creates some overhead, though I find it worthwhile.

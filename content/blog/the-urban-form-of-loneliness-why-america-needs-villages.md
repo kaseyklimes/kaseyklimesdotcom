@@ -54,7 +54,6 @@ On the other hand, [massive cities contribute to a sense of anonymity and social
 > 
 The greatest danger—I would almost say the greatest crime—of modern city life is its disruption of human relations, resulting in an isolation, a loneliness of the individual which increases with the size of the city and its complexity. 
 
-The greatest danger—I would almost say the greatest crime—of modern city life is its disruption of human relations, resulting in an isolation, a loneliness of the individual which increases with the size of the city and its complexity. 
 ![](/images/EuSJvgOXUAQQj7E.jpeg)
 The problem is growing dire. Since 1985, social scientists have asked a representative sample of Americans, "How many confidants do you have?" In 1985, the most common answer was three. By 2004, [the most common answer was zero](https://journals.sagepub.com/doi/abs/10.1177/000312240607100301). 
 

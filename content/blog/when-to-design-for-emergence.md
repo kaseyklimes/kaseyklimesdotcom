@@ -15,13 +15,9 @@ For years, I’ve heard some variation of the following lament from clients, col
 > 
 “There’s so many use cases we _could_ solve for, but every user we talk to wants something different, and we just don’t know which ones to focus on.”
 
-“There’s so many use cases we _could_ solve for, but every user we talk to wants something different, and we just don’t know which ones to focus on.”
-
 or,
 
 > 
-“We’ve designed for all the common and important user needs and now we’ve hit a ceiling. How do we grow without bloating our product with minor features?”
-
 “We’ve designed for all the common and important user needs and now we’ve hit a ceiling. How do we grow without bloating our product with minor features?”
 
 Both statements describe what we can call the long-tail problem. It’s very common—I’ve seen the long-tail problem at tiny two-person startups and at Big Tech corporations with billions of users.

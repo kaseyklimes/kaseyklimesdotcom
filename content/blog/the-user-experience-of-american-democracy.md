@@ -21,8 +21,6 @@ In user experience (UX) design this narrative is called “blaming the user” a
 > 
 “…wherever the people are well-informed they can be trusted with their own government.” — Thomas Jefferson
 
-“…wherever the people are well-informed they can be trusted with their own government.” — Thomas Jefferson
-
 Consider the number of political offices that the well-informed citizen is expected to follow. Thanks to the gargantuan size of the United States and the federalist system intended to connect people with government, Americans must keep tabs on a daunting array of offices. Each office is governed by a unique set of rules and endowed with a unique set of powers. Most of us are represented by a city council member, a state house representative, a state senator, a U.S. representative in the house, and two U.S. senators. That’s just the legislative branches. In the executive branches, voters must generally choose a mayor, a county executive, a state attorney general, a treasurer, a secretary of state, a governor, a lieutenant governor, and the president of the United States. If you’re counting, that’s roughly 14 offices with plenty more in judgeships, public defenders, transit boards, and local school systems.
 
 By comparison the citizens of Denmark — a country where voter turnout regularly surpasses 85% — vote for about 5 offices (if you include their vote in the European Union).

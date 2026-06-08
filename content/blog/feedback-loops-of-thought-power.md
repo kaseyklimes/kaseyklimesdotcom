@@ -23,19 +23,11 @@ _“If thought corrupts language, language can also corrupt thought”_
 
 George Orwell,_Politics and The English Language, 1946_
 
-_“If thought corrupts language, language can also corrupt thought”_
-
-George Orwell,_Politics and The English Language, 1946_
-
 Representation of thought takes the form of words, phrases, images, sounds and symbols. Orwell emphasized that power over language (or semiotics more generally) is about as close as one can get to power over thought itself. Even within our minds we cannot escape the boundaries of the symbols we use to express ideas – an abstract concept without a name or words to describe it isn’t a concept at all. A [2001 study](https://www.sciencedirect.com/science/article/pii/S0010028501907480) found that English speakers and Mandarin speakers conceptualize time differently as a byproduct of their respective linguistic structures. Findings like this support the [Sapir-Wharf hypothesis](https://www.sciencedirect.com/topics/psychology/sapir-whorf-hypothesis), which suggests that our interpretation of reality is heavily influenced by the language we speak. 
 
 ## **Media :: Media Theory**
 
 > 
-_“We shape our tools and thereafter our tools shape us.”_
-
-Marshall Mcluhan, Understanding Media: The Extensions of Man, 1994
-
 _“We shape our tools and thereafter our tools shape us.”_
 
 Marshall Mcluhan, Understanding Media: The Extensions of Man, 1994
@@ -49,10 +41,6 @@ Representations are conveyed at scale through media, the forms of which have inf
 
 Antonio Gramsci, Prison Notebooks, 1929-1935
 
-“Ideas and opinions are not spontaneously "born" in each individual brain: they have had a centre of formation, or irradiation, of dissemination, of persuasion-a group of men, or a single individual even, which has developed them and presented them in the political form of current reality.”
-
-Antonio Gramsci, Prison Notebooks, 1929-1935
-
 Media exerts force on our norms of social relation, our culture. Antonio Gramsci proposed that power was exerted through _cultural hegemony,_ a dynamic in which the worldview of elites becomes the culturally accepted norm. Margaret Thatcher’s famous Gramscian defense of market fundamentalism became a slogan; “_There is no alternative_”. A parallel concept is the Overton window, in which political actors struggle to define the bounds of what policy ideas are considered plausible and mainstream.
 ![](/images/urn_cambridge.org_id_binary-alt_20170126184834-48637-optimisedImage-S1537592714001595_fig1g.jpg)![](/images/urn_cambridge.org_id_binary-alt_20170126184834-48637-optimisedImage-S1537592714001595_fig1g-1.jpg)
 Of course, there is a relationship with material power that isn’t fully captured by the model. A [2014 US study](https://www.cambridge.org/core/journals/perspectives-on-politics/article/testing-theories-of-american-politics-elites-interest-groups-and-average-citizens/62327F513959D0A304D4893B382B992B/core-reader) of thousands of policy opinion polls between 1981 and 2002 found that public support among median-income Americans for a policy had no correlation with the likelihood of that policy passing as legislation. If 100% of median-income Americans supported a policy, it had only a ~30% chance of passing as legislation. If 0% of median-income Americans supported a policy, it _still_ had a ~30% change of passing as legislation. In contrast, the preferences of those in the top 10% of income earners were well-reflected by legislation.
@@ -60,10 +48,6 @@ Of course, there is a relationship with material power that isn’t fully captur
 ## **Epistemology :: Post-Structuralism**
 
 > 
-“There is no power relation without the correlative constitution of a field of knowledge, nor any knowledge that does not presuppose and constitute at the same time power relations”
-
-Michel Foucault, Discipline and Punish, 1977
-
 “There is no power relation without the correlative constitution of a field of knowledge, nor any knowledge that does not presuppose and constitute at the same time power relations”
 
 Michel Foucault, Discipline and Punish, 1977

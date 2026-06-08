@@ -24,8 +24,6 @@ In describing the criteria by which we should judge moral actions, Kant gave us 
 > 
 Act only on that maxim through which you can at the same time will that it should become a universal law.
 
-Act only on that maxim through which you can at the same time will that it should become a universal law.
-
 In other words, would you want to live in a world in which everyone behaves the way you are right now? If so, you can reasonably call it moral behavior. If not, it is immoral behavior.
 
 Moral living, then, requires ongoing thought experiments in the effect of individual choices at scale and over time. You may, for example, run the decision to take an annual vacation to the Caribbean through the thought experiment.
@@ -65,8 +63,6 @@ Now, we must take into account the non-zero possibility that you are unwittingly
 Due to the deterministic nature of network effects and their blossoming causal chains, the downside risk is colossal irrespective of probabilities. Speeding in a car has a relatively high probability of leading to fatalities, but the downside risk is at least limited to a fairly small number of deaths. The odds that you are infected with coronavirus is relatively low, but the number of people you could effectively kill by being infected and careless with your actions is unbounded. My friend and colleague Josh Liebow-Feeser described this well:
 
 > 
-At current growth rates (15% day over day), anyone transmitting the disease to a single person is, in expectation, responsible for 100 infections within 33 days. In expectation, that will result in two deaths, and that's only if we consider the first month. So even if the likelihood that you have the virus is very low, the expected value of the effects of your actions is still pretty serious.
-
 At current growth rates (15% day over day), anyone transmitting the disease to a single person is, in expectation, responsible for 100 infections within 33 days. In expectation, that will result in two deaths, and that's only if we consider the first month. So even if the likelihood that you have the virus is very low, the expected value of the effects of your actions is still pretty serious.
 
 With or without Kant's categorical imperative, this kind of risk assessment at the margins should make clear our moral obligation.
