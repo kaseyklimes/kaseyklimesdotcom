@@ -38,7 +38,7 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
   const bodyText = (
     <>
       <p className="mb-4">
-        Kasey Klimes · Designer & Technologist · Brooklyn
+        Kasey Klimes · Systems Designer · Brooklyn
       </p>
       <p>Currently building agentic infrastructure for human coordination at <a href="https://getprimitive.ai" target="_blank" rel="noopener noreferrer" className="underline">Primitive</a>.</p>
     </>
