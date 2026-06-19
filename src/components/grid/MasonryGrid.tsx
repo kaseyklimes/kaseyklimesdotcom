@@ -9,6 +9,7 @@ import { getVideoInfo, VideoInfo } from '@/utils/mediaDetection';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import VideoEmbed from '@/components/ui/VideoEmbed';
+import PhotoCarousel, { Photo } from '@/components/ui/PhotoCarousel';
 
 // Gap between items in pixels
 const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
@@ -414,6 +415,8 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
   const [containerWidth, setContainerWidth] = useState(0);
   const [itemHeights, setItemHeights] = useState<Map<string, number>>(new Map());
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+  // Index into the full-screen photo viewer; null when closed.
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   // Get unique tags from all items
   const tags = React.useMemo(() => {
@@ -456,6 +459,26 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
       return dateCompare;
     });
   }, [items, selectedTag]);
+
+  // Photos available for the full-screen viewer, in grid order.
+  // Skips items without a still image (e.g. videos) so navigation stays clean.
+  const photos = useMemo<Photo[]>(() => {
+    const result: Photo[] = [];
+    for (const item of sortedItems) {
+      const src = item.heroImage || item.thumbnail;
+      if (!src || getVideoInfo(src).isVideo) continue;
+      result.push({
+        src,
+        title: item.title,
+        location: item.location,
+        caption: item.date ? formatDateOrRange(item.date) : undefined,
+      });
+    }
+    return result;
+  }, [sortedItems]);
+
+  // Only offer the slideshow on the photography filter, and only with photos to show.
+  const canShowSlideshow = selectedTag === 'photography' && photos.length > 0;
 
   // Measure container width
   useEffect(() => {
@@ -627,6 +650,18 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
             {tag.charAt(0).toUpperCase() + tag.slice(1)}
           </button>
         ))}
+        {canShowSlideshow && (
+          <button
+            onClick={() => setLightboxIndex(0)}
+            className="text-sm mb-2 inline-flex items-center gap-1.5 text-gray-500 hover:text-current"
+            aria-label="View photos full screen"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4" />
+            </svg>
+            View full screen
+          </button>
+        )}
       </div>
 
       {/* Masonry Grid */}
@@ -666,6 +701,14 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
           );
         })}
       </div>
+
+      {lightboxIndex !== null && photos.length > 0 && (
+        <PhotoCarousel
+          photos={photos}
+          startIndex={Math.min(lightboxIndex, photos.length - 1)}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </div>
   );
 }
