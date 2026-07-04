@@ -46,3 +46,12 @@ export function getVideoInfo(url: string): VideoInfo {
 
   return { isVideo: false };
 }
+
+/**
+ * Build a YouTube thumbnail URL for a video id.
+ * Uses `hqdefault.jpg`, which every video is guaranteed to have — unlike
+ * `maxresdefault.jpg`, which only exists for videos uploaded in HD and 404s otherwise.
+ */
+export function getYouTubeThumbnail(id: string): string {
+  return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+}

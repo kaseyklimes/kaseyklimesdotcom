@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { VideoInfo } from '@/utils/mediaDetection';
+import { VideoInfo, getYouTubeThumbnail } from '@/utils/mediaDetection';
 
 interface VideoEmbedProps {
   videoInfo: VideoInfo;
@@ -15,7 +15,7 @@ export default function VideoEmbed({ videoInfo, title, sizes, priority }: VideoE
     return (
       <>
         <Image
-          src={`https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`}
+          src={getYouTubeThumbnail(videoInfo.id!)}
           alt={`Thumbnail for ${title}`}
           fill
           className="object-cover"

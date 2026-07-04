@@ -10,7 +10,7 @@ import rehypeRaw from 'rehype-raw';
 import { Metadata } from 'next';
 import Carousel from '@/components/ui/Carousel';
 import React from 'react';
-import { getVideoInfo } from '@/utils/mediaDetection';
+import { getVideoInfo, getYouTubeThumbnail } from '@/utils/mediaDetection';
 import { formatDateOrRange } from '@/utils/dateFormatting';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 
@@ -430,7 +430,7 @@ export default async function ContentPage({ params }: PageProps) {
                 const hero = item.heroImage;
                 const videoInfo = hero ? getVideoInfo(hero) : { isVideo: false };
                 const imageUrl = videoInfo.isVideo && videoInfo.type === 'youtube' && videoInfo.id
-                  ? `https://i.ytimg.com/vi/${videoInfo.id}/maxresdefault.jpg`
+                  ? getYouTubeThumbnail(videoInfo.id)
                   : hero;
 
                 return (
