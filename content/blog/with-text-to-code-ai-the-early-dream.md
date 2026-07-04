@@ -5,7 +5,7 @@ date: 12-02-2022
 stars: 1
 tags: ["blog"]
 description: There's just one thing missing.
-heroImage: /images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_59ca2a12-bda8-4380-a7ca-fdafecfdc3dd_1456x1884.png
+heroImage: /images/with-text-to-code-ai.jpg
 ---
 
 # With Text-to-Code AI, The Early Dream of Computation is Back

@@ -5,7 +5,7 @@ date: 08-31-2021
 stars: 1
 tags: ["blog"]
 description: Despite Christopher Alexander’s notable application of complexity  theory in design during the 60's and 70's, the two fields have  mysteriously grown apart. ...
-heroImage: /images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_78a61b73-94b7-4690-b694-b9c55d9bc9a4_625x856.png
+heroImage: /images/design-needs-complexity-theory.png
 ---
 
 # Design Needs Complexity Theory
@@ -158,7 +158,7 @@ This reality is not a threat to designers,  but an opportunity. In many cases, t
 Consider the wide range of adaptive  outcomes made possible by digital spreadsheets, in which the simple  relationships of cells (which can only contain a small handful of data  types) can be combined to create highly complex systems. Digital  spreadsheets have eclipsed thousands of would-be single purpose software  tools because a general purpose tool designed for emergence can fulfill  a wide variety of potential niches.[8](https://rhizomerd.substack.com/p/design-needs-complexity-theory#footnote-8)
 
 Alexander attempted to leverage this kind of local intelligence by creating widely accessible tools like _A Pattern Language_.[9](https://rhizomerd.substack.com/p/design-needs-complexity-theory#footnote-9) In _Systems Generating Systems_,  Alexander describes this kind of design as a “kit of parts.” We might  think of these kits as innovation-enabling innovation, from which entire  ecologies of ideas and solutions might emerge.
-![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_78a61b73-94b7-4690-b694-b9c55d9bc9a4_625x856.png)
+![](/images/design-needs-complexity-theory.png)
 ## 3. Design benefits from interdisciplinary mental models
 ![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_05ab8781-a813-47a8-91fd-7582d3e10508_2096x2000.png)
 &nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;_Bollen et al. (2009). [Clickstream data yields high-resolution maps of science](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0004803)__
