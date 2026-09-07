@@ -91,7 +91,7 @@ The hyperspec creates a shared surface for each team member to leverage their un
 
 A PM can chat with an agent that references both the sales team’s customer calls and the codebase, exploring opportunities in the adjacent possible and ensuring no collisions with in-flight workstreams to generate a PRD-like hyperspec. A designer can prototype the idea with Claude Code and the system passively integrates their design decisions and rationale back into the same hyperspec (along with the prototype). An engineer can use this comprehensive corpus of intent to contribute the appropriate architecture for scale, security, and reliability to the same hyperspec. Agents translate it into tests and code. Everyone has situational awareness of cross-functional decisions made in real-time, lifting the fog.
 
-Three months from now, any team member or agent can read, in plain English, why a particular API endpoint exists, what user problem it solves, which design decisions constrain its behavior, and how it relates to the three features that depend on it. The codebase becomes _more coherent_ as it’s built, and the team__gets collectively smarter about its own product over time.
+Three months from now, any team member or agent can read, in plain English, why a particular API endpoint exists, what user problem it solves, which design decisions constrain its behavior, and how it relates to the three features that depend on it. The codebase becomes _more coherent_ as it’s built, and the team gets collectively smarter about its own product over time.
 
 The hyperspec _is your product_ described in a language everyone on the team can read.
 

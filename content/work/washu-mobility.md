@@ -1,4 +1,5 @@
 ---
+reportPages: true
 title: "Washington University Mobility Study"
 category: "work"
 date: "2014"

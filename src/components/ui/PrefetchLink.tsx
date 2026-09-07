@@ -25,7 +25,9 @@ export function PrefetchLink({ href, children, className }: PrefetchLinkProps) {
     <Link
       href={href}
       className={className}
+      prefetch={false}
       onMouseEnter={handleMouseEnter}
+      onFocus={handleMouseEnter}
     >
       {children}
     </Link>

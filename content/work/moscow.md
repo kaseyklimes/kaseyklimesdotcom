@@ -1,4 +1,5 @@
 ---
+reportPages: true
 title: "Moscow: Towards a Great City for People"
 category: "work"
 date: "2012-2013"

@@ -10,14 +10,16 @@ heroImage: /images/14377164540_454c0f577b_o.jpg
 
 # A (Constructive) Critique of Data as Labor
 
-### _The Quality Problem_
+- The Quality Problem
 
-### _The Inequality Problem_
+- The Inequality Problem
 
-### _The Meaning Problem_
+- The Meaning Problem
 
-### _The Disaggregate Value Problem._
+- The Disaggregate Value Problem
+
 ![](/images/14377164540_454c0f577b_o-1.jpg)
+
 In March I attended the [RadicalxChange](https://radicalxchange.org/) conference in Detroit, where “data as labor” was celebrated as a core tenet of a nascent social movement. This idea gained traction following Jaron Lanier’s 2013 book _Who Owns The Future?,_ which proposed a [Ted Nelson](https://en.wikipedia.org/wiki/Ted_Nelson)-inspired digital infrastructure for micropayments on the internet. In such a system, you could be directly compensated for the value created by your data. The idea has been explored further in Lanier’s [collaboration with Glen Weyl](https://www.aeaweb.org/articles?id=10.1257/pandp.20181003), which led to [a chapter in _Radical Markets_](http://radicalmarkets.com/chapters/data-as-labor/) on the subject.
 
 Contrary to the norms of the internet for the last couple decades, the new radical liberals claim, information should not be free. Some have even envisioned [“data strikes”](https://dl.acm.org/citation.cfm?id=3313742) as a tactic towards this end.
@@ -28,23 +30,23 @@ What most impressed me about the community that convened at RadicalxChange — a
 
 As a contribution to that emerging cultural norm and in the hopes that we can get closer to a viable proposal, I’d like to share some concerns I have with the data-as-labor argument as I have seen it laid out.  In the spirit of constructive critique I’ll outline them here.
 
-# The Quality Problem
+## The Quality Problem
 
 One core argument made by the data-as-labor movement is that paying for information will incentivize higher quality information. That is true, but only if the compensation is directly linked to the quality of that information. Unless we adequately quantify the quality of data, compensation for data creates incentives to flood the network with high quantities of low-quality data. People would game the system. It is not obvious how this would work. **How does one measure the quality of a restaurant review in a way that can’t be gamed?** Even if markets were set up so that different platforms could bid for restaurant review data, they would need to be able to determine their quality in a manner that scales without introducing new biases.
 
 _(It's worth noting that a similar disconnect occurs today in news media – sensationalism pulls at least as much revenue as deep investigative journalism – with similarly detrimental results to the information ecosystem.)_
 
-# The Inequality Problem
+## The Inequality Problem
 
-The data-as-labor movement tends to use the value created by training data for algorithms as a preferred example. Perhaps the most common (and value-generating) kind of AI today is a recommendation algorithm, like those that recommend products on Amazon. They are trained by exhibited preference data, e.g. the person who bought running shoes also looked at sunscreen. In an egalitarian world this would be fine, but in a world of multi-dimensionally quantified value _and_ wealth inequality, **isn’t the preference data of wealthy people worth more than the data of low-income people simply by virtue of their spending power?** And if that’s the case, would wealthy people not be paid more for what is otherwise the same data? How would such a system avoid perpetuating or even exacerbating existing inequalities?
+The data-as-labor movement tends to use the value created by training data for algorithms as a preferred example. Perhaps the most common (and value-generating) kind of AI today is a recommendation algorithm, like those that recommend products on Amazon. They are trained by exhibited preference data, e.g. the person who bought running shoes also looked at sunscreen. In an egalitarian world this would be fine, but in a world of multi-dimensionally quantified value _and_ wealth inequality, **isn’t the preference data of wealthy people worth more than the data of low-income people simply by virtue of their spending power?** And if that’s the case, would wealthy people not be paid more for what is otherwise the same data? How would such a system avoid perpetuating or even exacerbating existing inequalities?
 
-# The Meaning Problem
+## The Meaning Problem
 
-This issue is more philosophical, but I think it has major implications for the human psyche. In a world where every action has an associated data artifact for sale, are we not reducing human existence to a never-ending transactional nightmare? Does the data of who and how I love have a price tag on it? Does that change the way we think about love? Community? Meaning? **What if a world of data-as-labor looks like hyper-neoliberalism, in which anything and everything is commoditized?** Maybe we don’t want to economize metaphysical values.
+This issue is more philosophical, but I think it has major implications for the human psyche. In a world where every action has an associated data artifact for sale, are we not reducing human existence to a never-ending transactional nightmare? Does the data of who and how I love have a price tag on it? Does that change the way we think about love? Community? Meaning? **What if a world of data-as-labor looks like hyper-neoliberalism, in which anything and everything is commoditized?** Maybe we don’t want to economize metaphysical values.
 
-# The Disaggregate Value Problem
+## The Disaggregate Value Problem
 
-What if all of these problems are the cost of a program that ultimately isn’t worth much in the disaggregate? No one seems to know how much disaggregate data would be worth in a market-based data ecosystem. **What if my data is only worth $20 a month?** That nominal amount simply isn’t enough to rebuild a middle class, as Lanier suggests it might, nor is it enough to warrant the major infrastructural changes required to create such a system. While some project the returns may increase over time as the value of data is realized, this remains one of the biggest unknowns of data-as-labor and perhaps the most clear gap in the underlying argument.
+What if all of these problems are the cost of a program that ultimately isn’t worth much in the disaggregate? No one seems to know how much disaggregate data would be worth in a market-based data ecosystem. **What if my data is only worth $20 a month?** That nominal amount simply isn’t enough to rebuild a middle class, as Lanier suggests it might, nor is it enough to warrant the major infrastructural changes required to create such a system. While some project the returns may increase over time as the value of data is realized, this remains one of the biggest unknowns of data-as-labor and perhaps the most clear gap in the underlying argument.
 
 ---
 

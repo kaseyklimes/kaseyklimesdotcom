@@ -1,4 +1,5 @@
 ---
+title: "Guest Lecture at SVA"
 category: "work"
 date: "02-04-2025"
 location: "SVA, NYC"

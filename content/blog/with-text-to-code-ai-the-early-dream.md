@@ -12,9 +12,9 @@ heroImage: /images/with-text-to-code-ai.jpg
 
 ![](/images/https3A2F2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com2Fpublic2Fimages2F59ca2a12-bda8-4380-a7ca-fdafecfdc3dd_1456x1884-1.png)
 
-&nbsp;&nbsp;&nbsp;&nbsp;_The cover of **Computer Lib/Dream Machine** by Ted Nelson, 1974._
+Caption: The cover of **Computer Lib/Dream Machine** by Ted Nelson, 1974.
 
-# A History
+## A History
 
 The pioneers of early computation had a beautiful dream. Technology as they envisioned it would be a democratizing force. It would empower everyday people to build and control tools that improved their lives. These “bicycles for the mind” would give wings to their creativity and materialize solutions to even the most niche and idiosyncratic needs. To make this dream a reality, the pioneers would need to marry permissionless composability with user-friendly interfaces.
 
@@ -48,7 +48,7 @@ Corporate software built easy-to-use tools, but at a cost and without composabil
 
 ---
 
-# An Opportunity
+## An Opportunity
 
 This was the state of computation until last week, when OpenAI released [ChatGPT](https://chat.openai.com/chat).
 
@@ -94,7 +94,7 @@ There is no question that this moment represents an enormous leap in the traject
 
 There’s just one glaring problem.
 
-# A Warning
+## A Warning
 
 Despite its name, OpenAI is not an open-source project. In fact, its largest investor is the very behemoth that once schemed to destroy open-source—Microsoft. In 2020, OpenAI announced that it would grant an exclusive license for GPT-3 to Microsoft, giving the company the sole power to embed, repurpose, and modify the model as it pleases.
 

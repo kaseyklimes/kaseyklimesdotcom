@@ -17,6 +17,7 @@ export interface ContentMeta {
   private?: boolean;
   clickThroughUrl?: string;
   audioUrl?: string;
+  reportPages?: boolean;
   iframeUrl?: string;
   iframeRows?: number;  // Number of grid rows for iframe height
   iframeWidth?: number; // Fixed width in pixels for responsive calculations

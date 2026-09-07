@@ -8,8 +8,10 @@ heroImage: /images/75459.jpg
 ---
 
 # The Pandemic Imperative
+
 ![](/images/75459-1.jpg)
-&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;_Scenes from the 1918 Spanish Flu pandemic, which infected nearly a third of the world's population and killed some 50 million people.__
+
+Caption: Scenes from the 1918 Spanish Flu pandemic, which infected nearly a third of the world's population and killed some 50 million people.
 
 _Important Note: I am not an epidemiologist, virologist, or public health expert of any kind. Nothing here should be interpreted as a perspective from any authority on scientific matters._
 
@@ -21,8 +23,7 @@ Moral calculus changes dramatically during a pandemic. Actions that might have l
 
 In describing the criteria by which we should judge moral actions, Kant gave us the following rule:
 
-> 
-Act only on that maxim through which you can at the same time will that it should become a universal law.
+> Act only on that maxim through which you can at the same time will that it should become a universal law.
 
 In other words, would you want to live in a world in which everyone behaves the way you are right now? If so, you can reasonably call it moral behavior. If not, it is immoral behavior.
 
@@ -41,13 +42,17 @@ Let's run a very simple (hypothetical) model. One person is infected with corona
 A virus that infects more than one person for every individual infected will grow exponentially through a population. A little more crude math: as of this writing, we're seeing an average of +15% day-over-day growth of new confirmed cases outside China. Given ~35,000 confirmed cases outside China today, holding that growth rate constant would result in 1 million in two weeks, and more than 2 million by the first week of April.
 
 To demonstrate just how much that rate impacts outcomes, tamping it down to 10% day-over-day growth would lead to "only" a half million cases by the beginning of April. Meanwhile, if we start with our current 15% growth rate but reduce it by just 5% each day (so that the growth rate is 15% today, 14.3% tomorrow, 13.5% the next day, and so on) the curve flattens out by the end of the month.
+
 ![](/images/chart-01.png)
-&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;&nbsp;&nbsp;&nbsp;_Modeled growth of confirmed cases outside China through April 8.__
+
+Caption: Modeled growth of confirmed cases outside China through April 8.
 
 _"But all bringing the rate down does is slow down the virus, if it's still growing then that doesn't mean there's going to be any fewer infections in the long run!"_
 
 Well, perhaps. As [public health experts have reminded us](https://www.weforum.org/agenda/2020/03/this-one-chart-shows-why-minimizing-coronavirus-impact-is-a-race-against-time/), the big difference is that by slowing it down, we increase the odds that our healthcare system can handle the surge of demand from new infections. If the number of infections at any given time overwhelms the hospitals, then it's possible that we'll see a rise in the fatality rate as we run out of doctors, beds, and ventilators.
+
 ![](/images/IMG_0997.jpg)
+
 ## **Ethical Actions**
 
 The good news is that the rate of growth is not fixed. The quicker we can bend the growth rate downward (i.e. "flatten the curve"), the better our odds of preventing global tragedy on a scale with which few living people are familiar. In China, where [drastic measures](https://newrepublic.com/article/156616/life-china-coronavirus-lockdown) were taken to reduce person-to-person contact, the rate of growth fell by roughly 15% per day (three times as fast as the variable growth model shown earlier) from roughly 25% in early February. Whereas early February saw new cases rise day-over-day by as much as 30%, the number of new cases in  China is now falling.
@@ -62,8 +67,7 @@ Now, we must take into account the non-zero possibility that you are unwittingly
 
 Due to the deterministic nature of network effects and their blossoming causal chains, the downside risk is colossal irrespective of probabilities. Speeding in a car has a relatively high probability of leading to fatalities, but the downside risk is at least limited to a fairly small number of deaths. The odds that you are infected with coronavirus is relatively low, but the number of people you could effectively kill by being infected and careless with your actions is unbounded. My friend and colleague Josh Liebow-Feeser described this well:
 
-> 
-At current growth rates (15% day over day), anyone transmitting the disease to a single person is, in expectation, responsible for 100 infections within 33 days. In expectation, that will result in two deaths, and that's only if we consider the first month. So even if the likelihood that you have the virus is very low, the expected value of the effects of your actions is still pretty serious.
+> At current growth rates (15% day over day), anyone transmitting the disease to a single person is, in expectation, responsible for 100 infections within 33 days. In expectation, that will result in two deaths, and that's only if we consider the first month. So even if the likelihood that you have the virus is very low, the expected value of the effects of your actions is still pretty serious.
 
 With or without Kant's categorical imperative, this kind of risk assessment at the margins should make clear our moral obligation.
 

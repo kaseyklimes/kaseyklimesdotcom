@@ -1,196 +1,94 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { cache } from 'react';
 import { ContentCategory, ContentItem, ContentMeta, FilterOptions } from '@/types/content';
 import { HIDE_TWEETS } from '@/utils/config';
 import { parseDateToTimestamp } from '@/utils/dateFormatting';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
-const VALID_CATEGORIES = ['blog', 'work', 'photography', 'shelf', 'tweet'];
+const VALID_CATEGORIES: ContentCategory[] = ['blog', 'work', 'photography', 'shelf', 'tweet'];
+const VALID_SLUG = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
 
-export function getContentBySlug(category: ContentCategory, slug: string): ContentItem | null {
+function isAvailableCategory(category: ContentCategory): boolean {
+  return VALID_CATEGORIES.includes(category) && !(HIDE_TWEETS && category === 'tweet');
+}
+
+// React's request-scoped cache shares reads between metadata and page rendering,
+// without retaining stale Markdown across development edits or revalidation.
+export const getContentBySlug = cache((category: ContentCategory, slug: string): ContentItem | null => {
+  if (!isAvailableCategory(category) || !VALID_SLUG.test(slug)) return null;
+
   try {
-    // Respect hide-tweets flag
-    if (HIDE_TWEETS && category === 'tweet') {
-      return null;
-    }
-    // Validate category
-    if (!VALID_CATEGORIES.includes(category)) {
-      console.warn(`Invalid category: ${category}`);
-      return null;
-    }
-
-    const fullPath = path.join(CONTENT_DIR, category, `${slug}.md`);
-
-    // Check if file exists
-    if (!fs.existsSync(fullPath)) {
-      console.warn(`File not found: ${fullPath}`);
-      return null;
-    }
-
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data, content } = matter(fileContents);
-
+    const fileContents = fs.readFileSync(path.join(CONTENT_DIR, category, `${slug}.md`), 'utf8');
+    // Disable gray-matter's global cache, which retains failed parses as empty data.
+    const { data, content } = matter(fileContents, {});
     return {
       ...(data as ContentMeta),
-      content,
+      category,
       slug,
+      content,
+      hasContent: content.trim().length > 0,
     };
   } catch (error) {
-    console.error(`Error loading content for ${category}/${slug}:`, error);
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error(`Error loading content for ${category}/${slug}:`, error);
+    }
     return null;
   }
+});
+
+export const getContentPaths = cache((category: ContentCategory): string[] => {
+  if (!isAvailableCategory(category)) return [];
+  try {
+    return fs.readdirSync(path.join(CONTENT_DIR, category))
+      .filter(file => file.endsWith('.md') && VALID_SLUG.test(file.slice(0, -3)))
+      .map(file => file.slice(0, -3))
+      .sort();
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error(`Error loading paths for ${category}:`, error);
+    }
+    return [];
+  }
+});
+
+function metadata(item: ContentItem): ContentMeta {
+  const { content, ...meta } = item;
+  void content;
+  return meta;
 }
 
 export function getAllContent(options?: FilterOptions): ContentMeta[] {
-  // Build category list, respecting hide-tweets flag
-  const categories = (() => {
-    if (options?.category) {
-      if (HIDE_TWEETS && options.category === 'tweet') return [];
-      return [options.category];
-    }
-    return HIDE_TWEETS ? VALID_CATEGORIES.filter(c => c !== 'tweet') : VALID_CATEGORIES;
-  })();
-  let allContent: ContentMeta[] = [];
-
+  const categories = options?.category ? [options.category] : VALID_CATEGORIES;
+  const allContent: ContentMeta[] = [];
   for (const category of categories) {
-    const categoryPath = path.join(CONTENT_DIR, category);
-
-    try {
-      if (!fs.existsSync(categoryPath)) {
-        console.warn(`Category directory not found: ${categoryPath}`);
-        continue;
-      }
-
-      const files = fs.readdirSync(categoryPath)
-        .filter(file => file.endsWith('.md'));
-
-      const categoryContent = files.map(file => {
-        const fullPath = path.join(categoryPath, file);
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-        const { data, content } = matter(fileContents);
-        const slug = file.replace(/\.md$/, '');
-
-        return {
-          ...(data as ContentMeta),
-          slug,
-          category: category as ContentCategory,
-          hasContent: content.trim().length > 0
-        };
-      });
-
-      allContent = [...allContent, ...categoryContent];
-    } catch (error) {
-      console.error(`Error loading content for ${category}:`, error);
+    for (const slug of getContentPaths(category)) {
+      const item = getContentBySlug(category, slug);
+      if (item) allContent.push(metadata(item));
     }
   }
 
-  // Apply sorting
-  if (options?.sortBy) {
-    allContent.sort((a, b) => {
-      const aValue = a[options.sortBy!];
-      const bValue = b[options.sortBy!];
-      const modifier = options.order === 'desc' ? -1 : 1;
-
-      if (options.sortBy === 'date') {
-        return modifier * (parseDateToTimestamp(aValue as string) - parseDateToTimestamp(bValue as string));
-      }
-
-      return modifier * ((aValue as number) - (bValue as number));
-    });
+  const sortBy = options?.sortBy;
+  if (sortBy) {
+    const modifier = options.order === 'desc' ? -1 : 1;
+    const value = (item: ContentMeta) => sortBy === 'date'
+      ? parseDateToTimestamp(item.date)
+      : (Number(item.stars) || 0);
+    allContent.sort((a, b) => modifier * (value(a) - value(b)));
   }
-
   return allContent;
 }
 
-/**
- * Get related content for a given category, excluding the current item.
- * Optimized to only read the minimum number of files needed (limit + buffer).
- * This avoids reading the entire category directory for better performance.
- */
-export function getRelatedContent(
-  category: ContentCategory,
-  excludeSlug: string,
-  limit = 2
-): ContentMeta[] {
-  // Validate category
-  if (!VALID_CATEGORIES.includes(category)) {
-    console.warn(`Invalid category: ${category}`);
-    return [];
+export function getRelatedContent(category: ContentCategory, excludeSlug: string, limit = 2): ContentMeta[] {
+  if (!Number.isFinite(limit) || limit < 1) return [];
+  const results: ContentMeta[] = [];
+  for (const slug of getContentPaths(category)) {
+    if (slug === excludeSlug) continue;
+    const item = getContentBySlug(category, slug);
+    if (!item || item.private) continue;
+    results.push(metadata(item));
+    if (results.length >= Math.floor(limit)) break;
   }
-
-  // Respect hide-tweets flag
-  if (HIDE_TWEETS && category === 'tweet') {
-    return [];
-  }
-
-  const categoryPath = path.join(CONTENT_DIR, category);
-
-  try {
-    if (!fs.existsSync(categoryPath)) {
-      console.warn(`Category directory not found: ${categoryPath}`);
-      return [];
-    }
-
-    const files = fs.readdirSync(categoryPath)
-      .filter(f => f.endsWith('.md') && f !== `${excludeSlug}.md`);
-
-    // Only read enough files to get the limit (plus a small buffer for filtering)
-    const results: ContentMeta[] = [];
-    const maxFilesToRead = Math.min(files.length, limit + 2); // Small buffer
-
-    for (let i = 0; i < maxFilesToRead && results.length < limit; i++) {
-      const file = files[i];
-      const fullPath = path.join(categoryPath, file);
-
-      try {
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-        const { data, content } = matter(fileContents);
-        const slug = file.replace(/\.md$/, '');
-
-        results.push({
-          ...(data as ContentMeta),
-          slug,
-          category: category as ContentCategory,
-          hasContent: content.trim().length > 0
-        });
-      } catch (error) {
-        console.error(`Error reading file ${file}:`, error);
-      }
-    }
-
-    return results;
-  } catch (error) {
-    console.error(`Error getting related content for ${category}:`, error);
-    return [];
-  }
+  return results;
 }
-
-export function getContentPaths(category: ContentCategory): string[] {
-  // Validate category
-  if (!VALID_CATEGORIES.includes(category)) {
-    console.warn(`Invalid category: ${category}`);
-    return [];
-  }
-
-  // Respect hide-tweets flag for path generation
-  if (HIDE_TWEETS && category === 'tweet') {
-    return [];
-  }
-
-  const categoryPath = path.join(CONTENT_DIR, category);
-
-  try {
-    if (!fs.existsSync(categoryPath)) {
-      console.warn(`Category directory not found: ${categoryPath}`);
-      return [];
-    }
-
-    return fs.readdirSync(categoryPath)
-      .filter(file => file.endsWith('.md'))
-      .map(file => file.replace(/\.md$/, ''));
-  } catch (error) {
-    console.error(`Error loading paths for ${category}:`, error);
-    return [];
-  }
-} 
