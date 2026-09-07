@@ -19,7 +19,7 @@ function load(file) {
   });
   vm.runInThisContext(`(function(require, module, exports, process) {${outputText}\n})`, { filename: file })(
     name => name.startsWith('@/') ? load(path.join(root, 'src', name.slice(2) + '.ts')) : require(name),
-    module, module.exports, { cwd: () => fixture, env: { HIDE_TWEETS: 'true' } },
+    module, module.exports, { cwd: () => fixture, env: {} },
   );
   return module.exports;
 }
@@ -32,16 +32,20 @@ write('b-hidden', '---\ntitle: Hidden\nprivate: true\n---\nbody');
 write('c-current', '---\ntitle: Current\ncategory: work\nslug: wrong\n---\nbody');
 write('d-public', '---\ntitle: Public\nstars: 4\n---\nbody');
 write('e-public', '---\ntitle: Also public\n---\n');
+fs.mkdirSync(path.join(fixture, 'content/tweet'), { recursive: true });
+fs.writeFileSync(path.join(fixture, 'content/tweet/c-current.md'), '---\ntitle: Old tweet\ncategory: tweet\n---\nbody');
 const api = load(path.join(root, 'src/utils/content.ts'));
 after(() => fs.rmSync(fixture, { recursive: true, force: true }));
 
-test('rejects traversal, invalid categories, missing posts, and disabled tweets', () => {
+test('rejects traversal, invalid categories, missing posts, and removed tweets', () => {
   assert.equal(api.getContentBySlug('blog', '../blog/c-current'), null);
   assert.equal(api.getContentBySlug('../blog', 'c-current'), null);
   assert.equal(api.getContentBySlug('blog', 'missing'), null);
   assert.equal(api.getContentBySlug('tweet', 'c-current'), null);
   assert.deepEqual(api.getAllContent({ category: '../blog' }), []);
   assert.deepEqual(api.getContentPaths('tweet'), []);
+  assert.deepEqual(api.getAllContent({ category: 'tweet' }), []);
+  assert.ok(api.getAllContent().every(item => item.category !== 'tweet'));
 });
 
 test('disk identity overrides frontmatter and metadata excludes Markdown body', () => {

@@ -3,15 +3,14 @@ import path from 'path';
 import matter from 'gray-matter';
 import { cache } from 'react';
 import { ContentCategory, ContentItem, ContentMeta, FilterOptions } from '@/types/content';
-import { HIDE_TWEETS } from '@/utils/config';
 import { parseDateToTimestamp } from '@/utils/dateFormatting';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
-const VALID_CATEGORIES: ContentCategory[] = ['blog', 'work', 'photography', 'shelf', 'tweet'];
+const VALID_CATEGORIES: ContentCategory[] = ['blog', 'work', 'photography', 'shelf'];
 const VALID_SLUG = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
 
 function isAvailableCategory(category: ContentCategory): boolean {
-  return VALID_CATEGORIES.includes(category) && !(HIDE_TWEETS && category === 'tweet');
+  return VALID_CATEGORIES.includes(category);
 }
 
 // React's request-scoped cache shares reads between metadata and page rendering,

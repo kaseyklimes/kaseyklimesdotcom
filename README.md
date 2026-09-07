@@ -77,7 +77,7 @@ Create new content files using the following format:
 ```yaml
 ---
 title: "Your Title"
-category: "blog" # blog, work, photography, shelf, or tweet
+category: "blog" # blog, work, photography, or shelf
 date: "2024-02-13" # supports: MM-DD-YYYY, MM-YYYY, YYYY, YYYY-YYYY, YYYY-present
 stars: 4 # 1-5, controls column span in masonry grid
 heroImage: "/images/your-image.jpg"

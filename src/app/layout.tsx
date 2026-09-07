@@ -22,12 +22,6 @@ export const metadata: Metadata = {
     url: '/',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: siteName }],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: siteName,
-    description: siteDescription,
-    images: ['/og-image.png'],
-  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -80,11 +74,6 @@ export default function RootLayout({
         
         {/* DNS Prefetching for external resources */}
         <link rel="dns-prefetch" href="//i.ytimg.com" />
-        <link rel="dns-prefetch" href="//pbs.twimg.com" />
-        <link rel="dns-prefetch" href="//platform.twitter.com" />
-        
-        {/* Preconnect for critical resources */}
-        <link rel="preconnect" href="https://platform.twitter.com" />
         
         {/* Add manifest for PWA */}
         <link rel="manifest" href="/manifest.json" />
