@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <footer className="py-4">
         <div className="max-w-7xl mx-auto px-4">
           <p className="text-xs">
-            © {new Date().getFullYear()} Portfolio. All rights reserved.
+            © {new Date().getFullYear()} Kasey Klimes
           </p>
         </div>
       </footer>

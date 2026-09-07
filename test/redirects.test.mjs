@@ -4,6 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { unstable_getResponseFromNextConfig } from 'next/experimental/testing/server.js';
 import config from '../next.config.mjs';
 import { getLegacyBlogRedirects } from '../config/legacy-blog-redirects.mjs';
+import { getLegacyWorkRedirects } from '../config/legacy-work-redirects.mjs';
 
 const origin = 'https://www.kaseyklimes.com';
 async function check(source, destination) {
@@ -40,4 +41,15 @@ test('current blog URLs and unknown legacy slugs are not redirected', async () =
     const response = await unstable_getResponseFromNextConfig({ url: origin + source, nextConfig: config });
     assert.equal(response.headers.get('location'), null);
   }
+});
+
+test('legacy Squarespace work URLs redirect to current pages', async () => {
+  await check('/google-maps-ar', '/work/google');
+  await check('/about?utm=x', '/?utm=x');
+  for (const rule of getLegacyWorkRedirects()) await check(rule.source, rule.destination);
+});
+
+test('current work URLs are not redirected', async () => {
+  const response = await unstable_getResponseFromNextConfig({ url: origin + '/work/google', nextConfig: config });
+  assert.equal(response.headers.get('location'), null);
 });

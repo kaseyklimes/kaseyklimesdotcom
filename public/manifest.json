@@ -1,7 +1,7 @@
 {
-  "name": "Portfolio Website",
-  "short_name": "Portfolio",
-  "description": "A showcase of work, writing, photography, and other content",
+  "name": "Kasey Klimes",
+  "short_name": "Klimes",
+  "description": "Systems designer in Brooklyn. Founder of Primitive.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -3,12 +3,10 @@
   <style>
     .bg { fill: #e8e8e8; }
     .dot { fill: #d0d0d0; }
-    .texture-layer { opacity: 0.03; }
     .fg { fill: #333333; }
     @media (prefers-color-scheme: dark) {
       .bg { fill: #2a2a2a; }
       .dot { fill: #222222; }
-      .texture-layer { opacity: 0.04; }
       .fg { fill: #ffffff; }
     }
   </style>
@@ -16,12 +14,8 @@
     <pattern id="dotGrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
       <circle cx="20" cy="20" r="2" class="dot"/>
     </pattern>
-    <pattern id="texturePattern" x="0" y="0" width="250" height="250" patternUnits="userSpaceOnUse">
-      <image href="/images/primitive-texture.jpg" width="250" height="250"/>
-    </pattern>
   </defs>
   <rect class="bg" width="1000" height="500"/>
-  <rect width="1000" height="500" fill="url(#texturePattern)" class="texture-layer"/>
   <rect width="1000" height="500" fill="url(#dotGrid)"/>
   <g class="fg">
     <path d="M368.76,202.52h-35.98v96.31h12.86v-37.53h23.11c18.6,0,31.08-12.16,31.08-30.28,0-14.19-9.62-28.51-31.08-28.51ZM369.29,249.41h-23.66v-34.95h23.66c10.57,0,17.41,6.52,17.41,16.59,0,11.15-6.82,18.36-17.41,18.36Z"/>

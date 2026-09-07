@@ -1,10 +1,11 @@
 import { getLegacyBlogRedirects } from './config/legacy-blog-redirects.mjs';
+import { getLegacyWorkRedirects } from './config/legacy-work-redirects.mjs';
 import createMDX from '@next/mdx';
 import remarkGfm from 'remark-gfm';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  redirects: async () => getLegacyBlogRedirects(),
+  redirects: async () => [...getLegacyBlogRedirects(), ...getLegacyWorkRedirects()],
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   images: {
     remotePatterns: [
