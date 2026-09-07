@@ -2,7 +2,7 @@
 title: Design Needs Complexity Theory
 category: blog
 date: 08-31-2021
-stars: 1
+stars: 2
 tags: ["blog"]
 description: Despite Christopher Alexander’s notable application of complexity  theory in design during the 60's and 70's, the two fields have  mysteriously grown apart. ...
 heroImage: /images/design-needs-complexity-theory.png

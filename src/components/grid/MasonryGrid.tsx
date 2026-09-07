@@ -10,6 +10,7 @@ import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 import PhotoCarousel, { Photo } from '@/components/ui/PhotoCarousel';
+import { filterGridItems } from '@/utils/gridFilter';
 
 // Gap between items in pixels
 const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
@@ -336,9 +337,8 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
 
   // Memoized filtered and sorted items with pre-computed date cache
   const sortedItems = useMemo(() => {
-    const filtered = selectedTag && selectedTag !== 'all'
-      ? items.filter(item => item.tags?.includes(selectedTag) && !item.private)
-      : items.filter(item => !item.private && item.category !== 'shelf');
+    // Mobile is the single-column layout. The star floor only applies to the unfiltered view.
+    const filtered = filterGridItems(items, selectedTag, maxColumns === 1);
 
     // Pre-compute dates ONCE before sorting
     const dateCache = new Map<string, number>(
@@ -368,7 +368,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
 
       return dateCompare;
     });
-  }, [items, selectedTag]);
+  }, [items, selectedTag, maxColumns]);
 
   // Photos available for the full-screen viewer, in grid order.
   // Skips items without a still image (e.g. videos) so navigation stays clean.

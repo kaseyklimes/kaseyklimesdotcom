@@ -62,6 +62,12 @@ content/
   work/
     job-1.md
     job-2.md
+  play/
+    side-project-1.md
+    side-project-2.md
+  talks/
+    talk-1.md
+    talk-2.md
   photography/
     collection-1.md
     collection-2.md
@@ -77,7 +83,7 @@ Create new content files using the following format:
 ```yaml
 ---
 title: "Your Title"
-category: "blog" # blog, work, photography, or shelf
+category: "blog" # blog, work, play, talks, photography, or shelf
 date: "2024-02-13" # supports: MM-DD-YYYY, MM-YYYY, YYYY, YYYY-YYYY, YYYY-present
 stars: 4 # 1-5, controls column span in masonry grid
 heroImage: "/images/your-image.jpg"
