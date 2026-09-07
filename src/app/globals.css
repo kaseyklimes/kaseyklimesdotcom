@@ -110,3 +110,180 @@ body {
 .grid-item img.loaded {
   opacity: 1;
 }
+
+/* Shared article typography. Media stays full-width while body copy is readable. */
+.markdown-content {
+  overflow-wrap: anywhere;
+}
+.blog-prose {
+  font-size: 1rem;
+  line-height: 1.85;
+}
+.blog-prose > :where(p, ul, ol, blockquote, h2, h3, h4, hr, .footnotes) {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.blog-prose :where(h1, h2, h3, h4) {
+  text-wrap: balance;
+  line-height: 1.3;
+  scroll-margin-top: 2rem;
+}
+.blog-prose h1 {
+  font-size: clamp(1.8rem, 4vw, 2.65rem);
+  margin-bottom: 1.5em;
+}
+.blog-prose h2 { font-size: 1.5rem; margin-top: 2.5em; }
+.blog-prose h3 { font-size: 1.15rem; margin-top: 2em; }
+.markdown-content :where(ul, ol) { padding-left: 1.6em; }
+.markdown-content li { padding-left: .3em; margin-block: .5em; }
+.markdown-content li > :where(p, ul, ol) { margin-block: .5em; }
+.markdown-content li::marker { color: var(--foreground); font-weight: 500; }
+.markdown-content blockquote {
+  border-left: 2px solid currentColor;
+  padding-left: 1.25em;
+  font-style: normal;
+  font-weight: 400;
+  opacity: .85;
+}
+.markdown-content blockquote p::before,
+.markdown-content blockquote p::after { content: none; }
+.markdown-content figure { margin-block: 2.5rem; }
+.markdown-content .markdown-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  align-items: center;
+}
+.markdown-content .markdown-images > a { min-width: 0; }
+.markdown-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 4px;
+  outline: 1px solid rgba(0, 0, 0, .1);
+  outline-offset: -1px;
+}
+.markdown-content figcaption {
+  margin-top: .75rem;
+  font-size: .8rem;
+  line-height: 1.6;
+  opacity: .7;
+  text-wrap: pretty;
+}
+.markdown-content figcaption :where(p, a, strong, em) { font-size: inherit; }
+.markdown-content .markdown-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.5rem;
+  margin-block: 2rem;
+}
+.markdown-content .markdown-columns > div { min-width: 0; }
+.markdown-content .markdown-columns > div > :first-child { margin-top: 0; }
+.markdown-table { overflow-x: auto; margin-block: 2rem; }
+.markdown-table table { margin: 0; min-width: 24rem; }
+.markdown-content pre { overflow-x: auto; max-width: 100%; }
+.markdown-content .footnotes { margin-top: 3rem; border-top: 1px solid; padding-top: 1rem; font-size: .8rem; }
+.markdown-content [data-footnote-ref] { text-decoration: none; }
+.markdown-content .footnotes :target { scroll-margin-top: 2rem; }
+@media (prefers-color-scheme: dark) {
+  .markdown-content img { outline-color: rgba(255, 255, 255, .1); }
+}
+@media (max-width: 640px) {
+  .blog-prose { font-size: .9375rem; line-height: 1.8; }
+  .blog-prose h2 { font-size: 1.3rem; }
+  .markdown-content figure { margin-block: 2rem; }
+}
+
+
+/* Long course outlines use weekly sections and readable lesson rows. */
+.markdown-content .course-overview { margin-block: 2.5rem; }
+.markdown-content .course-week + .course-week { margin-top: 3.5rem; }
+.markdown-content .course-week-header {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid currentColor;
+}
+.markdown-content .course-week-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+.markdown-content .course-lessons { list-style: none; padding: 0; margin: 0; }
+.markdown-content .course-lesson {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: .75rem;
+  padding: 1.5rem 0;
+  margin: 0;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+}
+.markdown-content .course-lesson h4 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.markdown-content .course-lesson-number {
+  display: block;
+  margin-bottom: .4rem;
+  font-size: .75rem;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  opacity: .55;
+}
+.markdown-content .course-lesson-body { min-width: 0; font-size: .875rem; line-height: 1.75; }
+.markdown-content .course-lesson-body p { margin: 0; }
+.markdown-content .course-lesson-body ul { margin: .75rem 0 0; padding-left: 1.25rem; }
+.markdown-content .course-lesson-body li { margin-block: .5rem; padding-left: .25rem; }
+.markdown-content .course-lesson-body li:last-child { margin-bottom: 0; }
+.markdown-content .course-lesson-body .course-guest { margin-top: 1rem; font-size: .8125rem; }
+.markdown-content .course-guest span {
+  display: block;
+  margin-bottom: .2rem;
+  font-size: .6875rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  opacity: .6;
+}
+@media (min-width: 768px) {
+  .markdown-content .course-lesson { grid-template-columns: 14rem minmax(0, 1fr); gap: 2rem; }
+}
+
+/* Work pages share a readable text measure while media retains its full width. */
+.work-heading { margin-bottom: 2rem; }
+.work-heading h1 { max-width: 48rem; font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.15; text-wrap: balance; }
+.work-heading p { max-width: 42rem; font-size: 1.125rem; line-height: 1.6; }
+.work-detail > .markdown-content > :is(p, ul, ol, blockquote, h1, h2, h3, h4) { max-width: 42rem; margin-inline: auto; }
+.work-detail > .markdown-content { line-height: 1.8; }
+.work-detail > .markdown-content > h2 { margin-top: 2.5rem; font-size: 1.25rem; line-height: 1.5; text-wrap: balance; }
+.image-gallery { min-width: 0; }
+.gallery-navigation { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin-top: .75rem; gap: .5rem; }
+.gallery-status { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .25rem 1rem; }
+.gallery-navigation span { text-align: center; font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.gallery-navigation button { width: 44px; height: 44px; border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: 50%; font-size: 1.25rem; }
+.gallery-navigation button:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+.gallery-navigation button:disabled { opacity: .35; }
+.gallery-tools { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: .5rem; font-size: .8125rem; }
+.gallery-tools select { width: 100%; flex: 1; min-width: 0; max-width: 100%; min-height: 44px; padding: .5rem; background: transparent; border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: .25rem; }
+.gallery-status a, .work-map-heading a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: .2em; }
+.image-gallery :is(button, select, a):focus-visible, .image-gallery:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.work-map { margin-top: 3rem; }
+.work-map-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; margin-bottom: .75rem; }
+.work-map-heading h2 { font-size: 1.125rem; }
+.work-map-heading a { font-size: .8125rem; }
+.work-map iframe { display: block; width: 100%; height: min(70vh, 40rem); min-height: 28rem; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+.markdown-content .report-page { scroll-margin-top: 2rem; }
+.markdown-content .report-page .markdown-images > a { display: block; }
+.markdown-content .report-page-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; font-size: .75rem; font-style: normal; }
+.report-page-controls span { margin-right: auto; font-variant-numeric: tabular-nums; }
+.markdown-content .report-page-controls a { display: inline-flex; align-items: center; min-height: 44px; }
+.markdown-content .report-index { margin-block: 2rem; border-block: 1px solid color-mix(in srgb, currentColor 15%, transparent); padding-block: .5rem; font-size: .875rem; }
+.report-index summary { cursor: pointer; padding-block: .625rem; }
+.report-index nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 1rem; padding-block: 1rem; }
+.markdown-content .report-index a { display: flex; flex-direction: column; gap: .5rem; min-width: 0; padding: .5rem; border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: .25rem; text-decoration: none; }
+.markdown-content .report-index img { width: 100%; height: 10rem; object-fit: contain; margin: 0; outline: none; border-radius: 0; }
+.report-index a span { font-size: .75rem; text-align: center; font-variant-numeric: tabular-nums; }
+.markdown-content .report-index a:hover { border-color: currentColor; }
+.report-index a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }

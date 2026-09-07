@@ -5,11 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import { notFound } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
+import MarkdownContent from '@/components/content/MarkdownContent';
 import { Metadata } from 'next';
 import Carousel from '@/components/ui/Carousel';
-import React from 'react';
 import { getVideoInfo, getYouTubeThumbnail } from '@/utils/mediaDetection';
 import { formatDateOrRange } from '@/utils/dateFormatting';
 import VideoEmbed from '@/components/ui/VideoEmbed';
@@ -34,6 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const hero = content.heroImage;
   return {
     title: content.title,
+    alternates: { canonical: `/${category}/${slug}` },
     description: content.description,
     openGraph: {
       title: content.title,
@@ -59,231 +58,6 @@ export async function generateStaticParams() {
   }));
 }
 
-// Renders markdown content with ::: column blocks (both ||| and ### styles)
-function MarkdownWithColumns({ content }: { content: string }) {
-  // Check if content has ::: markers for columns
-  const hasColumns = content.includes(':::');
-
-  if (!hasColumns) {
-    // No columns, render normally
-    return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>;
-  }
-
-  // Split content by ::: markers
-  const parts = content.split(/^:::\s*$/m);
-
-  return (
-    <>
-      {parts.map((part, index) => {
-        // Check if this part should be columns (odd indices after split)
-        if (index % 2 === 1) {
-          // Check if content uses ||| separator
-          const hasPipeSeparator = /^\|\|\|\s*$/m.test(part);
-
-          if (hasPipeSeparator) {
-            // Split by ||| separator — general-purpose side-by-side columns
-            const columns = part.split(/^\|\|\|\s*$/m).map(col => col.trim()).filter(col => col);
-
-            if (columns.length > 1) {
-              const gridClass = columns.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
-                              columns.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
-                              'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
-
-              return (
-                <div key={index} className={`grid ${gridClass} gap-6 my-8`}>
-                  {columns.map((col, colIndex) => (
-                    <div key={colIndex}>
-                      <ReactMarkdown rehypePlugins={[rehypeRaw]}>{col}</ReactMarkdown>
-                    </div>
-                  ))}
-                </div>
-              );
-            }
-          }
-
-          // Fall back to ### header splitting
-          const columns = part.trim().split(/(?=^### )/m).filter(col => col.trim());
-
-          if (columns.length > 1) {
-            const gridClass = columns.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
-                            columns.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
-                            'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
-
-            return (
-              <div key={index} className={`grid ${gridClass} gap-6 not-prose my-8`}>
-                {columns.map((col, colIndex) => (
-                  <div key={colIndex} className="space-y-3">
-                    <ReactMarkdown
-                      rehypePlugins={[rehypeRaw]}
-                      components={{
-                        h3: ({ children }) => (
-                          <h3 className="text-sm font-bold mb-3 mt-0">{children}</h3>
-                        ),
-                        h4: ({ children }) => (
-                          <h4 className="text-xs font-semibold mb-2 mt-3">{children}</h4>
-                        ),
-                        p: ({ children }) => (
-                          <p className="text-xs mb-2 leading-relaxed">{children}</p>
-                        )
-                      }}
-                    >
-                      {col}
-                    </ReactMarkdown>
-                  </div>
-                ))}
-              </div>
-            );
-          }
-        }
-
-        // Regular content
-        return (
-          <ReactMarkdown
-            key={index}
-            rehypePlugins={[rehypeRaw]}
-            components={{
-              p: ({ children, ...props }) => {
-                // Check if this paragraph contains multiple images
-                const childArray = React.Children.toArray(children);
-
-                // Count images
-                let imageCount = 0;
-                childArray.forEach(child => {
-                  if (React.isValidElement(child) && (child.type === 'img' || child.props?.src)) {
-                    imageCount++;
-                  }
-                });
-
-                // If multiple images, render side by side
-                if (imageCount > 1) {
-                  const gridCols = imageCount === 2 ? 'grid-cols-2' :
-                                  imageCount === 3 ? 'grid-cols-3' :
-                                  imageCount === 4 ? 'grid-cols-4' :
-                                  imageCount >= 5 ? 'grid-cols-5' : 'grid-cols-4';
-                  return (
-                    <div className={`grid ${gridCols} gap-4 my-8 not-prose`}>
-                      {childArray.filter(child =>
-                        React.isValidElement(child) && (child.type === 'img' || child.props?.src)
-                      )}
-                    </div>
-                  );
-                }
-
-                // Check for pipe-separated text
-                const textContent = childArray
-                  .map(child => {
-                    if (typeof child === 'string') return child;
-                    if (React.isValidElement(child) && child.type === 'strong') {
-                      return child.props?.children;
-                    }
-                    return '';
-                  })
-                  .join('');
-
-                if (textContent.includes(' | ')) {
-                  const columns = textContent.split(' | ').map(col => col.trim());
-                  const gridCols = columns.length === 2 ? 'grid-cols-2' :
-                                  columns.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
-
-                  return (
-                    <div className={`grid ${gridCols} gap-4 not-prose`}>
-                      {columns.map((col, idx) => {
-                        const isBold = col.startsWith('**') && col.endsWith('**');
-                        const text = isBold ? col.slice(2, -2) : col;
-                        return (
-                          <div key={idx} className="text-left">
-                            {isBold ? <strong className="font-bold">{text}</strong> : text}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                }
-
-                // Default paragraph rendering
-                return <p {...props}>{children}</p>;
-              },
-              img: ({ src, alt, ...props }) => (
-                <img
-                  src={src}
-                  alt={alt}
-                  className="w-full h-auto rounded-lg object-cover"
-                  style={{ maxHeight: '300px' }}
-                  {...props}
-                />
-              )
-            }}
-          >
-            {part}
-          </ReactMarkdown>
-        );
-      })}
-    </>
-  );
-}
-
-// Entry point: strips ^^ markers, splits out inline carousels, renders segments
-function ColumnLayout({ content }: { content: string }) {
-  // First, remove ^^ markers from the content
-  const processedContent = content.replace(/^\^\^/gm, '');
-
-  // Split content around <carousel>...</carousel> blocks
-  const carouselRegex = /<carousel>([\s\S]*?)<\/carousel>/g;
-  const segments: { type: 'markdown' | 'carousel'; content: string }[] = [];
-  let lastIndex = 0;
-  let match;
-
-  while ((match = carouselRegex.exec(processedContent)) !== null) {
-    // Add preceding markdown segment if any
-    if (match.index > lastIndex) {
-      const md = processedContent.slice(lastIndex, match.index);
-      if (md.trim()) {
-        segments.push({ type: 'markdown', content: md });
-      }
-    }
-    // Add carousel segment (the captured image URLs)
-    segments.push({ type: 'carousel', content: match[1] });
-    lastIndex = match.index + match[0].length;
-  }
-
-  // Add trailing markdown segment if any
-  if (lastIndex < processedContent.length) {
-    const md = processedContent.slice(lastIndex);
-    if (md.trim()) {
-      segments.push({ type: 'markdown', content: md });
-    }
-  }
-
-  // If no carousels were found, just render with columns
-  if (segments.length === 0) {
-    return <MarkdownWithColumns content={processedContent} />;
-  }
-
-  return (
-    <>
-      {segments.map((segment, i) => {
-        if (segment.type === 'carousel') {
-          const images = segment.content
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
-
-          if (images.length > 0) {
-            return (
-              <div key={i} className="my-8 not-prose">
-                <Carousel images={images} alt="Inline carousel" />
-              </div>
-            );
-          }
-          return null;
-        }
-
-        return <MarkdownWithColumns key={i} content={segment.content} />;
-      })}
-    </>
-  );
-}
-
 export default async function ContentPage({ params }: PageProps) {
   const { category, slug } = await params;
 
@@ -306,9 +80,20 @@ export default async function ContentPage({ params }: PageProps) {
   // Get video info if there is a single hero image that is a video URL
   const videoInfo = heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false };
 
+  const heading = (
+    <div className={category === 'work' ? 'work-heading' : undefined}>
+              <h1 className="text-4xl mb-4">
+                {content.title}
+              </h1>
+              {content.description && (
+                <p className="text-xl">{content.description}</p>
+              )}
+    </div>
+  );
+
   return (
     <Layout>
-      <article className="max-w-4xl mx-auto">
+      <article className={`max-w-4xl mx-auto ${category === 'work' ? 'work-detail' : ''}`}>
         {/* Back Button */}
         <div className="mb-4 mt-4">
           <Link
@@ -335,7 +120,7 @@ export default async function ContentPage({ params }: PageProps) {
         {/* Content Header */}
         <header className="mb-8">
           {category !== 'shelf' && (
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
               <span className="text-xs">
                 {content.category}
               </span>
@@ -358,6 +143,7 @@ export default async function ContentPage({ params }: PageProps) {
           )}
           {category !== 'blog' && (
             <>
+              {category === 'work' && heading}
               {heroImages.length > 0 && (
                 <div className={`relative ${videoInfo.isVideo
                   ? 'aspect-[16/9]'
@@ -404,20 +190,25 @@ export default async function ContentPage({ params }: PageProps) {
                   {content.carouselCaption}
                 </p>
               )}
-              <h1 className="text-4xl mb-4">
-                {content.title}
-              </h1>
-              {content.description && (
-                <p className="text-xl">{content.description}</p>
-              )}
+              {category !== 'work' && heading}
             </>
           )}
         </header>
 
         {/* Content Body */}
-        <div className="prose prose-untitled">
-          <ColumnLayout content={content.content} />
+        <div className={`prose prose-untitled markdown-content ${category === 'blog' ? 'blog-prose' : ''}`}>
+          <MarkdownContent content={content.content} reportPages={content.reportPages} />
         </div>
+
+        {category === 'work' && content.iframeUrl && (
+          <section className="work-map" aria-label="Interactive map">
+            <div className="work-map-heading">
+              <h2>Explore the interactive map</h2>
+              <a href={content.iframeUrl} target="_blank" rel="noopener noreferrer">Open full-screen map ↗</a>
+            </div>
+            <iframe src={content.iframeUrl} title={content.title} loading="lazy" allowFullScreen />
+          </section>
+        )}
 
         {/* Related Content */}
         {relatedContent.length > 0 && (

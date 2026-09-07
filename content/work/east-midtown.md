@@ -1,4 +1,5 @@
 ---
+reportPages: true
 title: "East Midtown Public Realm Vision Plan"
 category: "work"
 date: "2014"

@@ -60,82 +60,167 @@ https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/172403009
 
 ## Course Overview
 
-:::
-
-### WEEK 1
-
-#### 1. Introduction
-^^What is design research? What are systems?  
-^^This class introduces these core concepts as well as OODA loops, the ladder of abstraction, and models.  
-^^Students use interactive digital tools to model systems with stock and flow visualizations.
-
-#### 2. The context of complexity
-^^What is complexity?  
-^^This class introduces the world of complexity science, the discovery-first research process, and the phenomena of emergence.  
-^^Students get their hands dirty with agent-based modeling to better understand these surprising dynamics.  
-^^Students also select complex systems for study, identify their stakeholder within that system, and form groups for their research project over the next three weeks.
-
-#### 3. Asking the right questions
-^^Impactful design research begins with strong and well-articulated research questions.  
-^^In our first studio, students learn workshopping techniques and frameworks for developing early-stage research questions.  
-^^Their assignment is to build a study plan.
-
-#### 4. Understanding the user
-^^This class introduces the strange world of the human mind by tracing our evolutionary heritage and how the unusual quirks of human nature play out at large social scales.  
-^^Students learn the principles of user-centered design and methods for applying them in their work.  
-^^Guest speaker: Julka Almquist, Director of Research on the Innovation Team at Target and former IDEO ethnographer
-
-#### 5. Research methods
-^^This studio provides a tour of the researcher's toolkit, with qualitative and quantitative methods for investigating new problem spaces.  
-^^Students learn how to select a proper method for their study and techniques for conducting great interviews.
-
-### WEEK 2
-
-#### 6. Emergent technology
-^^What exactly is technology? Where do new technologies come from? How does technology progress? Who develops new technology?  
-^^This class explores these questions through the lens of combinatorial evolution and traces the history of the technologies that have changed our world.  
-^^We also introduce the concept of design for emergence as an alternative paradigm to modernist and user-centered design.  
-^^Guest speaker: Sam Arbesman, a complexity scientist at Lux Capital and author of Overcomplicated: Technology at the Limits of Comprehension.
-
-#### 7. Collecting raw data
-^^In this studio, students begin the process of collecting qualitative data for their research projects.  
-^^We cover different approaches to interviews, techniques for building rapport and uncovering mental models, and conduct mock interviews.
-
-#### 8. The construction of knowledge
-^^This class begins with students sharing examples of design for emergence from the wild.  
-^^After student presentations we dive into grounded theory and how high-level insights emerge from low-level data.
-
-#### 9. Qualitative data analysis
-^^In this studio, students get their hands dirty deriving insights from their qualitative interview data.  
-^^Students learn several analysis techniques like affinity mapping and open coding alongside frameworks like the DIKW pyramid.
-
-#### 10. The art of abstraction
-^^What are mental models? Where do they come from, and how can we build them?  
-^^This class—a student favorite—is a tour of mental models like Chesterton's Fence, contagion, the rhizome, the tragedy of the commons, and chaos theory.  
-^^Guest speaker: Alex Komoroske, Head of Corporate Strategy at Stripe.
-
-### WEEK 3
-
-#### 11. Strategy
-^^The word gets thrown around a lot, but what exactly is strategy—and why is it so rare?  
-^^In this studio, students learn the fundamentals of strategy and techniques for how to turn descriptive insight from their research into superior actions for their stakeholders.
-
-#### 12. The seduction of simplicity
-^^While understanding complexity requires simplified models, confusing the model for the system can have dire consequences.  
-^^This class offers a cautionary tale about the dangers of reductionism, covering concepts like legibility (à la James C. Scott), the McNamara fallacy, and the unintended consequences of social media on political discourse.  
-^^Students use the 'Tarot Cards of Tech' to explore risks of unintended consequences in their research projects.
-
-#### 13. Visual communication
-^^In order to have impact, great research must be paired with great storytelling.  
-^^This studio covers the fundamentals of visual communication and offers practical techniques for effectively transmitting ideas across minds.
-
-#### 14. Student presentations
-^^Students present their group projects with guest critics.
-
-#### 15. Student presentations
-^^Students present their group projects with guest critics.
-
-:::
+<div class="course-overview" id="course-overview">
+<section class="course-week">
+<header class="course-week-header">
+<h3>WEEK 1</h3>
+</header>
+<ol class="course-lessons" start="1">
+<li class="course-lesson">
+<h4><span class="course-lesson-number">1.</span> Introduction</h4>
+<div class="course-lesson-body">
+<p>What is design research? What are systems?</p>
+<ul>
+<li>This class introduces these core concepts as well as OODA loops, the ladder of abstraction, and models.</li>
+<li>Students use interactive digital tools to model systems with stock and flow visualizations.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">2.</span> The context of complexity</h4>
+<div class="course-lesson-body">
+<p>What is complexity?</p>
+<ul>
+<li>This class introduces the world of complexity science, the discovery-first research process, and the phenomena of emergence.</li>
+<li>Students get their hands dirty with agent-based modeling to better understand these surprising dynamics.</li>
+<li>Students also select complex systems for study, identify their stakeholder within that system, and form groups for their research project over the next three weeks.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">3.</span> Asking the right questions</h4>
+<div class="course-lesson-body">
+<p>Impactful design research begins with strong and well-articulated research questions.</p>
+<ul>
+<li>In our first studio, students learn workshopping techniques and frameworks for developing early-stage research questions.</li>
+<li>Their assignment is to build a study plan.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">4.</span> Understanding the user</h4>
+<div class="course-lesson-body">
+<p>This class introduces the strange world of the human mind by tracing our evolutionary heritage and how the unusual quirks of human nature play out at large social scales.</p>
+<ul>
+<li>Students learn the principles of user-centered design and methods for applying them in their work.</li>
+</ul>
+<p class="course-guest"><span>Guest speaker:</span>Julka Almquist, Director of Research on the Innovation Team at Target and former IDEO ethnographer</p>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">5.</span> Research methods</h4>
+<div class="course-lesson-body">
+<p>This studio provides a tour of the researcher&#x27;s toolkit, with qualitative and quantitative methods for investigating new problem spaces.</p>
+<ul>
+<li>Students learn how to select a proper method for their study and techniques for conducting great interviews.</li>
+</ul>
+</div>
+</li>
+</ol>
+</section>
+<section class="course-week">
+<header class="course-week-header">
+<h3>WEEK 2</h3>
+</header>
+<ol class="course-lessons" start="6">
+<li class="course-lesson">
+<h4><span class="course-lesson-number">6.</span> Emergent technology</h4>
+<div class="course-lesson-body">
+<p>What exactly is technology? Where do new technologies come from? How does technology progress? Who develops new technology?</p>
+<ul>
+<li>This class explores these questions through the lens of combinatorial evolution and traces the history of the technologies that have changed our world.</li>
+<li>We also introduce the concept of design for emergence as an alternative paradigm to modernist and user-centered design.</li>
+</ul>
+<p class="course-guest"><span>Guest speaker:</span>Sam Arbesman, a complexity scientist at Lux Capital and author of Overcomplicated: Technology at the Limits of Comprehension.</p>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">7.</span> Collecting raw data</h4>
+<div class="course-lesson-body">
+<p>In this studio, students begin the process of collecting qualitative data for their research projects.</p>
+<ul>
+<li>We cover different approaches to interviews, techniques for building rapport and uncovering mental models, and conduct mock interviews.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">8.</span> The construction of knowledge</h4>
+<div class="course-lesson-body">
+<p>This class begins with students sharing examples of design for emergence from the wild.</p>
+<ul>
+<li>After student presentations we dive into grounded theory and how high-level insights emerge from low-level data.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">9.</span> Qualitative data analysis</h4>
+<div class="course-lesson-body">
+<p>In this studio, students get their hands dirty deriving insights from their qualitative interview data.</p>
+<ul>
+<li>Students learn several analysis techniques like affinity mapping and open coding alongside frameworks like the DIKW pyramid.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">10.</span> The art of abstraction</h4>
+<div class="course-lesson-body">
+<p>What are mental models? Where do they come from, and how can we build them?</p>
+<ul>
+<li>This class—a student favorite—is a tour of mental models like Chesterton&#x27;s Fence, contagion, the rhizome, the tragedy of the commons, and chaos theory.</li>
+</ul>
+<p class="course-guest"><span>Guest speaker:</span>Alex Komoroske, Head of Corporate Strategy at Stripe.</p>
+</div>
+</li>
+</ol>
+</section>
+<section class="course-week">
+<header class="course-week-header">
+<h3>WEEK 3</h3>
+</header>
+<ol class="course-lessons" start="11">
+<li class="course-lesson">
+<h4><span class="course-lesson-number">11.</span> Strategy</h4>
+<div class="course-lesson-body">
+<p>The word gets thrown around a lot, but what exactly is strategy—and why is it so rare?</p>
+<ul>
+<li>In this studio, students learn the fundamentals of strategy and techniques for how to turn descriptive insight from their research into superior actions for their stakeholders.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">12.</span> The seduction of simplicity</h4>
+<div class="course-lesson-body">
+<p>While understanding complexity requires simplified models, confusing the model for the system can have dire consequences.</p>
+<ul>
+<li>This class offers a cautionary tale about the dangers of reductionism, covering concepts like legibility (à la James C. Scott), the McNamara fallacy, and the unintended consequences of social media on political discourse.</li>
+<li>Students use the &#x27;Tarot Cards of Tech&#x27; to explore risks of unintended consequences in their research projects.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">13.</span> Visual communication</h4>
+<div class="course-lesson-body">
+<p>In order to have impact, great research must be paired with great storytelling.</p>
+<ul>
+<li>This studio covers the fundamentals of visual communication and offers practical techniques for effectively transmitting ideas across minds.</li>
+</ul>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">14.</span> Student presentations</h4>
+<div class="course-lesson-body">
+<p>Students present their group projects with guest critics.</p>
+</div>
+</li>
+<li class="course-lesson">
+<h4><span class="course-lesson-number">15.</span> Student presentations</h4>
+<div class="course-lesson-body">
+<p>Students present their group projects with guest critics.</p>
+</div>
+</li>
+</ol>
+</section>
+</div>
 
 > I really loved this course, I think there's a great balance between theory and practice. Moreover, it was really a pleasure to learn from experts (including guests) with amazing backgrounds.  
 > — Student (anonymous feedback)
@@ -165,8 +250,22 @@ https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/172403009
 
 ## Guest Speakers
 
-![Julka Almquist](/images/drcs-julka.jpg) ![Sam Arbesman](/images/drcs-sam.jpg) ![Alex Komoroske](/images/drcs-alex.jpg)
+:::
+![Julka Almquist](/images/drcs-julka.jpg)
 
-**Julka Almquist** | **Sam Arbesman** | **Alex Komoroske**
+**Julka Almquist**
 
-Director of Research on the Innovation Team at Target, formerly IDEO | Complexity Scientist at LUX Capital, Author of _Overcomplicated: Technology at the Limits of Comprehension_ | Head of Strategy at Stripe, formerly Google
+Director of Research on the Innovation Team at Target, formerly IDEO
+|||
+![Sam Arbesman](/images/drcs-sam.jpg)
+
+**Sam Arbesman**
+
+Complexity Scientist at LUX Capital, Author of _Overcomplicated: Technology at the Limits of Comprehension_
+|||
+![Alex Komoroske](/images/drcs-alex.jpg)
+
+**Alex Komoroske**
+
+Head of Strategy at Stripe, formerly Google
+:::

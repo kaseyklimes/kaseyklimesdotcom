@@ -15,11 +15,11 @@ My research in this space identified and articulated the universal human dynamic
 
 Most of my work fell into two categories: 
 
-**1. Improving navigational confidence for people in complex street grids, in new cities, or with low innate navigational ability.**
+## 1. Improving navigational confidence for people in complex street grids, in new cities, or with low innate navigational ability.
 
 This began with understanding the cognitive process of cognitive map create and orientation. 
 
-2. Identifying and addressing safety challenges. 
+## 2. Identifying and addressing safety challenges.
 
 One of my proudest moments was when Apple Maps copied our feature a couple years later — and included our safety features!
 

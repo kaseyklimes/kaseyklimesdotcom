@@ -17,7 +17,7 @@ Last week I attended the [Malleable Software](https://lu.ma/interfaces-software-
 
 ![Image](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2F98927bb9-222f-4359-8e2f-ca3ca67fe8d2_2048x1536-1.jpeg)
 
-&nbsp;&nbsp;&nbsp;&nbsp;_Malleable Software Demo Night, photo by Lu Wilson ([@TodePond](https://x.com/TodePond))_
+Caption: Malleable Software Demo Night, photo by Lu Wilson ([@TodePond](https://x.com/TodePond))
 
 I spent most of the 2010s in the SF tech scene and working in Silicon Valley. Just as it is today, there was no question that California was the unrivaled epicenter of technical talent.
 
@@ -29,13 +29,13 @@ I’ve seen this on the ground for some years now, but the Malleable Software de
 
 ![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2Ffdc31161-a0d5-4dab-915e-694b80d3ceab_2048x1536.jpeg)
 
-&nbsp;&nbsp;&nbsp;&nbsp;_Photo by Geoffery Litt ([@geoffreylitt](https://x.com/geoffreylitt))_
+Caption: Photo by Geoffery Litt ([@geoffreylitt](https://x.com/geoffreylitt))
 
 This surprisingly big microcosm reflected a broader culture. When I think of the New York tech scene, I think of people like [Andrés Cuervo](https://cwervo.com/), [Omar Rizwan](https://omar.website/), and [Govind Manian](https://www.linkedin.com/in/govindmanian/) at [Folk Computer](https://folk.computer/), a research lab for spatial operating systems.
 
 ![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2F29fa2a32-4466-45a6-8e04-bc3ab34695fe_500x281.gif)
 
-&nbsp;&nbsp;&nbsp;&nbsp;_Folk Computer_
+Caption: Folk Computer
 
 I think of [Brendan Schlagel](https://schlage.town/), [Celine Park](https://x.com/cyberspaceline), and [Jared Pereira](https://awarm.space/) at [Hyperlink Academy](https://hyperlink.academy/), a startup creating end user programming tools for learning and collaboration.
 
@@ -45,7 +45,7 @@ Then there’s people like [Max Bittker](https://maxbittker.com/), [Kelin Caroly
 
 I could list dozens more (especially if we include friends along the coast that come through NYC on frequent pilgrimage, like [Jess Martin](https://jessmart.in/) and [Gordon Brander](https://gordonbrander.com/)), but you get the idea.
 
-A very distinct ethos is emerging in the NYC tech scene. These are technologists generally more inspired by [the early democratic visions of computation](https://newsletter.rhizomerd.com/p/with-text-to-code-ai-the-early-dream)—those of Doug Engelbart, Alan Kay, Ted Nelson, Seymour Papert, etc—and by the potential of human creativity than by the promise of unicorn market caps.[1](https://newsletter.rhizomerd.com/p/rise-of-the-new-york-tech-scene#footnote-1-147003114)
+A very distinct ethos is emerging in the NYC tech scene. These are technologists generally more inspired by [the early democratic visions of computation](https://newsletter.rhizomerd.com/p/with-text-to-code-ai-the-early-dream)—those of Doug Engelbart, Alan Kay, Ted Nelson, Seymour Papert, etc—and by the potential of human creativity than by the promise of unicorn market caps.[^1]
 
 “People are working on HCI in both SF and NYC, but in SF people are more interested in the Computer part, whereas in NYC people are more interested in the Human part.”—Andrés Cuervo
 
@@ -67,7 +67,7 @@ _**However**_**, I suspect New York will become the place where that technology 
 
 ![Image](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2Fee490c17-4755-4d1f-baa0-8721cb9f4164_2048x1536.jpeg)
 
-&nbsp;&nbsp;&nbsp;&nbsp;_Malleable Software Dinner hosted by Val Town_
+Caption: Malleable Software Dinner hosted by Val Town
 
 _Thanks to Jared Pereira, Andrés Cuervo, and [Agree Ahmed](https://agree.substack.com/) for sharing their perspectives on the community here to help form and sanity check the ideas in this post._
 
@@ -75,7 +75,7 @@ _Thanks to Jared Pereira, Andrés Cuervo, and [Agree Ahmed](https://agree.substa
 
 [^1]: Creative and exploratory as it may be, it’d be a mistake to characterize the emergent New York tech scene as a charming gaggle of artist-types and indie hackers. It’s also serious business.
 
-According to Pitchbook, 3 of the top 10 performing VC funds in the world are based in New York. Two are in the Bay Area.
-[![Image](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2Fba303a0d-67f4-4a73-a249-9eed45c39f73_1484x798.jpeg)](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fba303a0d-67f4-4a73-a249-9eed45c39f73_1484x798.jpeg)
-The Bay Area currently accounts for [20.6% of all venture capital deals in the US](https://www.crainsnewyork.com/technology/new-york-closer-ever-beating-bay-area-tech), but NYC accounts for 14.7% and is on the rise.
-[![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2F01f7a56d-ad06-4df9-9a12-ceb7212faffc_2418x2201.png)](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F01f7a56d-ad06-4df9-9a12-ceb7212faffc_2418x2201.png)
+    According to Pitchbook, 3 of the top 10 performing VC funds in the world are based in New York. Two are in the Bay Area.
+    [![Image](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2Fba303a0d-67f4-4a73-a249-9eed45c39f73_1484x798.jpeg)](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fba303a0d-67f4-4a73-a249-9eed45c39f73_1484x798.jpeg)
+    The Bay Area currently accounts for [20.6% of all venture capital deals in the US](https://www.crainsnewyork.com/technology/new-york-closer-ever-beating-bay-area-tech), but NYC accounts for 14.7% and is on the rise.
+    [![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2F01f7a56d-ad06-4df9-9a12-ceb7212faffc_2418x2201.png)](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F01f7a56d-ad06-4df9-9a12-ceb7212faffc_2418x2201.png)
