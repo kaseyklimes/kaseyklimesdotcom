@@ -6,7 +6,7 @@ import { ContentCategory, ContentItem, ContentMeta, FilterOptions } from '@/type
 import { parseDateToTimestamp } from '@/utils/dateFormatting';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
-const VALID_CATEGORIES: ContentCategory[] = ['blog', 'work', 'play', 'photography', 'shelf'];
+const VALID_CATEGORIES: ContentCategory[] = ['blog', 'work', 'play', 'talks', 'photography', 'shelf'];
 const VALID_SLUG = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
 
 function isAvailableCategory(category: ContentCategory): boolean {
