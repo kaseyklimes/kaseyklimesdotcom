@@ -7,5 +7,5 @@ stars: 1
 span: 5
 heroImage: "/images/sva.jpg"
 description: "Guest lecture for interaction design students at SVA."
-tags: ["work"]
+tags: []
 ---
