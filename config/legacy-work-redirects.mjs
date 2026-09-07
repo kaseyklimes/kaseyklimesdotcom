@@ -15,6 +15,9 @@ export const legacyWorkRedirects = {
   '/moscow-pspl': '/work/moscow',
   '/east-midtown-places-for-people': '/work/east-midtown',
   '/land-value-tax': '/blog/the-potential-of-land-value-tax-sustainable-equitable-growth',
+  // Cards that moved into the play category.
+  '/work/perfect-day': '/play/perfect-day',
+  '/photography/mouthkiss': '/play/mouthkiss',
 };
 
 export function getLegacyWorkRedirects() {
@@ -22,7 +25,7 @@ export function getLegacyWorkRedirects() {
     readdirSync(new URL(`../content/${category}/`, import.meta.url))
       .filter(file => file.endsWith('.md'))
       .map(file => `/${category}/${file.slice(0, -3)}`);
-  const targets = new Set(['/', ...slugs('work'), ...slugs('blog')]);
+  const targets = new Set(['/', ...slugs('work'), ...slugs('blog'), ...slugs('play')]);
 
   return Object.entries(legacyWorkRedirects).map(([source, destination]) => {
     if (!targets.has(destination)) throw new Error(`Missing work redirect target: ${destination}`);

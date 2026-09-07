@@ -1,4 +1,4 @@
-export type ContentCategory = 'blog' | 'work' | 'photography' | 'shelf';
+export type ContentCategory = 'blog' | 'work' | 'play' | 'photography' | 'shelf';
 
 export interface ContentMeta {
   title: string;
