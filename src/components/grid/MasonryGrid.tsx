@@ -20,84 +20,6 @@ interface MasonryGridProps {
 }
 
 
-function CustomTweet({ item }: { item: ContentMeta }) {
-  return (
-    <a
-      href={item.tweetUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block p-4 bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200 border border-gray-200 dark:border-gray-700 rounded-md"
-    >
-      <div className="text-gray-500 dark:text-gray-400 text-xs mb-3">@kaseyklimes</div>
-
-      {/* Tweet text */}
-      <div className="text-xs mb-3 text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
-        {item.description}
-      </div>
-
-      {/* Quoted tweet */}
-      {item.quoted_tweet && (
-        <div className="mb-3 p-3 border border-gray-200 dark:border-gray-700 rounded-sm bg-gray-50/50 dark:bg-gray-800/50">
-          {item.quoted_tweet.author && (
-            <div className="flex items-center gap-2 mb-2">
-              {item.quoted_tweet.author.profile_image_url ? (
-                <Image
-                  src={item.quoted_tweet.author.profile_image_url}
-                  alt={item.quoted_tweet.author.name}
-                  width={20}
-                  height={20}
-                  className="rounded-full"
-                />
-              ) : (
-                <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700" />
-              )}
-              <span className="font-medium text-xs text-gray-900 dark:text-gray-100">
-                {item.quoted_tweet.author.name}
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                @{item.quoted_tweet.author.username}
-              </span>
-            </div>
-          )}
-          <div className="text-xs text-gray-900 dark:text-gray-100">
-            {item.quoted_tweet.text}
-          </div>
-        </div>
-      )}
-
-      {/* Media */}
-      {item.media && item.media.length > 0 && (
-        <div className="mb-3 rounded-md overflow-hidden">
-          {item.media.map((media, index) => (
-            media.type === 'photo' ? (
-              <Image
-                key={index}
-                src={media.url}
-                alt={`Media attachment ${index + 1} for tweet by ${item.profile?.name || 'author'}`}
-                width={500}
-                height={300}
-                className="w-full h-auto"
-              />
-            ) : null
-          ))}
-        </div>
-      )}
-
-      {/* Date and metrics */}
-      <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
-        <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
-        <span>•</span>
-        <div className="flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-          <span>{item.likes || 0}</span>
-        </div>
-      </div>
-    </a>
-  );
-}
-
 // Shared content component to eliminate duplication
 interface GridItemContentProps {
   item: ContentMeta;
@@ -236,10 +158,7 @@ interface GridItemProps {
 
 const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, style, onHeightMeasured }: GridItemProps) {
   const itemRef = useRef<HTMLDivElement>(null);
-  // For tweets, always use 1 column regardless of stars
-  const colSpan = item.category === 'tweet'
-    ? 1
-    : Math.min(item.stars, maxColumns); // Limit column span to available columns
+  const colSpan = Math.min(item.stars, maxColumns); // Limit column span to available columns
 
   // Use thumbnail for grid display, fall back to heroImage
   const gridImage = item.thumbnail || item.heroImage;
@@ -284,14 +203,6 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
   }, [onHeightMeasured, itemKey]);
 
   const itemStyle = style || {};
-
-  if (item.category === 'tweet') {
-    return (
-      <div ref={itemRef} style={itemStyle}>
-        <CustomTweet item={item} />
-      </div>
-    );
-  }
 
   // Special case for shelf grid
   if (item.category === 'shelf' && item.items) {
@@ -374,7 +285,6 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
 
 // Helper to get column span for an item
 function getColSpan(item: ContentMeta, maxColumns: number): number {
-  if (item.category === 'tweet') return 1;
   return Math.min(item.stars, maxColumns);
 }
 
@@ -736,10 +646,6 @@ function estimateItemHeight(item: ContentMeta, width: number): number {
   }
 
   // Special cases
-  if (item.category === 'tweet') {
-    return 200 + descriptionHeight;
-  }
-
   if (item.iframeUrl) {
     return 400 + titleHeight + descriptionHeight + margins;
   }

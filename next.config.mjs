@@ -17,11 +17,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pbs.twimg.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'www.youtube.com',
         pathname: '/**',
       },

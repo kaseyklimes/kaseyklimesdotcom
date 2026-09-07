@@ -1,4 +1,4 @@
-export type ContentCategory = 'blog' | 'work' | 'photography' | 'shelf' | 'tweet';
+export type ContentCategory = 'blog' | 'work' | 'photography' | 'shelf';
 
 export interface ContentMeta {
   title: string;
@@ -25,29 +25,6 @@ export interface ContentMeta {
   tags: string[];
   // Shelf-specific fields
   items?: ContentMeta[];
-  // Tweet-specific fields
-  tweetId?: string;
-  tweetUrl?: string;
-  likes?: number;
-  profile?: {
-    name: string;
-    username: string;
-    profile_image_url: string;
-    description: string;
-  };
-  media?: Array<{
-    url: string;
-    type: string;
-  }>;
-  quoted_tweet?: {
-    id: string;
-    text: string;
-    author?: {
-      name: string;
-      username: string;
-      profile_image_url: string;
-    };
-  };
 }
 
 export interface ContentItem extends ContentMeta {
