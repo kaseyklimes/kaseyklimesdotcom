@@ -21,6 +21,10 @@ export const legacyWorkRedirects = {
   '/work/rethink': '/talks/rethink',
   '/work/sva': '/talks/sva',
   '/work/technology-shapes-homes-cities-work': '/talks/technology-shapes-homes-cities-work',
+  '/work/agentic-teams': '/talks/agentic-teams',
+  '/work/bottomlinedesign': '/talks/bottomlinedesign',
+  '/photography/tho': '/play/tho',
+  '/photography/modernstudy': '/play/modernstudy',
 };
 
 export function getLegacyWorkRedirects() {
