@@ -11,6 +11,10 @@ import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 import PhotoCarousel, { Photo } from '@/components/ui/PhotoCarousel';
 
+// Cards below this star count are hidden from the unfiltered "All" view on mobile
+// (the single-column layout). Selecting a filter shows every card in that tag.
+const MOBILE_MIN_STARS = 2;
+
 // Gap between items in pixels
 const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
 const GAP_Y = 24; // vertical gap between items
@@ -336,9 +340,14 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
 
   // Memoized filtered and sorted items with pre-computed date cache
   const sortedItems = useMemo(() => {
+    const isMobile = maxColumns === 1;
     const filtered = selectedTag && selectedTag !== 'all'
       ? items.filter(item => item.tags?.includes(selectedTag) && !item.private)
-      : items.filter(item => !item.private && item.category !== 'shelf');
+      : items.filter(item =>
+        !item.private
+        && item.category !== 'shelf'
+        && (!isMobile || (Number(item.stars) || 0) >= MOBILE_MIN_STARS)
+      );
 
     // Pre-compute dates ONCE before sorting
     const dateCache = new Map<string, number>(
@@ -368,7 +377,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
 
       return dateCompare;
     });
-  }, [items, selectedTag]);
+  }, [items, selectedTag, maxColumns]);
 
   // Photos available for the full-screen viewer, in grid order.
   // Skips items without a still image (e.g. videos) so navigation stays clean.
