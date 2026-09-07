@@ -547,12 +547,13 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
   return (
     <div>
       {/* Tag Filter */}
-      <div ref={filterRef} className="mb-8 flex space-x-4 flex-wrap">
+      {/* One scrollable row on mobile (bleeds to the viewport edges); wraps freely on larger screens. */}
+      <div ref={filterRef} className="tag-filter mb-8 -mx-4 px-4 flex flex-nowrap gap-x-3 overflow-x-auto sm:mx-0 sm:px-0 sm:flex-wrap sm:gap-x-4 sm:overflow-visible">
         {tags.map(tag => (
           <button
             key={tag}
             onClick={() => handleTagClick(tag)}
-            className={`text-sm mb-2 ${(tag === 'all' && !selectedTag) || tag === selectedTag
+            className={`text-sm mb-2 shrink-0 whitespace-nowrap ${(tag === 'all' && !selectedTag) || tag === selectedTag
               ? 'underline'
               : ''
               }`}
@@ -563,7 +564,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
         {canShowSlideshow && (
           <button
             onClick={() => setLightboxIndex(0)}
-            className="text-sm mb-2 inline-flex items-center gap-1.5 text-gray-500 hover:text-current"
+            className="text-sm mb-2 shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 text-gray-500 hover:text-current"
             aria-label="View photos full screen"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

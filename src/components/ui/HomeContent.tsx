@@ -40,8 +40,11 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
       <p className="mb-4">
         Kasey Klimes · Systems Designer · Brooklyn
       </p>
-      <p className="mb-4">Founder of <a href="https://getprimitive.ai" target="_blank" rel="noopener noreferrer" className="underline">Primitive</a></p>
-      <p><a href="https://twitter.com/kaseyklimes" target="_blank" rel="noopener noreferrer" className="underline">Twitter</a></p>
+      <p>
+        Founder of <a href="https://getprimitive.ai" target="_blank" rel="noopener noreferrer" className="underline">Primitive</a>
+        {' · '}
+        <a href="https://twitter.com/kaseyklimes" target="_blank" rel="noopener noreferrer" className="underline">Twitter</a>
+      </p>
     </>
   );
 

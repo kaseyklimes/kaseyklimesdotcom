@@ -92,6 +92,15 @@ body {
   color: white;
 }
 
+/* Tag filter: scrolls as a single row on mobile without showing a scrollbar. */
+.tag-filter {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.tag-filter::-webkit-scrollbar {
+  display: none;
+}
+
 /* Masonry Grid Styles */
 .grid-item {
   transition: transform 0.3s ease;
