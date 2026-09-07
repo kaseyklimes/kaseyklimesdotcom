@@ -2,10 +2,39 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./fonts.css";
 
+const siteName = "Kasey Klimes";
+const siteDescription =
+  "Systems designer in Brooklyn. Founder of Primitive, decision infrastructure for software teams and their AI agents. Previously Google Maps, Rhizome R&D, Gehl.";
+
 export const metadata: Metadata = {
-  title: "Portfolio Website",
-  description: "A showcase of work, writing, photography, and other content.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://kaseyklimes.com'),
+  title: {
+    default: siteName,
+    template: `%s · ${siteName}`,
+  },
+  description: siteDescription,
+  authors: [{ name: siteName, url: 'https://kaseyklimes.com' }],
+  openGraph: {
+    type: 'website',
+    siteName,
+    title: siteName,
+    description: siteDescription,
+    url: '/',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: siteName }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteName,
+    description: siteDescription,
+    images: ['/og-image.png'],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export const viewport: Viewport = {
@@ -60,8 +89,6 @@ export default function RootLayout({
         {/* Add manifest for PWA */}
         <link rel="manifest" href="/manifest.json" />
 
-        {/* Add favicon */}
-        <link rel="icon" href="/favicon.ico" />
       </head>
       <body 
         className="min-h-screen flex flex-col antialiased font-sans"

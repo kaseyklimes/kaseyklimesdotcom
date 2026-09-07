@@ -6,22 +6,22 @@ location: "San Francisco, CA"
 stars: 3
 thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558813344827-TGGZLLMYY9FCPYQLMWJK/googlemaps-ar.gif"
 heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558813194978-M56G82RJ9QL55NZNPT4G/googlemaps-ar.gif"
-description: "Design research for world-scale augmented reality"
+description: "Lead UX research for world-scale augmented reality"
 tags: ["work"]
 ---
-From 2017 to 2021 I served as lead UX researcher for world-scale augmented reality in Google Maps. To my knowledge, I was the first person to ever conduct this kind of research. While augmented reality wasn't new, our team was the first to develop augmented reality that could respond to your geographic position with high accuracy. I had to develop new qualitative and quantitative methods that could be applied out in urban streets in order to guide our product and design strategy.
+From 2017 to 2021 I was the lead UX researcher for world-scale augmented reality in Google Maps, the program that shipped as Live View. To my knowledge, I was the first person to conduct this kind of research.
 
-My research in this space identified and articulated the universal human dynamics of spatial cognition, drawing from methods and analysis across the fields of psychology, geography, neuroscience, cybernetics, and urban theory. I developed new research methods for constructing knowledge and interrogating the possibilities of this emerging technology.
+Nobody had built this before. Augmented reality wasn't new, but ours was the first that could respond to your geographic position with high accuracy, out on real streets. There were no established methods, no prior studies, and no benchmarks. A large cross-functional team of product managers, designers, and engineers still had to make consequential decisions: what the product was for, what to build first, and what was safe to ship.
 
-Most of my work fell into two categories: 
+My role was to supply the intelligence those decisions depended on. I developed new qualitative and quantitative methods that could be run in urban streets, then translated the findings into the shared understanding that product and design strategy was built on. That work drew on psychology, geography, neuroscience, cybernetics, and urban theory to articulate the human dynamics of spatial cognition and attention.
 
-## 1. Improving navigational confidence for people in complex street grids, in new cities, or with low innate navigational ability.
+Most of it fell into two categories:
 
-This began with understanding the cognitive process of cognitive map create and orientation. 
+**1. Improving navigational confidence** for people in complex street grids, in new cities, or with low innate navigational ability. This began with understanding how people build cognitive maps and orient themselves, and turned that into principles the team could design against.
 
-## 2. Identifying and addressing safety challenges.
+**2. Identifying and addressing safety challenges** of asking people to look through a phone while walking through a city, and defining the safety features the product shipped with.
 
-One of my proudest moments was when Apple Maps copied our feature a couple years later — and included our safety features!
+One of my proudest moments was when Apple Maps copied our feature a couple of years later, safety features included.
 
 ## Awards & Recognition
 
