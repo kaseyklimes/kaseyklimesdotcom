@@ -4,7 +4,7 @@ date: "06-2016"
 location: "Vinales, Cuba"
 stars: 1
 span: 8
-heroImage: "/images/IMG_5411.jpg"
+heroImage: "/images/vinales-regraded.jpg"
 description: "Deaton and I arrived in Viñales just before noon, completely oblivious to the naivete that would soon have us freaking out..."
 tags: ["photography"]
 ---
