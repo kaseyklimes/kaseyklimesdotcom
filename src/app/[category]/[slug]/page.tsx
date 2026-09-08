@@ -13,6 +13,7 @@ import { datePrecisionFor, formatDateOrRange } from '@/utils/dateFormatting';
 import { seriesImages } from '@/utils/photoSeries';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 import LoopingVideo from '@/components/ui/LoopingVideo';
+import { ARTICLE_SIZES, RELATED_CARD_SIZES } from '@/utils/imageSizes';
 
 interface PageProps {
   params: Promise<{
@@ -159,7 +160,7 @@ export default async function ContentPage({ params }: PageProps) {
                       <VideoEmbed
                         videoInfo={videoInfo}
                         title={content.title}
-                        sizes="(min-width: 1280px) 1200px, 100vw"
+                        sizes={ARTICLE_SIZES}
                         priority
                       />
                     </div>
@@ -187,7 +188,7 @@ export default async function ContentPage({ params }: PageProps) {
                       height={800}
                       className="w-full h-auto"
                       priority
-                      sizes="(min-width: 1280px) 1200px, 100vw"
+                      sizes={ARTICLE_SIZES}
                     />
                   )}
                 </div>
@@ -205,7 +206,7 @@ export default async function ContentPage({ params }: PageProps) {
                     width={1200}
                     height={800}
                     className="w-full h-auto"
-                    sizes="(min-width: 1280px) 1200px, 100vw"
+                    sizes={ARTICLE_SIZES}
                   />
                 </div>
               ))}
@@ -267,7 +268,7 @@ export default async function ContentPage({ params }: PageProps) {
                             alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(min-width: 768px) 50vw, 100vw"
+                            sizes={RELATED_CARD_SIZES}
                             loading="lazy"
                           />
                         )}

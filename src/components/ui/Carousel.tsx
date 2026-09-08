@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { ARTICLE_SIZES } from '@/utils/imageSizes';
 
 interface CarouselProps {
     images: string[];
@@ -48,7 +49,7 @@ export default function Carousel({ images, alt, contain = true, priority = false
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg">
                 <Image key={images[activeIndex]} src={images[activeIndex]} alt={`${alt} — image ${activeIndex + 1} of ${images.length}`}
                     fill className={contain ? 'object-contain' : 'object-cover'}
-                    priority={priority && activeIndex === 0} sizes="(min-width: 960px) 896px, 100vw" />
+                    priority={priority && activeIndex === 0} sizes={ARTICLE_SIZES} />
             </div>
             <div className="gallery-navigation">
                 <button type="button" aria-label="Previous image" onClick={() => move(-1)} disabled={images.length < 2}>←</button>

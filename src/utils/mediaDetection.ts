@@ -52,8 +52,8 @@ export function getVideoInfo(url: string): VideoInfo {
  * Uses `hqdefault.jpg`, which every video is guaranteed to have — unlike
  * `maxresdefault.jpg`, which only exists for videos uploaded in HD and 404s otherwise.
  */
-export function getYouTubeThumbnail(id: string): string {
-  return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+export function getYouTubeThumbnail(id: string, quality: 'hqdefault' | 'maxresdefault' = 'hqdefault'): string {
+  return `https://i.ytimg.com/vi/${id}/${quality}.jpg`;
 }
 
 /**

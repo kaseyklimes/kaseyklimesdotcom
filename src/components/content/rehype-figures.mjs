@@ -81,7 +81,7 @@ function addReportNavigation(tree) {
     }
     linkImages(figure);
     previews.push(element('a', [
-      ...(source ? [element('img', [], { src: source, alt: '', loading: 'lazy', decoding: 'async' })] : []),
+      ...(source ? [element('img', [], { src: source, alt: '', loading: 'lazy', decoding: 'async', sizes: '(min-width: 928px) 160px, 50vw' })] : []),
       element('span', [text(`Page ${index + 1}`)]),
     ], { href: `#report-page-${index + 1}`, ariaLabel: `Go to report page ${index + 1}` }));
     const controls = [element('span', [text(`Page ${index + 1} of ${figures.length}`)])];
