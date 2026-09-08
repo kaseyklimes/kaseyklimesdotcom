@@ -14,6 +14,7 @@ import { seriesImages } from '@/utils/photoSeries';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 import LoopingVideo from '@/components/ui/LoopingVideo';
 import { ARTICLE_SIZES, RELATED_CARD_SIZES } from '@/utils/imageSizes';
+import { imageDimensionsOr } from '@/utils/imageDimensions';
 
 interface PageProps {
   params: Promise<{
@@ -184,8 +185,7 @@ export default async function ContentPage({ params }: PageProps) {
                     <Image
                       src={heroImages[0]}
                       alt={`${content.title}${content.description ? ` - ${content.description}` : ''}`}
-                      width={1200}
-                      height={800}
+                      {...imageDimensionsOr(heroImages[0])}
                       className="w-full h-auto"
                       priority
                       sizes={ARTICLE_SIZES}
@@ -203,8 +203,7 @@ export default async function ContentPage({ params }: PageProps) {
                   <Image
                     src={src}
                     alt={`${content.title || content.location || 'Photo'} — ${i + 2} of ${series.length + 1}`}
-                    width={1200}
-                    height={800}
+                    {...imageDimensionsOr(src)}
                     className="w-full h-auto"
                     sizes={ARTICLE_SIZES}
                   />
