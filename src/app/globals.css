@@ -9,6 +9,18 @@
   }
 }
 
+/* Home hero: fill the viewport so the tag-filter row sits at its bottom edge.
+   On mobile, 100vh measures the viewport with the browser toolbar hidden, so
+   the row landed below the fold. svh is the height with the toolbar shown. */
+.hero-viewport {
+  height: calc(100vh - 20px - 2rem);
+}
+@supports (height: 100svh) {
+  .hero-viewport {
+    height: calc(100svh - 20px - 2rem);
+  }
+}
+
 /* Additional global styles */
 .prose {
   @apply max-w-none;
