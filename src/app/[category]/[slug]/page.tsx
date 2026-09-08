@@ -15,6 +15,7 @@ import VideoEmbed from '@/components/ui/VideoEmbed';
 import LoopingVideo from '@/components/ui/LoopingVideo';
 import { ARTICLE_SIZES, RELATED_CARD_SIZES } from '@/utils/imageSizes';
 import { imageDimensionsOr } from '@/utils/imageDimensions';
+import { categoryLabel } from '@/utils/categoryLabel';
 
 interface PageProps {
   params: Promise<{
@@ -129,7 +130,7 @@ export default async function ContentPage({ params }: PageProps) {
           {category !== 'shelf' && (
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
               <span className="text-xs">
-                {content.category}
+                {categoryLabel(content.category).toLowerCase()}
               </span>
               {content.location && (
                 <>

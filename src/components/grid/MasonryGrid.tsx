@@ -14,6 +14,7 @@ import PhotoCarousel, { Photo } from '@/components/ui/PhotoCarousel';
 import { filterGridItems } from '@/utils/gridFilter';
 import { distributeByCategory } from '@/utils/gridOrder';
 import { seriesImages } from '@/utils/photoSeries';
+import { categoryLabel } from '@/utils/categoryLabel';
 import { Images } from 'lucide-react';
 
 // Gap between items in pixels
@@ -598,7 +599,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
               : ''
               }`}
           >
-            {tag.charAt(0).toUpperCase() + tag.slice(1)}
+            {categoryLabel(tag)}
           </button>
         ))}
         {canShowSlideshow && (
