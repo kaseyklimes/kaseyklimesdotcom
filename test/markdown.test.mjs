@@ -69,3 +69,20 @@ test('imported footnotes have local references and visible definitions', () => {
     }
   }
 });
+
+test('local raster images get intrinsic dimensions, a column count, and one priority flag', async () => {
+  const { default: rehypeImageDimensions, localImageDimensions } = await import('../src/components/content/rehype-image-dimensions.mjs');
+  const root = new URL('..', import.meta.url).pathname;
+  assert.deepEqual(localImageDimensions('/images/advice.png', root), { width: 1190, height: 1684 });
+  assert.equal(localImageDimensions('/images/primitive-hero.svg', root), null);
+  assert.equal(localImageDimensions('https://example.com/x.png', root), null);
+  const html = renderToStaticMarkup(React.createElement(ReactMarkdown, {
+    rehypePlugins: [rehypeRaw, rehypeFigures, [rehypeImageDimensions, { root }]],
+  }, '![A](/images/advice.png) ![B](/images/advice.png)\n\n![C](/images/advice.png)\n\n![Remote](https://example.com/x.png)\n\n<img src="/images/advice.png" width="300" alt="sized">'));
+  assert.match(html, /<img src="\/images\/advice.png" alt="A" width="1190" height="1684" data-optimize="" data-columns="2" data-priority=""/);
+  assert.match(html, /<img src="\/images\/advice.png" alt="B" width="1190" height="1684" data-optimize="" data-columns="2"\/>/);
+  assert.match(html, /<img src="\/images\/advice.png" alt="C" width="1190" height="1684" data-optimize=""\/>/);
+  assert.match(html, /<img src="https:\/\/example.com\/x.png" alt="Remote"\/>/);
+  assert.match(html, /<img src="\/images\/advice.png" width="300" alt="sized"\/>/);
+  assert.equal((html.match(/data-priority/g) || []).length, 1);
+});

@@ -267,6 +267,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
           }}>
             <iframe
               src={item.iframeUrl}
+              loading="lazy"
               className="w-full h-full border border-[#444] rounded-md"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
