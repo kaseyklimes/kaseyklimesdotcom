@@ -7,5 +7,8 @@ span: 12
 heroImage: "/images/000045420005.jpg"
 series:
   - "/images/barcelona.jpg"
+  - "/images/barcelona-arcade.jpg"
+  - "/images/barcelona-candy-stall.jpg"
+  - "/images/barcelona-silk-tree.jpg"
 tags: ["photography"]
 ---
