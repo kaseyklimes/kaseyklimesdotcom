@@ -40,8 +40,7 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
       <p className="mb-4">
         Kasey Klimes · Systems Designer · Brooklyn
       </p>
-      <p className="mb-4">Founder of <a href="https://getprimitive.ai" target="_blank" rel="noopener noreferrer" className="underline">Primitive</a></p>
-      <p><a href="https://twitter.com/kaseyklimes" target="_blank" rel="noopener noreferrer" className="underline">Twitter</a></p>
+      <p>Founder of <a href="https://getprimitive.ai" target="_blank" rel="noopener noreferrer" className="underline">Primitive</a></p>
     </>
   );
 
@@ -61,7 +60,19 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
 
       {/* Content Section */}
       <section>
-        <MasonryGrid items={content} />
+        <MasonryGrid
+          items={content}
+          filterRowExtras={
+            <a
+              href="https://twitter.com/kaseyklimes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm mb-2 text-gray-500 hover:text-current"
+            >
+              Twitter ↗
+            </a>
+          }
+        />
       </section>
     </>
   );

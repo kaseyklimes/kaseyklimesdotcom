@@ -25,6 +25,7 @@ export const legacyWorkRedirects = {
   '/work/bottomlinedesign': '/talks/bottomlinedesign',
   '/photography/tho': '/play/tho',
   '/photography/modernstudy': '/play/modernstudy',
+  '/photography/advice': '/blog/early-career-advice-for-graduates',
 };
 
 export function getLegacyWorkRedirects() {

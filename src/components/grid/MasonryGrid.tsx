@@ -18,6 +18,8 @@ const GAP_Y = 24; // vertical gap between items
 
 interface MasonryGridProps {
   items: ContentMeta[];
+  /** Extra links rendered at the end of the filter row (e.g. social links on the home page). */
+  filterRowExtras?: React.ReactNode;
 }
 
 
@@ -319,7 +321,7 @@ interface ItemPosition {
   width: number;
 }
 
-export default function MasonryGrid({ items }: MasonryGridProps) {
+export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps) {
   const maxColumns = useResponsiveColumns();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -329,10 +331,17 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
   // Index into the full-screen photo viewer; null when closed.
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Get unique tags from all items
+  // Get unique tags from all items, in a fixed display order. Tags not listed
+  // fall back to alphabetical order ahead of shelf, which always comes last.
   const tags = React.useMemo(() => {
+    const order = ['all', 'blog', 'work', 'photography', 'play', 'talks'];
+    const rank = (tag: string) => {
+      if (tag === 'shelf') return Number.MAX_SAFE_INTEGER;
+      const index = order.indexOf(tag);
+      return index === -1 ? order.length : index;
+    };
     const allTags = items.flatMap(item => item.tags || []);
-    return ['all', ...new Set(allTags)].sort();
+    return ['all', ...new Set(allTags)].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
   }, [items]);
 
   // Memoized filtered and sorted items with pre-computed date cache
@@ -547,7 +556,7 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
   return (
     <div>
       {/* Tag Filter */}
-      <div ref={filterRef} className="mb-8 flex space-x-4 flex-wrap">
+      <div ref={filterRef} className="mb-8 flex gap-x-4 flex-wrap">
         {tags.map(tag => (
           <button
             key={tag}
@@ -571,6 +580,9 @@ export default function MasonryGrid({ items }: MasonryGridProps) {
             </svg>
             View full screen
           </button>
+        )}
+        {filterRowExtras && (
+          <div className="ml-auto flex gap-x-4 flex-wrap">{filterRowExtras}</div>
         )}
       </div>
 
