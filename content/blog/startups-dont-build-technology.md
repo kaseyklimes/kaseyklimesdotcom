@@ -10,7 +10,7 @@ heroImage: /images/startups-dont-build-technology-hero.png
 
 # Startups Don't Build Technology
 
-![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2F71c8794a-2f29-4013-a60a-2efc74adc4f6_2400x1800-44.png)
+![](/images/startups-dont-build-technology-1.png)
 
 _For those interested in the urban housing crisis, I recently published [What Really Drives Housing Prices?](https://www.kaseyklimes.com/notes/2023/5/2/density-doesnt-drive-housing-prices) on my personal blog. There I write and share analysis on subject matter that I find deeply important but off-topic for this newsletter. Now, for your (ir)regularly scheduled broadcast…_
 
@@ -24,7 +24,7 @@ You can trace most technologies back to these institutional research labs.
 
 The US government is an especially potent generator of new technology. Government research labs like DARPA developed GPS, cellular communication, touch screens, drones, accelerometers, the first “Street View”, and funded the development of mRNA vaccines. We also have DARPA to thank for the internet.[^1]
 
-![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2Fc16d2d48-fd0f-42f6-9cd1-7f3bf93ddb6e-17.avif)
+![](/images/startups-dont-build-technology-2.avif)
 
 Caption: ARPANET — the beginning of the Internet.
 

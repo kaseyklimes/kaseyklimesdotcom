@@ -24,7 +24,7 @@ A  proper introduction to Alexander’s work would require its own book, but  I�
 
 At the surface level, _A Pattern Language_  is a design and construction handbook for everyone. It contains 253  rules of thumb expressed in the form of patterns. Patterns are reusable  sets of relationships forged over time to address common problems. For  example, first-floor window sills should be 12 to 14 inches high  (pattern #222). Car parking should occupy no more than 9% of land (#22).  Balconies should be no shallower than 6 feet (#167). Patterns in this  sense are highly applicable and concrete.
 
-![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_1e3821e6-9727-4548-837c-82cd54c5c605_810x969-1.jpeg)![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_7fbdc15b-5892-47b2-b914-2cec1d122e1d_1273x559.jpg)
+![](/images/design-needs-complexity-theory-1.jpeg)![](/images/design-needs-complexity-theory-2.jpg)
 
 Caption: Labeled excerpts from _A Pattern Language_
 
@@ -110,7 +110,7 @@ For  example, Alexander described pattern languages as "very complex sets of  in
 
 Alexander described his evolutionary design process as a "new technique that focuses on _emergence_” (emphasis added) towards greater _fitness_ between _form_ and _context_.  Meanwhile, biologist and complexity scientist Stuart Kauffman describes  evolution as a process occurring across “fitness landscapes” with  “adjacent possibilities.”
 
-![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_5d231c68-bec0-473f-b63e-917cb6300210_627x458.jpg)
+![](/images/design-needs-complexity-theory-3.jpg)
 
 Caption: Visualization of Stuart Kauffman’s fitness landscape
 
@@ -122,7 +122,7 @@ The  essay’s attempt to bridge between the fields highlights where Alexander  
 
 Alexander  makes the case that the kind of fitness that arises from complex  systems in nature (the evolution of a bird's beak, for example) can and  must be achieved by designers through new step-by-step adaptive  processes.
 
-![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_e3108b10-5aca-4473-982e-774f7d8894b4_1748x1319.jpeg)
+![](/images/design-needs-complexity-theory-4.jpeg)
 
 Still, Alexander’s move towards actionable complexity doesn’t fully explain why design and complexity theory no longer overlap.
 
@@ -168,7 +168,7 @@ Alexander attempted to leverage this kind of local intelligence by creating wide
 
 ### 3. Design benefits from interdisciplinary mental models
 
-![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_05ab8781-a813-47a8-91fd-7582d3e10508_2096x2000.png)
+![](/images/design-needs-complexity-theory-5.png)
 
 Caption: Bollen et al. (2009). [Clickstream data yields high-resolution maps of science](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0004803)
 

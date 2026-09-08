@@ -10,7 +10,7 @@ heroImage: /images/with-text-to-code-ai.jpg
 
 # With Text-to-Code AI, The Early Dream of Computation is Back
 
-![](/images/https3A2F2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com2Fpublic2Fimages2F59ca2a12-bda8-4380-a7ca-fdafecfdc3dd_1456x1884-1.png)
+![](/images/with-text-to-code-ai-the-early-dream-1.png)
 
 Caption: The cover of **Computer Lib/Dream Machine** by Ted Nelson, 1974.
 
@@ -24,7 +24,7 @@ The purpose of computers is human freedom.—Ted Nelson, 1974
 
 For a time, the pioneers made progress towards this dream. In the 1970’s, researchers at Xerox PARC developed the earliest forms of copy and paste in text editors, which Apple then expanded into a universal API at the operating system level.
 
-![](/images/https3A2F2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com2Fpublic2Fimages2F0e41073b-4144-425e-b902-dbe80291e27a_1400x969.webp)
+![](/images/with-text-to-code-ai-the-early-dream-2.webp)
 
 Copy and paste is a bit like public libraries—if we hadn’t inherited these blessings from our forefathers, their proposal would seem wildly radical to today’s sensibilities (You want to allow unfettered data transfer between programs created by different companies? What’s next, taxpayer-funded books?). Copy and paste enabled user-friendly interoperability of data between programs, which in turn enabled a vast degree of composability for people who otherwise couldn’t speak the language of computers. Other revolutionary attempts of this era to combine composability with usability included [Hypercard](https://www.bbc.com/future/article/20190722-the-apple-software-that-inspired-the-internet) (1987), [digital spreadsheets](https://www.wired.com/2014/10/a-spreadsheet-way-of-knowledge/) (1979), and [Logo](https://en.wikipedia.org/wiki/Logo_(programming_language)) (a programming language designed for children, created in 1967).
 
@@ -36,7 +36,7 @@ But software-for-profit had detractors. A month after the 1983 ruling, Richard S
 
 Clashes erupted. Microsoft’s Steve Ballmer called open-source “a cancer” while leaked internal documents revealed a strategy to push proprietary protocols that would limit interoperability and kneecap open-source alternatives to Microsoft products. As major tech companies began to rely on open-source software, some open-source resorted to sabotage by [deleting their own code](https://www.sciencealert.com/how-a-programmer-almost-broke-the-internet-by-deleting-11-lines-of-code).
 
-![Open Source](/images/https3A2F2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com2Fpublic2Fimages2F08b241e2-6417-446d-9651-25841cd088a0_640x427.png)
+![Open Source](/images/with-text-to-code-ai-the-early-dream-3.png)
 
 However fierce the battle, neither side of this fraternal conflict could realize the original dream of user-friendly and permissionless composability.
 
