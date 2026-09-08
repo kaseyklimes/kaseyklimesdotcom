@@ -123,8 +123,8 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
             <Image
               src={heroImages[0]}
               alt={item.title || 'Content image'}
-              width={1200}
-              height={800}
+              width={item.imageDimensions?.width ?? 1200}
+              height={item.imageDimensions?.height ?? 800}
               className="w-full h-auto rounded-sm"
               sizes={cardSizes(colSpan)}
               priority={index < 4}
@@ -693,7 +693,9 @@ function estimateItemHeight(item: ContentMeta, width: number): number {
 
   // Image height estimation
   let imageHeight = 0;
-  if (item.thumbnail || item.heroImage) {
+  if (item.imageDimensions) {
+    imageHeight = width * item.imageDimensions.height / item.imageDimensions.width;
+  } else if (item.thumbnail || item.heroImage) {
     // Estimate based on typical aspect ratios
     if (item.category === 'photography') {
       imageHeight = width * 0.75; // Assume 4:3 portrait
