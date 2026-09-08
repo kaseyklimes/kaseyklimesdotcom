@@ -5,8 +5,8 @@ category: "work"
 date: "2014"
 location: "New York City"
 stars: 1
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558980166879-Q9C33KG9RNQ9JTCVPJLA/maponly.png"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558979772008-CGYR585RXBI05B3HFHZJ/page1.png"
+thumbnail: "/images/east-midtown-map.png"
+heroImage: "/images/east-midtown-page1.png"
 description: "Public space improvement strategy for pedestrian experience amid increased urban density"
 tags: ["work"]
 ---

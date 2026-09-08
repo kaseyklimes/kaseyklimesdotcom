@@ -3,8 +3,8 @@ title: "Whole Earth AI"
 category: "work"
 date: "2024"
 stars: 2
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/208d8363-913a-44f6-bc88-48a0d7c5094b/wholeearthlabel.png"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/2cbdd966-ceb3-4b39-9888-c6972286ee11/Whole+Earth+AI_preparation.gif"
+thumbnail: "/images/whole-earth-ai-label.png"
+heroImage: "/images/whole-earth-ai-loop.mp4"
 description: "Project-based learning tool exploring LLM user experiences and Montessori methods in software"
 tags: ["work"]
 ---

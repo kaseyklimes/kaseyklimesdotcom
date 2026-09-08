@@ -4,7 +4,7 @@ category: "work"
 date: "2014"
 location: "San Francisco, CA"
 stars: 1
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558913243406-R9XEN2NIPNFUJ5Y1OZ9B/SF+Pedestrian+Map-01.png"
+thumbnail: "/images/sf-pedestrian-map.png"
 description: "Report chapter examining how building scale influences urban vitality"
 tags: ["work"]
 ---

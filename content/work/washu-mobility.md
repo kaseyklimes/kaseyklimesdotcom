@@ -5,8 +5,8 @@ category: "work"
 date: "2014"
 location: "St. Louis, MO"
 stars: 1
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558841283655-NDALJHBP8479ZSFT058C/ezgif-2-057a74c1ec97.jpg"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558915765346-RQ3D6XW0GX32IHMTEJWG/page1.png"
+thumbnail: "/images/washu-mobility-thumb.jpg"
+heroImage: "/images/washu-mobility-page1.png"
 description: "GPS tracing survey and mobility research for campus infrastructure planning"
 tags: ["work"]
 ---

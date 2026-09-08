@@ -6,7 +6,7 @@ stars: 1
 span: 5
 tags: ["blog"]
 description: people making tools for people
-heroImage: https://substack-post-media.s3.amazonaws.com/public/images/98927bb9-222f-4359-8e2f-ca3ca67fe8d2_2048x1536.jpeg
+heroImage: /images/rise-of-the-new-york-tech-scene-hero.jpeg
 ---
 
 # Rise of the New York Tech Scene

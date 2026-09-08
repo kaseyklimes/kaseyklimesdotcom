@@ -5,8 +5,8 @@ category: "work"
 date: "2012-2013"
 location: "Moscow, Russia"
 stars: 1
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558918252865-1S89LB26XY9TRS335MKX/moscow.jpg"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558918411659-P8F1KIKQP08QELWXI5KC/moscow+exhibition.jpeg"
+thumbnail: "/images/moscow-thumb.jpg"
+heroImage: "/images/moscow-exhibition.jpeg"
 description: "Public Space/Public Life Report"
 tags: ["work"]
 ---

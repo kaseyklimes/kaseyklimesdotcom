@@ -4,8 +4,8 @@ category: "work"
 date: "2017-2021"
 location: "San Francisco, CA"
 stars: 3
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558813344827-TGGZLLMYY9FCPYQLMWJK/googlemaps-ar.gif"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558813194978-M56G82RJ9QL55NZNPT4G/googlemaps-ar.gif"
+thumbnail: "/images/google-maps-live-view-loop.mp4"
+heroImage: "/images/google-maps-live-view-loop.mp4"
 description: "Lead UX research for world-scale augmented reality"
 tags: ["work"]
 ---

@@ -4,8 +4,8 @@ category: "work"
 date: "2022-2024"
 location: "Barcelona, Spain"
 stars: 1
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1677008762227-A9V8DZPJO7SSK8XEU4I4/mentalmodels%281%29.2021-03-31+14_44_52.gif"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/53d92ce1-c9c2-4089-9120-aab1abc9351c/IMG_1212.jpg"
+thumbnail: "/images/mental-models-loop.mp4"
+heroImage: "/images/drcs-hero.jpg"
 carousel: ["/images/drcs-students-workshop.jpg"]
 carouselCaption: "Students using new workshopping techniques to develop their group research projects during studio time."
 description: "My graduate course for product design students at Harbour Space in Barcelona."
