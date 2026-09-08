@@ -11,6 +11,7 @@ export interface ContentMeta {
   heroImage?: string;  // Image for detail page
   carousel?: string[];
   carouselCaption?: string;
+  series?: string[];  // Extra photos in a mini-series; only heroImage shows in the grid
   hasContent?: boolean;
   location?: string;
   span?: number;

@@ -5,5 +5,7 @@ location: "Barcelona, Spain"
 stars: 2
 span: 12
 heroImage: "/images/000045420005.jpg"
+series:
+  - "/images/barcelona.jpg"
 tags: ["photography"]
 ---
