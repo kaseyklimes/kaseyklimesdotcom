@@ -40,7 +40,7 @@ There is a way of addressing the long-tail problem, but it requires a very diffe
 
 In complexity science, ‘emergence’ describes the way that interactions between individual components in a complex system can give rise to new behavior, patterns, or qualities. For example, the quality of ‘wetness’ cannot be found in a single water molecule, but instead arises from the interaction of many water molecules together. In living systems, emergence is at the core of adaptive evolution.
 
-![](/images/legocargap-1.gif)
+![](/images/legocargap.mp4)
 
 Caption: [Context-adapted solutions emerge when designers support composability](https://www.youtube.com/watch?v=pwglOlD7e0M)
 
@@ -86,7 +86,7 @@ In many cases this is sufficient. Don Norman, who coined the term ‘user-center
 
 But consider even the ‘desire path’ example pictured above. The modal user may be well supported by paving the desire path indicated by their behavior, but what good is a paved path leading to stairs for a wheelchair user? In practice, user-centered design tends to privilege the modal user at the expense of the long-tail user whose needs may be just as great.
 
-![](/images/humanscalechart-1.gif)
+![](/images/humanscalechart.mp4)
 
 Caption: User-centered design tends to optimize for the average
 

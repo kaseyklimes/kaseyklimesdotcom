@@ -4,6 +4,8 @@ import rehypeRaw from 'rehype-raw';
 import Carousel from '@/components/ui/Carousel';
 import rehypeFigures from './rehype-figures.mjs';
 import { splitLayoutBlocks } from './layout-blocks';
+import LoopingVideo from '@/components/ui/LoopingVideo';
+import { isLoopingVideo } from '@/utils/mediaDetection';
 
 function Markdown({ children, reportPages = false }: { children: string; reportPages?: boolean }) {
   return (
@@ -12,8 +14,11 @@ function Markdown({ children, reportPages = false }: { children: string; reportP
       rehypePlugins={[rehypeRaw, [rehypeFigures, { reportPages }]]}
       components={{
         // Original aspect ratios keep charts readable; figures own the spacing.
-        // eslint-disable-next-line @next/next/no-img-element
-        img: ({ src, alt, title, width, height }) => <img src={src} alt={alt || ''} title={title} width={width} height={height} loading="lazy" decoding="async" />,
+        // A video file in an image slot plays silently on loop, like the GIF it replaced.
+        img: ({ src, alt, title, width, height }) => isLoopingVideo(typeof src === 'string' ? src : undefined)
+          ? <LoopingVideo src={src as string} label={alt || title} />
+          // eslint-disable-next-line @next/next/no-img-element
+          : <img src={src} alt={alt || ''} title={title} width={width} height={height} loading="lazy" decoding="async" />,
         table: ({ children }) => (
           <div className="markdown-table" tabIndex={0} role="region" aria-label="Scrollable table">
             <table>{children}</table>

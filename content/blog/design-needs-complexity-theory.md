@@ -90,7 +90,7 @@ Interacting  agents (like traders in a marketplace or players in a Prisoner's  D
 
 Spontaneous, global order results from many local interactions between agents who lack a source of centralized control.
 
-![](/images/https_bucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com_public_images_cbc82064-7725-4e2f-a631-cf9da72fb75b_640x360.gif)
+![](/images/design-needs-complexity-theory-loop.mp4)
 
 Caption: The leaderless murmuration—caused by each starling adapting its flight path in response to that of its nearest neighbor—is a classic example of emergence.
 

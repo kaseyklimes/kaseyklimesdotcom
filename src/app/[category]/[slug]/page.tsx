@@ -8,10 +8,11 @@ import { notFound } from 'next/navigation';
 import MarkdownContent from '@/components/content/MarkdownContent';
 import { Metadata } from 'next';
 import Carousel from '@/components/ui/Carousel';
-import { getVideoInfo, getYouTubeThumbnail } from '@/utils/mediaDetection';
+import { getVideoInfo, getYouTubeThumbnail, isLoopingVideo } from '@/utils/mediaDetection';
 import { datePrecisionFor, formatDateOrRange } from '@/utils/dateFormatting';
 import { seriesImages } from '@/utils/photoSeries';
 import VideoEmbed from '@/components/ui/VideoEmbed';
+import LoopingVideo from '@/components/ui/LoopingVideo';
 
 interface PageProps {
   params: Promise<{
@@ -169,6 +170,8 @@ export default async function ContentPage({ params }: PageProps) {
                       contain
                       priority
                     />
+                  ) : isLoopingVideo(heroImages[0]) ? (
+                    <LoopingVideo src={heroImages[0]} label={content.title} className="block w-full h-auto" />
                   ) : heroImages[0].endsWith('.svg') ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -248,7 +251,9 @@ export default async function ContentPage({ params }: PageProps) {
                   >
                     {imageUrl && (
                       <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-lg">
-                        {imageUrl.endsWith('.svg') ? (
+                        {isLoopingVideo(imageUrl) ? (
+                          <LoopingVideo src={imageUrl} label={item.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        ) : imageUrl.endsWith('.svg') ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={imageUrl}

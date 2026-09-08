@@ -55,3 +55,11 @@ export function getVideoInfo(url: string): VideoInfo {
 export function getYouTubeThumbnail(id: string): string {
   return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
+
+/**
+ * Local video files that play like animated GIFs (silent, looping, inline),
+ * as opposed to the embedded players above.
+ */
+export function isLoopingVideo(src: string | undefined): boolean {
+  return typeof src === 'string' && /\.(mp4|webm)(\?|#|$)/i.test(src);
+}

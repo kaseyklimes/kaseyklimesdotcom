@@ -77,7 +77,7 @@ The same agents that thickened the fog have properties that make this future pos
 
 Ted Nelson coined the term “hypertext” to describe text that broke out of linear constraint, text that could reference, branch, and stay live against a moving body of other text. Hypertext was text with a different topology. What the era of agentic engineering needs is hypertext for the theory of the program. One possibility is what we call _hyperspecs_.
 
-![](/images/english-isnt-a-programming-language-2.gif)
+![](/images/english-isnt-a-programming-language-2.mp4)
 
 **A hyperspec is both intent and self-updating documentation, written in English, that captures what a product is, why it was built that way, and the relationships between those decisions.** It’s the product of infrastructure that proactively maintains the theory of the program for both humans and agents alike.
 

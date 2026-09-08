@@ -5,10 +5,11 @@ import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
 import ShelfGrid from './ShelfGrid';
 import { datePrecisionFor, formatDateOrRange, parseDateToTimestamp } from '@/utils/dateFormatting';
-import { getVideoInfo, VideoInfo } from '@/utils/mediaDetection';
+import { getVideoInfo, isLoopingVideo, VideoInfo } from '@/utils/mediaDetection';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import VideoEmbed from '@/components/ui/VideoEmbed';
+import LoopingVideo from '@/components/ui/LoopingVideo';
 import PhotoCarousel, { Photo } from '@/components/ui/PhotoCarousel';
 import { filterGridItems } from '@/utils/gridFilter';
 import { distributeByCategory } from '@/utils/gridOrder';
@@ -115,6 +116,8 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
               sizes={cardSizes(colSpan)}
             />
           </div>
+        ) : isLoopingVideo(heroImages[0]) ? (
+          <LoopingVideo src={heroImages[0]} label={item.title} className="block w-full h-auto rounded-sm" />
         ) : (
           heroImages[0] && (
             <Image
@@ -408,7 +411,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
     const result: Photo[] = [];
     for (const item of sortedItems) {
       const cover = item.heroImage || item.thumbnail;
-      if (!cover || getVideoInfo(cover).isVideo) continue;
+      if (!cover || getVideoInfo(cover).isVideo || isLoopingVideo(cover)) continue;
       // A series contributes its cover followed by the rest of its photos.
       for (const src of [cover, ...seriesImages(item)]) {
         result.push({
