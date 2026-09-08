@@ -72,12 +72,13 @@ test('imported footnotes have local references and visible definitions', () => {
 
 test('local raster images get intrinsic dimensions, a column count, and one priority flag', async () => {
   const { default: rehypeImageDimensions, localImageDimensions } = await import('../src/components/content/rehype-image-dimensions.mjs');
-  const root = new URL('..', import.meta.url).pathname;
-  assert.deepEqual(localImageDimensions('/images/advice.png', root), { width: 1190, height: 1684 });
-  assert.equal(localImageDimensions('/images/primitive-hero.svg', root), null);
-  assert.equal(localImageDimensions('https://example.com/x.png', root), null);
+  const manifest = JSON.parse(readFileSync(new URL('../config/image-dimensions.json', import.meta.url), 'utf8'));
+  assert.deepEqual(localImageDimensions('/images/advice.png', manifest), { width: 1190, height: 1684 });
+  assert.equal(localImageDimensions('/images/primitive-hero.svg', manifest), null);
+  assert.equal(localImageDimensions('https://example.com/x.png', manifest), null);
+  assert.equal(localImageDimensions('/images/does-not-exist.png', manifest), null);
   const html = renderToStaticMarkup(React.createElement(ReactMarkdown, {
-    rehypePlugins: [rehypeRaw, rehypeFigures, [rehypeImageDimensions, { root }]],
+    rehypePlugins: [rehypeRaw, rehypeFigures, [rehypeImageDimensions, { manifest }]],
   }, '![A](/images/advice.png) ![B](/images/advice.png)\n\n![C](/images/advice.png)\n\n![Remote](https://example.com/x.png)\n\n<img src="/images/advice.png" width="300" alt="sized">'));
   assert.match(html, /<img src="\/images\/advice.png" alt="A" width="1190" height="1684" data-optimize="" data-columns="2" data-priority=""/);
   assert.match(html, /<img src="\/images\/advice.png" alt="B" width="1190" height="1684" data-optimize="" data-columns="2"\/>/);
@@ -85,4 +86,16 @@ test('local raster images get intrinsic dimensions, a column count, and one prio
   assert.match(html, /<img src="https:\/\/example.com\/x.png" alt="Remote"\/>/);
   assert.match(html, /<img src="\/images\/advice.png" width="300" alt="sized"\/>/);
   assert.equal((html.match(/data-priority/g) || []).length, 1);
+});
+
+test('the image dimensions manifest covers every local raster image used in Markdown bodies', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../config/image-dimensions.json', import.meta.url), 'utf8'));
+  for (const category of ['blog', 'work', 'play', 'talks']) {
+    for (const file of readdirSync(new URL(`../content/${category}/`, import.meta.url)).filter(file => file.endsWith('.md'))) {
+      const {content} = matter(readFileSync(new URL(`../content/${category}/${file}`, import.meta.url), 'utf8'));
+      for (const [, src] of content.matchAll(/\((\/images\/[^\s)]+\.(?:jpe?g|png|webp|avif))\)/gi)) {
+        assert.ok(manifest[decodeURIComponent(src)], `${category}/${file}: ${src} missing from manifest (run npm run image-dimensions)`);
+      }
+    }
+  }
 });
