@@ -1,0 +1,27 @@
+# CLAUDE.md — personal_website (kaseyklimes.com)
+
+Next.js (App Router) + React 19 + Tailwind. Markdown content with YAML frontmatter. Deployed on Vercel.
+
+## Commands
+- `npm run dev` — local dev. Port 3000 is often occupied by another project; if Next falls back to 3001, verify/screenshot against the port it actually chose.
+- `npm run build` / `npm run lint`
+
+## Verify against production
+Fixes aren't done at localhost — when the bug was reported on the live site, verify against the deployed Vercel site too.
+
+## Content model
+`content/{blog,work,photography,shelf,tweet}/*.md` with frontmatter: `title`, `category`, `date` (flexible: MM-DD-YYYY, MM-YYYY, YYYY, ranges, "present"), `stars` (1–5, controls masonry column span), `heroImage`/`thumbnail`, `carousel` + `carouselCaption`, `description`, `location`, `tags`, `private` (hides from grid), `clickThroughUrl`.
+
+Photo mini-series: `heroImage` is the cover (the only image shown in the masonry grid) and `series` lists the remaining photos, which the detail page stacks full-width beneath the cover. The grid caption marks series with a lucide `Images` icon and a photo count. `carousel` is a separate thing (a paged 16:9 gallery, used by work entries).
+
+Markdown layout extensions: `:::` column blocks with `|||` separators; `###` headers inside `:::` auto-split into columns; `<carousel>` tags (one image URL per line); multiple images on one line auto-grid (≤5 cols); ` | ` pipe-separated text renders as columns.
+
+## Images
+Files under `public/images/` are served with a one-year immutable cache header, and the image optimizer inherits that TTL. Never overwrite an image in place; give the replacement a new filename. Sources over ~20MB make cold transforms slow (4–10s) and Vercel sometimes serves the untouched original instead, so after deploying new photography run `npm run warm-images` to pre-render the large variants.
+
+## Parked work / cautions
+- Theme-toggle work is parked in a **git stash** — it must not ship as part of unrelated changes.
+- For design-reference tasks: screenshot the reference URL in a real browser **before** designing from it (a text-only read of laurasinisterra.com misread the design and cost a full redesign cycle).
+
+## Roughdraft
+Do not use `roughdraft open` in this project. Write substantial docs as .md files, point to the file, summarize key points in chat.

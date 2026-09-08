@@ -33,7 +33,7 @@ Caption: Photo by Geoffery Litt ([@geoffreylitt](https://x.com/geoffreylitt))
 
 This surprisingly big microcosm reflected a broader culture. When I think of the New York tech scene, I think of people like [Andrés Cuervo](https://cwervo.com/), [Omar Rizwan](https://omar.website/), and [Govind Manian](https://www.linkedin.com/in/govindmanian/) at [Folk Computer](https://folk.computer/), a research lab for spatial operating systems.
 
-![](/images/https3A2F2Fsubstack-post-media.s3.amazonaws.com2Fpublic2Fimages2F29fa2a32-4466-45a6-8e04-bc3ab34695fe_500x281.gif)
+![](/images/rise-of-the-new-york-tech-scene-loop.mp4)
 
 Caption: Folk Computer
 

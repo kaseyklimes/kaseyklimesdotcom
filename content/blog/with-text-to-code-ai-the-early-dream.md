@@ -68,13 +68,13 @@ ChatGPT knows how to code.
 
 On my first morning with ChatGPT, I asked it to create a custom client intake questionnaire with multiple question types and complex branching logic, where only one question is displayed per page. I've been looking for a program like this for a while, but none of the available web form services met my particular needs. I'm also a terrible programmer. Not only did ChatGPT generate plausible questions for my use case, it produced a working python script that met my criteria in seconds.
 
-![](/images/https3A2F2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com2Fpublic2Fimages2Ffbaa5f4e-fcfe-4296-9b43-61936aabfa4b_800x449.gif)
+![](/images/text-to-code-ai-2.mp4)
 
 Of course, there’s some technical knowledge expressed just in knowing enough to request a python script. What if I don’t know what I need? A single python script isn’t enough. Again, ChatGPT is a generous and understanding developer.
 
 But I don’t just want it to work, my clients will see this! I need it to look good too. ChatGPT, help!
 
-![](/images/https3A2F2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com2Fpublic2Fimages2F12be93c9-1be7-430f-9c74-73e6000d47ce_800x450.gif)
+![](/images/text-to-code-ai-1.mp4)
 
 One more thing — I forgot to tell it that I wanted my questions to show up one at a time. Can we rewrite the code to do that? Of course, it’ll just whip up some javascript for us.
 

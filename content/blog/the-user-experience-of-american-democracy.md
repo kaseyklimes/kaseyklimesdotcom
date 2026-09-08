@@ -38,7 +38,7 @@ Big umbrella parties make for uncomfortable bedfellows. The real political battl
 
 There are many candidates vying for your attention in numerous races at your ballot box, but the well-informed citizen must keep tabs on ballot measures as well. California commonly has as many as 18 on any given ballot. Want unbiased information about them? Good luck. As we’ve been reminded in recent weeks, most information you’ll get about these propositions (or the candidates) is by a campaign or special interest group trying to get you to vote one way or the other. You’ll get more straightforward advice on a used car lot.
 
-![](/images/cognitive-overload-image1-large-opt.gif)
+![](/images/cognitive-overload.mp4)
 
 Caption: If American Democracy was a website.
 
