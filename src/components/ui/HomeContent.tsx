@@ -47,7 +47,7 @@ export default function HomeContent({ allContent, shelfItems }: HomeContentProps
   return (
     <>
       {/* Header Section - Viewport height minus padding */}
-      <section className="flex items-center lg:w-1/3" style={{ height: 'calc(100vh - 20px - 2rem)' }}>
+      <section className="hero-viewport flex items-center lg:w-1/3">
         <div>
           <h2 className="text-2xl mb-8">
             {headerContent}
