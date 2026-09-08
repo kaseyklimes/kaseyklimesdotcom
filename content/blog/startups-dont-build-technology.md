@@ -5,7 +5,7 @@ date: 06-14-2023
 stars: 1
 tags: ["blog"]
 description: Nor should they.
-heroImage: https://substack-post-media.s3.amazonaws.com/public/images/71c8794a-2f29-4013-a60a-2efc74adc4f6_2400x1800.png
+heroImage: /images/startups-dont-build-technology-hero.png
 ---
 
 # Startups Don't Build Technology

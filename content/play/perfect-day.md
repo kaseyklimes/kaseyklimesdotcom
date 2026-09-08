@@ -3,8 +3,8 @@ title: "Perfect Day"
 category: "play"
 date: "2026"
 stars: 1
-thumbnail: "https://www.perfectday.nyc/opengraph-image?7824aaebbcb243b6"
-heroImage: "https://www.perfectday.nyc/opengraph-image?7824aaebbcb243b6"
+thumbnail: "/images/perfect-day-og.png"
+heroImage: "/images/perfect-day-og.png"
 description: "The weather app for touching grass"
 clickThroughUrl: "https://www.perfectday.nyc/"
 tags: ["play"]

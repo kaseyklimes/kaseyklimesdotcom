@@ -4,8 +4,8 @@ category: "work"
 date: "2015"
 stars: 1
 location: "UC Berkeley"
-thumbnail: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558841383322-D9RYTK8D2GIQK1NZIWKO/southberkeley.png"
-heroImage: "https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1558835696644-DDGA3TC6XLLDIIJFPDYK/southberkeley.png"
+thumbnail: "/images/southberkeley-hero.png"
+heroImage: "/images/southberkeley-hero.png"
 description: "A proposal for transforming excess vehicular space into human-scaled development"
 tags: ["work"]
 ---
