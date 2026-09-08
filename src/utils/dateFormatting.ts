@@ -56,7 +56,17 @@ export function parseDateToTimestamp(dateStr: string | undefined): number {
   }
 }
 
-export function formatDateOrRange(dateString: string): string {
+export type DatePrecision = 'day' | 'month';
+
+/**
+ * The finest resolution a category's dates are displayed at. Photography is
+ * captioned by month and year only, even when the frontmatter records the day.
+ */
+export function datePrecisionFor(category: string | undefined): DatePrecision {
+  return category === 'photography' ? 'month' : 'day';
+}
+
+export function formatDateOrRange(dateString: string, precision: DatePrecision = 'day'): string {
   try {
     // Handle undefined or invalid dates
     if (!dateString || typeof dateString !== 'string') {
@@ -91,7 +101,7 @@ export function formatDateOrRange(dateString: string): string {
     if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
       const [month, day, year] = dateString.split('-');
       const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      return fullDateFormatter.format(date);
+      return precision === 'month' ? monthYearFormatter.format(date) : fullDateFormatter.format(date);
     }
 
     // Handle just year (e.g., "2023")

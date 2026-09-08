@@ -4,17 +4,33 @@ import React, { useState, useMemo, useCallback, memo, useRef, useEffect } from '
 import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
 import ShelfGrid from './ShelfGrid';
-import { formatDateOrRange, parseDateToTimestamp } from '@/utils/dateFormatting';
+import { datePrecisionFor, formatDateOrRange, parseDateToTimestamp } from '@/utils/dateFormatting';
 import { getVideoInfo, VideoInfo } from '@/utils/mediaDetection';
 import { useResponsiveColumns } from '@/hooks/useResponsiveColumns';
 import { PrefetchLink } from '@/components/ui/PrefetchLink';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 import PhotoCarousel, { Photo } from '@/components/ui/PhotoCarousel';
 import { filterGridItems } from '@/utils/gridFilter';
+import { distributeByCategory } from '@/utils/gridOrder';
+import { seriesImages } from '@/utils/photoSeries';
+import { Images } from 'lucide-react';
 
 // Gap between items in pixels
 const GAP_X = 24; // gap-x-6 = 1.5rem = 24px
 const GAP_Y = 24; // vertical gap between items
+// The grid lives in a max-w-7xl container with lg:px-8, so it never exceeds 1216px.
+const CONTAINER_MAX_INNER_WIDTH = 1216;
+const MAX_COLUMNS = 5;
+
+/**
+ * The `sizes` hint for a card. Capped at the container's real width so wide
+ * screens don't fetch larger variants than the card can ever display.
+ */
+function cardSizes(colSpan: number): string {
+  const columnWidth = (CONTAINER_MAX_INNER_WIDTH - (MAX_COLUMNS - 1) * GAP_X) / MAX_COLUMNS;
+  const cappedWidth = Math.ceil(colSpan * columnWidth + (colSpan - 1) * GAP_X);
+  return `(min-width: 1280px) ${cappedWidth}px, (min-width: 1024px) ${colSpan * 20}vw, 100vw`;
+}
 
 interface MasonryGridProps {
   items: ContentMeta[];
@@ -22,6 +38,36 @@ interface MasonryGridProps {
   filterRowExtras?: React.ReactNode;
 }
 
+
+// Date, location, and a series marker beneath every card except the shelf.
+const CardMeta = memo(function CardMeta({ item }: { item: ContentMeta }) {
+  if (item.category === 'shelf') return null;
+  const seriesCount = seriesImages(item).length;
+  return (
+    <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+      <span suppressHydrationWarning>{formatDateOrRange(item.date, datePrecisionFor(item.category))}</span>
+      {item.location && (
+        <>
+          <span className="text-gray-300">•</span>
+          <span>{item.location}</span>
+        </>
+      )}
+      {seriesCount > 0 && (
+        <>
+          <span className="text-gray-300">•</span>
+          <span
+            className="inline-flex items-center gap-1"
+            title={`Series of ${seriesCount + 1} photos`}
+            aria-label={`Series of ${seriesCount + 1} photos`}
+          >
+            <Images size={12} strokeWidth={1.75} aria-hidden="true" />
+            <span>{seriesCount + 1}</span>
+          </span>
+        </>
+      )}
+    </div>
+  );
+});
 
 // Shared content component to eliminate duplication
 interface GridItemContentProps {
@@ -52,17 +98,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
         <div className="mt-1">
           <h3 className="text-lg leading-snug">{item.title}</h3>
           <p className="text-xs line-clamp-4 mt-1">{item.description}</p>
-          {item.category !== 'shelf' && (
-            <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-              <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
-              {item.location && (
-                <>
-                  <span className="text-gray-300">•</span>
-                  <span>{item.location}</span>
-                </>
-              )}
-            </div>
-          )}
+          <CardMeta item={item} />
         </div>
       </div>
     );
@@ -76,7 +112,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
             <VideoEmbed
               videoInfo={videoInfo}
               title={item.title}
-              sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
+              sizes={cardSizes(colSpan)}
             />
           </div>
         ) : (
@@ -87,7 +123,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
               width={1200}
               height={800}
               className="w-full h-auto rounded-sm"
-              sizes={`(min-width: 1024px) ${colSpan * 20}vw, 100vw`}
+              sizes={cardSizes(colSpan)}
               priority={index < 4}
               loading={index < 4 ? "eager" : "lazy"}
               placeholder="blur"
@@ -134,17 +170,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
       <div className="mt-1">
         <h3 className="text-lg leading-snug">{item.title}</h3>
         <p className="text-xs line-clamp-4 mt-1">{item.description}</p>
-        {item.category !== 'shelf' && (
-          <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-            <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
-            {item.location && (
-              <>
-                <span className="text-gray-300">•</span>
-                <span>{item.location}</span>
-              </>
-            )}
-          </div>
-        )}
+        <CardMeta item={item} />
       </div>
     </div>
   );
@@ -252,17 +278,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
                 {item.description}
               </p>
             )}
-            {item.category !== 'shelf' && (
-              <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                <span suppressHydrationWarning>{formatDateOrRange(item.date)}</span>
-                {item.location && (
-                  <>
-                    <span className="text-gray-300">•</span>
-                    <span>{item.location}</span>
-                  </>
-                )}
-              </div>
-            )}
+            <CardMeta item={item} />
           </div>
         )}
       </div>
@@ -357,7 +373,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
       ])
     );
 
-    return [...filtered].sort((a, b) => {
+    const byDate = [...filtered].sort((a, b) => {
       // Always put shelf at the end
       if (a.category === 'shelf') return 1;
       if (b.category === 'shelf') return -1;
@@ -377,6 +393,13 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
 
       return dateCompare;
     });
+
+    // Break up runs of one content type without straying far from date order.
+    // Shelf cards stay pinned at the end.
+    const shelfStart = byDate.findIndex(item => item.category === 'shelf');
+    const main = shelfStart === -1 ? byDate : byDate.slice(0, shelfStart);
+    const shelf = shelfStart === -1 ? [] : byDate.slice(shelfStart);
+    return [...distributeByCategory(main), ...shelf];
   }, [items, selectedTag, maxColumns]);
 
   // Photos available for the full-screen viewer, in grid order.
@@ -384,14 +407,17 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
   const photos = useMemo<Photo[]>(() => {
     const result: Photo[] = [];
     for (const item of sortedItems) {
-      const src = item.heroImage || item.thumbnail;
-      if (!src || getVideoInfo(src).isVideo) continue;
-      result.push({
-        src,
-        title: item.title,
-        location: item.location,
-        caption: item.date ? formatDateOrRange(item.date) : undefined,
-      });
+      const cover = item.heroImage || item.thumbnail;
+      if (!cover || getVideoInfo(cover).isVideo) continue;
+      // A series contributes its cover followed by the rest of its photos.
+      for (const src of [cover, ...seriesImages(item)]) {
+        result.push({
+          src,
+          title: item.title,
+          location: item.location,
+          caption: item.date ? formatDateOrRange(item.date, datePrecisionFor(item.category)) : undefined,
+        });
+      }
     }
     return result;
   }, [sortedItems]);
@@ -553,6 +579,8 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
     }
   }, []);
 
+  const hasPositions = positions.size > 0;
+
   return (
     <div>
       {/* Tag Filter */}
@@ -587,27 +615,40 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
       </div>
 
       {/* Masonry Grid */}
+      {/*
+        Until the container has been measured (including on the server) the
+        cards sit in a plain CSS grid. That puts the images in the initial HTML
+        so the browser can start fetching them, and lets the first few carry
+        preload hints, before any JavaScript runs. The container stays
+        invisible until the masonry positions replace the fallback layout.
+      */}
       <div
         ref={containerRef}
         className="relative"
-        style={{
+        style={hasPositions ? {
           height: containerHeight || 'auto',
           opacity: isLayoutReady ? 1 : 0,
           transition: 'opacity 0.2s ease-in-out'
+        } : {
+          display: 'grid',
+          gridTemplateColumns: `repeat(${maxColumns}, minmax(0, 1fr))`,
+          columnGap: GAP_X,
+          rowGap: GAP_Y,
+          opacity: 0,
         }}
       >
         {sortedItems.map((item, index) => {
           const key = `${item.category}-${item.slug}`;
           const position = positions.get(key);
 
-          if (!position) return null;
-
-          const style: React.CSSProperties = {
+          const style: React.CSSProperties = position ? {
             position: 'absolute',
             left: position.left,
             top: position.top,
             width: position.width,
             transition: 'left 0.3s ease-out, top 0.3s ease-out, width 0.3s ease-out'
+          } : {
+            gridColumn: `span ${getColSpan(item, maxColumns)}`,
           };
 
           return (

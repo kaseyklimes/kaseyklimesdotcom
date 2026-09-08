@@ -9,7 +9,8 @@ import MarkdownContent from '@/components/content/MarkdownContent';
 import { Metadata } from 'next';
 import Carousel from '@/components/ui/Carousel';
 import { getVideoInfo, getYouTubeThumbnail } from '@/utils/mediaDetection';
-import { formatDateOrRange } from '@/utils/dateFormatting';
+import { datePrecisionFor, formatDateOrRange } from '@/utils/dateFormatting';
+import { seriesImages } from '@/utils/photoSeries';
 import VideoEmbed from '@/components/ui/VideoEmbed';
 
 interface PageProps {
@@ -80,6 +81,9 @@ export default async function ContentPage({ params }: PageProps) {
   // Get video info if there is a single hero image that is a video URL
   const videoInfo = heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false };
 
+  // Remaining photos of a mini-series, stacked beneath the cover
+  const series = seriesImages(content);
+
   const heading = (
     <div className={category === 'work' ? 'work-heading' : undefined}>
               <h1 className="text-4xl mb-4">
@@ -137,7 +141,7 @@ export default async function ContentPage({ params }: PageProps) {
                 dateTime={content.date}
                 className="text-xs"
               >
-                {formatDateOrRange(content.date)}
+                {formatDateOrRange(content.date, datePrecisionFor(category))}
               </time>
             </div>
           )}
@@ -190,6 +194,18 @@ export default async function ContentPage({ params }: PageProps) {
                   {content.carouselCaption}
                 </p>
               )}
+              {series.map((src, i) => (
+                <div key={`${i}-${src}`} className="mb-8">
+                  <Image
+                    src={src}
+                    alt={`${content.title || content.location || 'Photo'} — ${i + 2} of ${series.length + 1}`}
+                    width={1200}
+                    height={800}
+                    className="w-full h-auto"
+                    sizes="(min-width: 1280px) 1200px, 100vw"
+                  />
+                </div>
+              ))}
               {category !== 'work' && heading}
             </>
           )}
