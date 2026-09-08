@@ -138,6 +138,8 @@ body {
 .markdown-content :where(ul, ol) { padding-left: 1.6em; }
 .markdown-content li { padding-left: .3em; margin-block: .5em; }
 .markdown-content li > :where(p, ul, ol) { margin-block: .5em; }
+/* Loose lists (items with their own paragraphs) get a blank line between items. */
+.markdown-content li:has(> p) { margin-block: 1.5em; }
 .markdown-content li::marker { color: var(--foreground); font-weight: 500; }
 .markdown-content blockquote {
   border-left: 2px solid currentColor;
