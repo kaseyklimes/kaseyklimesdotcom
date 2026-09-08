@@ -9,7 +9,11 @@
     "warm-images": "node scripts/warm-image-cache.mjs",
     "lint": "eslint src",
     "test": "node --test test/*.test.cjs test/*.test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "image-dimensions": "node scripts/image-dimensions.mjs",
+    "predev": "npm run image-dimensions",
+    "prebuild": "npm run image-dimensions",
+    "pretest": "npm run image-dimensions"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
@@ -18,7 +22,6 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "date-fns": "^4.1.0",
     "gray-matter": "^4.0.3",
-    "image-size": "^2.0.2",
     "lucide-react": "^1.42.0",
     "next": "^16.2.4",
     "react": "^19.0.0",
@@ -35,6 +38,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "^15.1.7",
+    "image-size": "^2.0.2",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
