@@ -9,6 +9,7 @@ export interface ContentMeta {
   slug: string;
   thumbnail?: string;  // Image for grid display (falls back to heroImage)
   heroImage?: string;  // Image for detail page
+  imageDimensions?: { width: number; height: number };  // Pixel size of the grid image, from the dimensions manifest
   carousel?: string[];
   carouselCaption?: string;
   series?: string[];  // Extra photos in a mini-series; only heroImage shows in the grid
