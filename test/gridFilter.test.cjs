@@ -32,6 +32,7 @@ const items = [
   card('big-blog', 2, ['blog']),
   card('secret', 5, ['work'], { private: true }),
   card('shelf', 5, ['shelf'], { category: 'shelf' }),
+  card('quiet-photo', 3, ['photography'], { hideFromAll: true }),
 ];
 const slugs = list => list.map(item => item.slug).sort();
 
@@ -41,6 +42,7 @@ test('a selected filter shows every public card in that tag regardless of stars,
     assert.deepEqual(slugs(filterGridItems(items, 'play', isMobile)), ['small-play']);
     assert.deepEqual(slugs(filterGridItems(items, 'blog', isMobile)), ['big-blog', 'small-blog']);
     assert.deepEqual(slugs(filterGridItems(items, 'shelf', isMobile)), ['shelf']);
+    assert.deepEqual(slugs(filterGridItems(items, 'photography', isMobile)), ['quiet-photo']);
   }
 });
 
@@ -51,10 +53,19 @@ test('the unfiltered view hides low-star cards only on mobile', () => {
   assert.deepEqual(slugs(filterGridItems(items, null, false)), ['big-blog', 'big-work', 'small-blog', 'small-play', 'small-work']);
 });
 
-test('private cards and the shelf card never appear in the unfiltered view', () => {
+test('private cards, the shelf card, and hideFromAll cards never appear in the unfiltered view', () => {
   for (const isMobile of [true, false]) {
-    const shown = slugs(filterGridItems(items, null, isMobile));
-    assert.ok(!shown.includes('secret'));
-    assert.ok(!shown.includes('shelf'));
+    for (const tag of [null, 'all']) {
+      const shown = slugs(filterGridItems(items, tag, isMobile));
+      assert.ok(!shown.includes('secret'));
+      assert.ok(!shown.includes('shelf'));
+      assert.ok(!shown.includes('quiet-photo'));
+    }
   }
+});
+
+test('hideFromAll cards still appear under their tag filter even below the mobile star floor', () => {
+  const lowStar = [...items, card('quiet-low', 1, ['photography'], { hideFromAll: true })];
+  assert.deepEqual(slugs(filterGridItems(lowStar, 'photography', true)), ['quiet-low', 'quiet-photo']);
+  assert.ok(!slugs(filterGridItems(lowStar, null, true)).includes('quiet-low'));
 });

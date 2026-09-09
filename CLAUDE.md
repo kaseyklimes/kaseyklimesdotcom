@@ -10,7 +10,7 @@ Next.js (App Router) + React 19 + Tailwind. Markdown content with YAML frontmatt
 Fixes aren't done at localhost — when the bug was reported on the live site, verify against the deployed Vercel site too.
 
 ## Content model
-`content/{blog,work,photography,shelf,tweet}/*.md` with frontmatter: `title`, `category`, `date` (flexible: MM-DD-YYYY, MM-YYYY, YYYY, ranges, "present"), `stars` (1–5, controls masonry column span), `heroImage`/`thumbnail`, `carousel` + `carouselCaption`, `description`, `location`, `tags`, `private` (hides from grid), `clickThroughUrl`.
+`content/{blog,work,photography,shelf,tweet}/*.md` with frontmatter: `title`, `category`, `date` (flexible: MM-DD-YYYY, MM-YYYY, YYYY, ranges, "present"), `stars` (1–5, controls masonry column span), `heroImage`/`thumbnail`, `carousel` + `carouselCaption`, `description`, `location`, `tags`, `private` (hides from grid), `hideFromAll` (hides from the unfiltered "All" grid only; still shown under its tag filters), `clickThroughUrl`.
 
 Photo mini-series: `heroImage` is the cover (the only image shown in the masonry grid) and `series` lists the remaining photos, which the detail page stacks full-width beneath the cover. The grid caption marks series with a lucide `Images` icon and a photo count. `carousel` is a separate thing (a paged 16:9 gallery, used by work entries).
 

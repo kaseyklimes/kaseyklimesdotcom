@@ -8,8 +8,8 @@ export const MOBILE_MIN_STARS = 2;
  * Decide which cards the masonry grid shows.
  *
  * - A selected tag shows every public card carrying that tag, regardless of stars.
- * - The unfiltered "All" view hides the shelf card and, on mobile only,
- *   anything below MOBILE_MIN_STARS.
+ * - The unfiltered "All" view hides the shelf card, cards flagged hideFromAll,
+ *   and, on mobile only, anything below MOBILE_MIN_STARS.
  */
 export function filterGridItems(items: ContentMeta[], selectedTag: string | null, isMobile: boolean): ContentMeta[] {
   if (selectedTag && selectedTag !== 'all') {
@@ -18,6 +18,7 @@ export function filterGridItems(items: ContentMeta[], selectedTag: string | null
   return items.filter(item =>
     !item.private
     && item.category !== 'shelf'
+    && !item.hideFromAll
     && (!isMobile || (Number(item.stars) || 0) >= MOBILE_MIN_STARS)
   );
 }
