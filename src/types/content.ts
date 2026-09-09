@@ -17,6 +17,7 @@ export interface ContentMeta {
   location?: string;
   span?: number;
   private?: boolean;
+  hideFromAll?: boolean;  // Hidden from the unfiltered "All" grid; still shown under its tag filters
   clickThroughUrl?: string;
   audioUrl?: string;
   reportPages?: boolean;

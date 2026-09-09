@@ -94,6 +94,7 @@ description: "Brief description"
 location: "City, Country" # optional
 tags: ["work", "design"] # for grid filtering
 private: true # optional, hides from grid
+hideFromAll: true # optional, hides from the unfiltered "All" grid but keeps it under its tag filters
 clickThroughUrl: "https://..." # optional, links grid card externally
 ---
 

@@ -5,4 +5,5 @@ location: "Brooklyn, NY"
 stars: 1
 heroImage: "/images/cherry-blossom-finch.jpg"
 tags: ["photography"]
+hideFromAll: true
 ---
