@@ -14,7 +14,7 @@ Fixes aren't done at localhost — when the bug was reported on the live site, v
 
 Photo mini-series: `heroImage` is the cover (the only image shown in the masonry grid) and `series` lists the remaining photos, which the detail page stacks full-width beneath the cover. The grid caption marks series with a lucide `Images` icon and a photo count. `carousel` is a separate thing (a paged 16:9 gallery, used by work entries).
 
-Markdown layout extensions: `:::` column blocks with `|||` separators; `###` headers inside `:::` auto-split into columns; `<carousel>` tags (one image URL per line); multiple images on one line auto-grid (≤5 cols); ` | ` pipe-separated text renders as columns.
+Markdown layout extensions: `:::` column blocks with `|||` separators; `###` headers inside `:::` auto-split into columns; `<carousel>` tags (one image URL per line; `<carousel picker="false">` hides the slide dropdown, as does `carouselPicker: false` in frontmatter for the hero carousel); multiple images on one line auto-grid (≤5 cols); ` | ` pipe-separated text renders as columns.
 
 ## Images
 Files under `public/images/` are served with a one-year immutable cache header, and the image optimizer inherits that TTL. Never overwrite an image in place; give the replacement a new filename. Sources over ~20MB make cold transforms slow (4–10s) and Vercel sometimes serves the untouched original instead, so after deploying new photography run `npm run warm-images` to pre-render the large variants.

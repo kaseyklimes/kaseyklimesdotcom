@@ -172,6 +172,7 @@ export default async function ContentPage({ params }: PageProps) {
                       alt={`${content.title}${content.description ? ` - ${content.description}` : ''}`}
                       contain
                       priority
+                      picker={content.carouselPicker !== false}
                     />
                   ) : isLoopingVideo(heroImages[0]) ? (
                     <LoopingVideo src={heroImages[0]} label={content.title} className="block w-full h-auto" />
