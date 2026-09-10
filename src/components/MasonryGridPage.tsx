@@ -3,6 +3,7 @@
 import React from 'react';
 import { MasonryGridPage as MasonryGridPageType } from '@/types/content';
 import MasonryGrid from './grid/MasonryGrid';
+import ShelfGrid from './grid/ShelfGrid';
 
 interface MasonryGridPageProps {
   page: MasonryGridPageType;
@@ -21,7 +22,7 @@ export default function MasonryGridPage({ page }: MasonryGridPageProps) {
           )}
         </div>
       )}
-      <MasonryGrid items={page.items} />
+      {page.category === 'shelf' ? <ShelfGrid items={page.items} /> : <MasonryGrid items={page.items} />}
     </div>
   );
-} 
+}
