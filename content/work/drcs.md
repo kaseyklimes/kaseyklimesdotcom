@@ -39,7 +39,7 @@ Students select their own areas of study, and have explored complex systems like
 
 :::
 
-<carousel>
+<carousel picker="false">
 https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1677008045673-0S0NRPD1CO1V9FBO4JLT/Slide+16_9+-+3+%281%29.png
 https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1677007458175-PDHL973U8B781JCU0NC7/001.png
 https://images.squarespace-cdn.com/content/v1/5223b0a0e4b0316853560d4e/1677007460673-GLHBGPXCS76ECQEP9HRZ/1200.png

@@ -9,9 +9,11 @@ interface CarouselProps {
     alt: string;
     contain?: boolean;
     priority?: boolean;
+    /** Show the "Choose image" dropdown under the arrows. Off for galleries whose filenames mean nothing to readers. */
+    picker?: boolean;
 }
 
-export default function Carousel({ images, alt, contain = true, priority = false }: CarouselProps) {
+export default function Carousel({ images, alt, contain = true, priority = false, picker = true }: CarouselProps) {
     const [index, setIndex] = React.useState(0);
     const selectId = React.useId();
     const activeIndex = Math.min(index, Math.max(0, images.length - 1));
@@ -59,12 +61,14 @@ export default function Carousel({ images, alt, contain = true, priority = false
                 </span>
                 <button type="button" aria-label="Next image" onClick={() => move(1)} disabled={images.length < 2}>→</button>
             </div>
-            <div className="gallery-tools">
-                <label className="sr-only" htmlFor={selectId}>Choose image</label>
-                <select id={selectId} value={activeIndex} onChange={event => setIndex(Number(event.target.value))}>
-                    {slideIds.map((id, i) => <option key={`${i}-${id}`} value={i}>{i + 1}. {id.replace(/[-_]+/g, ' ')}</option>)}
-                </select>
-            </div>
+            {picker && (
+                <div className="gallery-tools">
+                    <label className="sr-only" htmlFor={selectId}>Choose image</label>
+                    <select id={selectId} value={activeIndex} onChange={event => setIndex(Number(event.target.value))}>
+                        {slideIds.map((id, i) => <option key={`${i}-${id}`} value={i}>{i + 1}. {id.replace(/[-_]+/g, ' ')}</option>)}
+                    </select>
+                </div>
+            )}
         </div>
     );
 }

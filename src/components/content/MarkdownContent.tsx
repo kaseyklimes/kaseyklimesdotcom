@@ -77,7 +77,7 @@ export default function MarkdownContent({ content, reportPages = false }: { cont
   return <>{splitLayoutBlocks(content).map((block, index) => {
     if (block.type === 'carousel') {
       const images = block.content.split('\n').map(line => line.trim()).filter(Boolean);
-      return images.length ? <div key={index} className="my-8 not-prose"><Carousel images={images} alt="Image carousel" /></div> : null;
+      return images.length ? <div key={index} className="my-8 not-prose"><Carousel images={images} alt="Image carousel" picker={block.picker !== false} /></div> : null;
     }
     if (block.type === 'columns') {
       const columns = block.content.split(/^\|\|\|\s*$/m.test(block.content) ? /^\|\|\|\s*$/m : /(?=^### )/m).filter(col => col.trim());

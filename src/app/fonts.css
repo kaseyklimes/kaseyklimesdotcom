@@ -66,3 +66,35 @@
 }
 
  
+/* IBM Plex Serif: blog body copy (see .blog-prose in globals.css). OFL 1.1, licence alongside the files. */
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

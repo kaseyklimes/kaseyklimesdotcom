@@ -128,8 +128,8 @@ body {
   overflow-wrap: anywhere;
 }
 .blog-prose {
-  font-size: 1rem;
-  line-height: 1.85;
+  font-size: 1.0625rem;
+  line-height: 1.75;
 }
 .blog-prose > :where(p, ul, ol, blockquote, h2, h3, h4, hr, .footnotes) {
   max-width: 42rem;
@@ -147,6 +147,16 @@ body {
 }
 .blog-prose h2 { font-size: 1.5rem; margin-top: 2.5em; }
 .blog-prose h3 { font-size: 1.15rem; margin-top: 2em; }
+/* Article body copy on every detail page reads in IBM Plex Serif, self-hosted in public/fonts.
+   Headings, code, and captions stay in Berkeley Mono. The typography plugin pins `a` to Berkeley
+   Mono, so inline elements inherit explicitly. Only 400 and 700 are shipped, so the site's
+   weight-500 "medium" strong is bumped to 700. */
+.markdown-content :where(p, ul, ol, blockquote, .footnotes, table) {
+  font-family: 'IBM Plex Serif', Charter, Georgia, serif;
+}
+.markdown-content :where(p, li, blockquote, td, th) :where(a, strong, em, del) { font-family: inherit; }
+.markdown-content :where(p, li, blockquote, td, th) strong { font-weight: 700; }
+.markdown-content figcaption, .markdown-content figcaption p { font-family: 'Berkeley Mono', system-ui, monospace; }
 .markdown-content :where(ul, ol) { padding-left: 1.6em; }
 .markdown-content li { padding-left: .3em; margin-block: .5em; }
 .markdown-content li > :where(p, ul, ol) { margin-block: .5em; }
@@ -207,7 +217,7 @@ body {
   .markdown-content :is(img, video) { outline-color: rgba(255, 255, 255, .1); }
 }
 @media (max-width: 640px) {
-  .blog-prose { font-size: .9375rem; line-height: 1.8; }
+  .blog-prose { font-size: 1rem; line-height: 1.7; }
   .blog-prose h2 { font-size: 1.3rem; }
   .markdown-content figure { margin-block: 2rem; }
 }
@@ -256,6 +266,7 @@ body {
 .markdown-content .course-lesson-body li:last-child { margin-bottom: 0; }
 .markdown-content .course-lesson-body .course-guest { margin-top: 1rem; font-size: .8125rem; }
 .markdown-content .course-guest span {
+  font-family: 'Berkeley Mono', system-ui, monospace;
   display: block;
   margin-bottom: .2rem;
   font-size: .6875rem;

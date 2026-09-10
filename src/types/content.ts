@@ -12,6 +12,7 @@ export interface ContentMeta {
   imageDimensions?: { width: number; height: number };  // Pixel size of the grid image, from the dimensions manifest
   carousel?: string[];
   carouselCaption?: string;
+  carouselPicker?: boolean;  // Set false to hide the hero carousel's slide dropdown
   series?: string[];  // Extra photos in a mini-series; only heroImage shows in the grid
   hasContent?: boolean;
   location?: string;
