@@ -62,7 +62,7 @@ const nextConfig = {
       // Source images are immutable: replace an image by giving it a new name.
       // The optimizer inherits this TTL, so optimized variants stay cached in
       // browsers and on the CDN instead of being revalidated on every visit.
-      source: '/images/:path*',
+      source: '/images/:path+',
       headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
     },
   ],
