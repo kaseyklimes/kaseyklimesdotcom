@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
 import Link from 'next/link';
+import { orderShelfItems, SHELF_COLUMN_GAP } from '@/utils/shelfOrder';
 
 interface ShelfGridProps {
   items: ContentMeta[];
@@ -24,8 +25,8 @@ function ShelfGridItem({ item, index }: { item: ContentMeta; index: number }) {
             <Image
               src={item.heroImage}
               alt={`${item.title}${item.description ? ` - ${item.description}` : ''}`}
-              width={1200}
-              height={800}
+              width={item.imageDimensions?.width ?? 1200}
+              height={item.imageDimensions?.height ?? 800}
               className={`w-full h-auto ${imageLoaded ? 'loaded' : ''}`}
               sizes="(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw"
               onLoad={handleImageLoad}
@@ -43,7 +44,8 @@ function ShelfGridItem({ item, index }: { item: ContentMeta; index: number }) {
 
 export default function ShelfGrid({ items }: ShelfGridProps) {
   const [maxColumns, setMaxColumns] = useState(5);
-  const [columns, setColumns] = useState<ContentMeta[][]>([]);
+  const [containerWidth, setContainerWidth] = useState(1216);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Calculate max columns based on window width - same as MasonryGrid
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function ShelfGrid({ items }: ShelfGridProps) {
       const possibleColumns = Math.floor(availableWidth / 200);
       // Clamp between 1 and 5 columns
       setMaxColumns(Math.max(1, Math.min(5, possibleColumns)));
+      if (containerRef.current) setContainerWidth(containerRef.current.clientWidth);
     }
 
     // Initial calculation
@@ -62,25 +65,32 @@ export default function ShelfGrid({ items }: ShelfGridProps) {
 
     // Add event listener
     window.addEventListener('resize', handleResize);
+    const observer = new ResizeObserver(handleResize);
+    if (containerRef.current) observer.observe(containerRef.current);
 
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      observer.disconnect();
+    };
   }, []);
 
   // Distribute items into columns for masonry layout
-  useEffect(() => {
+  const columns = useMemo(() => {
     const newColumns: ContentMeta[][] = Array.from({ length: maxColumns }, () => []);
+    const columnWidth = (containerWidth - (maxColumns - 1) * SHELF_COLUMN_GAP) / maxColumns;
 
-    items.forEach((item, index) => {
+    orderShelfItems(items, maxColumns, columnWidth).forEach((item, index) => {
       const columnIndex = index % maxColumns;
       newColumns[columnIndex].push(item);
     });
 
-    setColumns(newColumns);
-  }, [items, maxColumns]);
+    return newColumns;
+  }, [items, maxColumns, containerWidth]);
 
   return (
     <div
+      ref={containerRef}
       className="flex gap-6"
     >
       {columns.map((column, columnIndex) => (
@@ -89,11 +99,11 @@ export default function ShelfGrid({ items }: ShelfGridProps) {
             <ShelfGridItem
               key={item.slug}
               item={item}
-              index={columnIndex * maxColumns + itemIndex}
+              index={itemIndex * maxColumns + columnIndex}
             />
           ))}
         </div>
       ))}
     </div>
   );
-} 
+}
