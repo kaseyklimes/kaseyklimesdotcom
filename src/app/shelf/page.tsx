@@ -1,30 +1,12 @@
-import { getAllContent } from '@/utils/content';
-import MasonryGridPage from '@/components/MasonryGridPage';
-import { Metadata, Viewport } from 'next';
-import { imageDimensions } from '@/utils/imageDimensions';
+import Home from '../page';
+import { Metadata } from 'next';
+
+export const dynamic = 'force-static';
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Shelf | Kasey Klimes',
-  description: 'A collection of books, albums, and other media that have influenced my thinking.'
+  description: 'A collection of books, albums, and other media that have influenced my thinking.',
 };
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-};
-
-export default async function ShelfPage() {
-  const shelfItems = getAllContent({ category: 'shelf' })
-    .filter(item => !item.private)
-    .map(item => ({ ...item, imageDimensions: imageDimensions(item.heroImage) ?? undefined }));
-
-  const page = {
-    title: 'Shelf',
-    description: 'A collection of books, albums, and other media that have influenced my thinking.',
-    items: shelfItems,
-    category: 'shelf' as const,
-    layout: 'masonry' as const
-  };
-
-  return <MasonryGridPage page={page} />;
-}
+export default Home;
