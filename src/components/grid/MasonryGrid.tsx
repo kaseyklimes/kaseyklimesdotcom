@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useCallback, memo, useRef, useEffect } from 'react';
 import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { filterPath, filterTag } from '@/utils/filterRoutes';
 import ShelfGrid from './ShelfGrid';
 import { datePrecisionFor, formatDateOrRange, parseDateToTimestamp } from '@/utils/dateFormatting';
 import { getVideoInfo, isLoopingVideo, VideoInfo } from '@/utils/mediaDetection';
@@ -344,7 +346,8 @@ interface ItemPosition {
 
 export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps) {
   const maxColumns = useResponsiveColumns();
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const pathname = usePathname();
+  const selectedTag = filterTag(pathname);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [itemHeights, setItemHeights] = useState<Map<string, number>>(new Map());
@@ -574,9 +577,21 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
   // Ref for tag filter to scroll to on click
   const filterRef = useRef<HTMLDivElement>(null);
 
+  // Shared links open at the selected collection, below the homepage introduction.
+  useEffect(() => {
+    if (window.location.pathname !== '/' && filterRef.current) {
+      const top = filterRef.current.getBoundingClientRect().top + window.scrollY - 40;
+      window.scrollTo({ top, behavior: 'instant' });
+    }
+  }, []);
+
   // Handle tag click with scroll
   const handleTagClick = useCallback((tag: string) => {
-    setSelectedTag(tag === 'all' ? null : tag);
+    const path = filterPath(tag);
+    if (window.location.pathname !== path) {
+      window.history.pushState(null, '', path);
+    }
+    setLightboxIndex(null);
     // Scroll filter to 40px below viewport top
     if (filterRef.current) {
       const top = filterRef.current.getBoundingClientRect().top + window.scrollY - 40;
@@ -591,16 +606,22 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
       {/* Tag Filter */}
       <div ref={filterRef} className="mb-8 flex gap-x-4 flex-wrap">
         {tags.map(tag => (
-          <button
+          <a
             key={tag}
-            onClick={() => handleTagClick(tag)}
+            href={filterPath(tag)}
+            aria-current={(tag === 'all' && !selectedTag) || tag === selectedTag ? 'page' : undefined}
+            onClick={event => {
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
+              handleTagClick(tag);
+            }}
             className={`text-sm mb-2 ${(tag === 'all' && !selectedTag) || tag === selectedTag
               ? 'underline'
               : ''
               }`}
           >
             {categoryLabel(tag)}
-          </button>
+          </a>
         ))}
         {canShowSlideshow && (
           <button
