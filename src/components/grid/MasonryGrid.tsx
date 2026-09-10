@@ -358,7 +358,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
   // Get unique tags from all items, in a fixed display order. Tags not listed
   // fall back to alphabetical order ahead of shelf, which always comes last.
   const tags = React.useMemo(() => {
-    const order = ['all', 'blog', 'work', 'photography', 'play', 'talks'];
+    const order = ['all', 'blog', 'work', 'photography', 'talks', 'play'];
     const rank = (tag: string) => {
       if (tag === 'shelf') return Number.MAX_SAFE_INTEGER;
       const index = order.indexOf(tag);
