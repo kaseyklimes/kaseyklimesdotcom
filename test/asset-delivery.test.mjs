@@ -4,7 +4,7 @@ import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
-import { collectImages, createJobs, warmJob } from '../scripts/warm-image-cache.mjs';
+import { collectImages, createJobs, parseArgs, warmJob } from '../scripts/warm-image-cache.mjs';
 import { imageDeviceSizes, imageFormats } from '../config/image-optimization.mjs';
 
 test('versioned fonts are byte-identical, content-addressed, and referenced by CSS and preloads', () => {
@@ -27,7 +27,7 @@ test('warming includes public covers and photo series, skipping private and bypa
   const dir = mkdtempSync(join(tmpdir(), 'warm-images-'));
   try {
     for (const category of ['photography', 'work', 'shelf']) mkdirSync(join(dir, category));
-    const put = (category, name, yaml) => writeFileSync(join(dir, category, `${name}.md`), `---\n${yaml}\n---\n`);
+    const put = (category, name, yaml, body = '') => writeFileSync(join(dir, category, `${name}.md`), `---\n${yaml}\n---\n${body}`);
     put('photography', 'series', 'heroImage: /images/cover.jpg\nseries: [/images/extra.png, /images/cover.jpg]');
     put('photography', 'private', 'private: true\nheroImage: /images/private.jpg');
     put('work', 'thumb', 'heroImage: /images/hero.jpg\nthumbnail: /images/thumb.webp');
@@ -36,6 +36,37 @@ test('warming includes public covers and photo series, skipping private and bypa
     put('shelf', 'book', 'heroImage: /images/book.jpg');
     assert.deepEqual(collectImages(dir), ['/images/book.jpg', '/images/cover.jpg', '/images/extra.png', '/images/thumb.webp']);
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('warming stays off article body images, which would multiply the transformation bill', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'warm-body-'));
+  try {
+    mkdirSync(join(dir, 'blog'));
+    const body = ['![a chart](/images/chart.png)', '![](/images/photo.jpeg)'].join('\n\n');
+    writeFileSync(join(dir, 'blog', 'post.md'), `---\nheroImage: /images/hero.png\n---\n${body}`);
+    assert.deepEqual(collectImages(dir), ['/images/hero.png']);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('the width ladder stays short enough to keep the transformation bill in budget', () => {
+  // widths × formats is the per-image transformation count; every step added
+  // here is bought again for all ~650 images in public/images.
+  assert.ok(imageDeviceSizes.length * imageFormats.length <= 10,
+    `${imageDeviceSizes.length} widths × ${imageFormats.length} formats is too many variants per image`);
+  assert.deepEqual([...imageDeviceSizes].sort((a, b) => a - b), imageDeviceSizes);
+});
+
+test('origin, --only and --limit parse independently of argument order', () => {
+  assert.deepEqual(parseArgs([]), { dryRun: false, limit: 0, only: null, origin: 'https://www.kaseyklimes.com' });
+  const parsed = parseArgs(['--only', 'nyc-\\d', 'https://preview.example.com/', '--limit', '12', '--dry-run']);
+  assert.equal(parsed.origin, 'https://preview.example.com');
+  assert.equal(parsed.limit, 12);
+  assert.equal(parsed.dryRun, true);
+  assert.ok(parsed.only.test('/images/nyc-4.png'));
+  assert.ok(!parsed.only.test('/images/memex.jpg'));
+  // `--flag=value` is equivalent, and a pattern is never mistaken for the origin.
+  assert.equal(parseArgs(['--only=nyc', '--limit=3']).origin, 'https://www.kaseyklimes.com');
+  assert.throws(() => parseArgs(['--nope']), /Unknown option --nope/);
 });
 
 test('every configured device width and format is warmed with unchanged quality', async () => {
