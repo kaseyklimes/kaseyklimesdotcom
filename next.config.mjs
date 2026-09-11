@@ -53,8 +53,7 @@ const nextConfig = {
       }
     ],
     formats: imageFormats,
-    // Adds a 2560 step so a 1200px-wide slot on a 2x display gets a 2560
-    // variant instead of jumping to 3840.
+    // A short ladder on purpose: see config/image-optimization.mjs.
     deviceSizes: imageDeviceSizes,
     minimumCacheTTL: 60 * 60 * 24 * 365,
   },

@@ -1,7 +1,20 @@
 name: Warm production images
+# Warming bills one Vercel image transformation per uncached variant, so a full
+# pass is expensive and a pass on every production deployment exhausted the
+# monthly allowance: the optimizer then answered HTTP 402 for every variant it
+# had not already cached, which readers saw as broken images. Run it manually
+# after publishing new photography, and prefer `only` to warm just those paths.
 on:
-  deployment_status:
   workflow_dispatch:
+    inputs:
+      only:
+        description: 'Only warm image paths matching this regular expression'
+        required: false
+        default: ''
+      limit:
+        description: 'Request at most this many variants (0 = all)'
+        required: false
+        default: '0'
 permissions:
   contents: read
 concurrency:
@@ -9,19 +22,17 @@ concurrency:
   cancel-in-progress: false
 jobs:
   warm:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.deployment_status.state == 'success' &&
-       (github.event.deployment.environment == 'Production' || github.event.deployment.environment == 'production'))
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.deployment.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm run warm-images -- https://www.kaseyklimes.com
+      - run: npm run warm-images -- https://www.kaseyklimes.com $ARGS
+        env:
+          ARGS: >-
+            ${{ inputs.only && format('--only={0}', inputs.only) || '' }}
+            ${{ inputs.limit && inputs.limit != '0' && format('--limit={0}', inputs.limit) || '' }}
