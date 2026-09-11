@@ -52,21 +52,21 @@ export default function RootLayout({
         {/* Critical font preloading */}
         <link 
           rel="preload" 
-          href="/fonts/Berkeley Mono/BerkeleyMono-Regular.woff2" 
+          href="/fonts/versioned/BerkeleyMono-Regular.175ac985f6f946a3.woff2"
           as="font" 
           type="font/woff2" 
           crossOrigin="" 
         />
         <link 
           rel="preload" 
-          href="/fonts/Berkeley Mono/BerkeleyMono-Bold.woff2" 
+          href="/fonts/versioned/BerkeleyMono-Bold.dbf854644010c5bc.woff2"
           as="font" 
           type="font/woff2" 
           crossOrigin="" 
         />
         <link 
           rel="preload" 
-          href="/fonts/Berkeley Mono/BerkeleyMono-Oblique.woff2" 
+          href="/fonts/versioned/BerkeleyMono-Oblique.a4f99954a4a967fb.woff2"
           as="font" 
           type="font/woff2" 
           crossOrigin="" 

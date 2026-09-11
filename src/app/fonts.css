@@ -2,7 +2,7 @@
 /* Essential Untitled Sans Weights */
 @font-face {
   font-family: 'Untitled Sans';
-  src: url('/fonts/Untitled Sans Regular.ttf') format('truetype');
+  src: url('/fonts/versioned/Untitled%20Sans%20Regular.cf0367da045cf124.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: 'Untitled Sans';
-  src: url('/fonts/Untitled Sans Medium.ttf') format('truetype');
+  src: url('/fonts/versioned/Untitled%20Sans%20Medium.3da1bce485427041.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -18,7 +18,7 @@
 
 @font-face {
   font-family: 'Untitled Sans';
-  src: url('/fonts/Untitled Sans Bold.ttf') format('truetype');
+  src: url('/fonts/versioned/Untitled%20Sans%20Bold.a70e3618089c8b0c.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -27,7 +27,7 @@
 /* Berkeley Mono Font Definitions */
 @font-face {
   font-family: 'Berkeley Mono';
-  src: url('/fonts/Berkeley%20Mono/BerkeleyMono-Regular.woff2') format('woff2');
+  src: url('/fonts/versioned/BerkeleyMono-Regular.175ac985f6f946a3.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -35,7 +35,7 @@
 
 @font-face {
   font-family: 'Berkeley Mono';
-  src: url('/fonts/Berkeley%20Mono/BerkeleyMono-Medium.woff2') format('woff2');
+  src: url('/fonts/versioned/BerkeleyMono-Medium.2d0139630d3e5ab2.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -43,7 +43,7 @@
 
 @font-face {
   font-family: 'Berkeley Mono';
-  src: url('/fonts/Berkeley%20Mono/BerkeleyMono-Medium-Oblique.woff2') format('woff2');
+  src: url('/fonts/versioned/BerkeleyMono-Medium-Oblique.cb5353996619fabf.woff2') format('woff2');
   font-weight: 500;
   font-style: italic;
   font-display: swap;
@@ -51,7 +51,7 @@
 
 @font-face {
   font-family: 'Berkeley Mono';
-  src: url('/fonts/Berkeley%20Mono/BerkeleyMono-Bold.woff2') format('woff2');
+  src: url('/fonts/versioned/BerkeleyMono-Bold.dbf854644010c5bc.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -59,7 +59,7 @@
 
 @font-face {
   font-family: 'Berkeley Mono';
-  src: url('/fonts/Berkeley%20Mono/BerkeleyMono-Oblique.woff2') format('woff2');
+  src: url('/fonts/versioned/BerkeleyMono-Oblique.a4f99954a4a967fb.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -69,7 +69,7 @@
 /* IBM Plex Serif: blog body copy (see .blog-prose in globals.css). OFL 1.1, licence alongside the files. */
 @font-face {
   font-family: 'IBM Plex Serif';
-  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-Regular.woff2') format('woff2');
+  src: url('/fonts/versioned/IBMPlexSerif-Regular.024ebce13cec984b.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -77,7 +77,7 @@
 
 @font-face {
   font-family: 'IBM Plex Serif';
-  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-Italic.woff2') format('woff2');
+  src: url('/fonts/versioned/IBMPlexSerif-Italic.ba5feed9ebae36e3.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -85,7 +85,7 @@
 
 @font-face {
   font-family: 'IBM Plex Serif';
-  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-Bold.woff2') format('woff2');
+  src: url('/fonts/versioned/IBMPlexSerif-Bold.3b9eb99793dd9fed.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -93,7 +93,7 @@
 
 @font-face {
   font-family: 'IBM Plex Serif';
-  src: url('/fonts/IBM%20Plex%20Serif/IBMPlexSerif-BoldItalic.woff2') format('woff2');
+  src: url('/fonts/versioned/IBMPlexSerif-BoldItalic.cbbf0d3e16d2b42b.woff2') format('woff2');
   font-weight: 700;
   font-style: italic;
   font-display: swap;

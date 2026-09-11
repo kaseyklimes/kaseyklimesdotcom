@@ -1,61 +1,89 @@
-// Pre-render the large image variants on the deployed site so visitors never
-// hit a cold transform. Cold transforms of the biggest sources take 4–10s and
-// Vercel occasionally answers them with the untouched multi-megabyte original.
-//
-//   npm run warm-images                 # warms https://www.kaseyklimes.com
-//   npm run warm-images -- https://host # warms another deployment
+// Warm the same q=75 variants served by next/image, without changing any assets.
+// npm run warm-images -- [https://www.kaseyklimes.com] [--dry-run]
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import matter from 'gray-matter';
+import { imageDeviceSizes, imageFormats } from '../config/image-optimization.mjs';
 
-const origin = (process.argv[2] || 'https://www.kaseyklimes.com').replace(/\/$/, '');
-// Widths a detail page (1200px slot) or the full-screen viewer (100vw) can request.
-const widths = [1200, 1920, 2048, 2560, 3840];
-const concurrency = 4;
-
-const dir = join(process.cwd(), 'content', 'photography');
-const images = new Set();
-for (const file of readdirSync(dir)) {
-  if (!file.endsWith('.md')) continue;
-  const { data } = matter(readFileSync(join(dir, file), 'utf8'));
-  if (data.private) continue;
-  for (const src of [data.heroImage, ...(Array.isArray(data.series) ? data.series : [])]) {
-    if (typeof src === 'string' && src.startsWith('/images/')) images.add(src);
+export function collectImages(contentDir = join(process.cwd(), 'content')) {
+  const images = new Set();
+  for (const category of ['blog', 'work', 'play', 'talks', 'photography', 'shelf']) {
+    const dir = join(contentDir, category);
+    let files;
+    try { files = readdirSync(dir); } catch (error) {
+      if (error.code === 'ENOENT') continue;
+      throw error;
+    }
+    for (const file of files.filter(file => file.endsWith('.md'))) {
+      const { data } = matter(readFileSync(join(dir, file), 'utf8'));
+      if (data.private) continue;
+      // All local grid covers, plus photography detail/slideshow images.
+      const sources = [data.thumbnail || data.heroImage];
+      if (category === 'photography') sources.push(data.heroImage, ...(Array.isArray(data.series) ? data.series : []));
+      for (const src of sources) {
+        // SVGs, GIFs, videos and external thumbnails do not use this raster pipeline.
+        if (typeof src === 'string' && /^\/images\/.*\.(jpe?g|png|webp|avif)$/i.test(src)) images.add(src);
+      }
+    }
   }
+  return [...images].sort();
 }
 
-const jobs = [];
-for (const src of images) for (const w of widths) jobs.push({ src, w });
-console.log(`Warming ${jobs.length} variants (${images.size} images × ${widths.length} widths) on ${origin}`);
+export function createJobs(images) {
+  return images.flatMap(src => imageDeviceSizes.flatMap(w => imageFormats.map(format => ({ src, w, format }))));
+}
 
-let passthroughs = 0, failures = 0;
-async function warm({ src, w }) {
+export async function warmJob(origin, { src, w, format }, fetcher = fetch) {
   const url = `${origin}/_next/image?url=${encodeURIComponent(src)}&w=${w}&q=75`;
-  const started = Date.now();
-  try {
-    const res = await fetch(url, { headers: { Accept: 'image/avif,image/webp,*/*' } });
-    const bytes = (await res.arrayBuffer()).byteLength;
-    const type = res.headers.get('content-type') || '';
-    const secs = ((Date.now() - started) / 1000).toFixed(1);
-    const flag = !res.ok ? 'FAIL' : type.includes('jpeg') || type.includes('png') ? 'PASSTHROUGH' : 'ok';
-    if (flag === 'FAIL') failures += 1;
-    if (flag === 'PASSTHROUGH') passthroughs += 1;
-    console.log(`${flag.padEnd(11)} ${res.status} ${String(Math.round(bytes / 1024)).padStart(6)}KB ${secs.padStart(5)}s ${src} w=${w}`);
-    return flag;
-  } catch (err) {
-    failures += 1;
-    console.log(`FAIL        ${src} w=${w} ${err.message}`);
-    return 'FAIL';
+  let reason, original;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    original = undefined;
+    try {
+      const response = await fetcher(url, {
+        headers: { Accept: format },
+        signal: AbortSignal.timeout(45_000),
+      });
+      const bytes = (await response.arrayBuffer()).byteLength;
+      const type = (response.headers.get('content-type') || '').split(';')[0];
+      if (response.ok && type === format && bytes > 0) return { ok: true, bytes };
+      reason = `HTTP ${response.status}, ${type || 'no content type'}, ${bytes} bytes`;
+      if (response.ok && bytes > 0 && ['image/png', 'image/jpeg', 'image/gif'].includes(type)) {
+        original = { ok: true, bytes, passthrough: true, type };
+      }
+    } catch (error) { reason = error.message; }
+    if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1000));
   }
+  // The optimizer may retain the original format. Preserve that delivery decision.
+  return original || { ok: false, reason };
 }
 
-// A passthrough means the transform was still running; asking again gets the real variant.
-const queue = [...jobs];
-await Promise.all(Array.from({ length: concurrency }, async () => {
-  while (queue.length) {
-    const job = queue.shift();
-    if (await warm(job) === 'PASSTHROUGH') await warm(job);
-  }
-}));
-console.log(`Done. ${passthroughs} passthrough(s) retried, ${failures} failure(s).`);
-process.exit(failures ? 1 : 0);
+async function main() {
+  const args = process.argv.slice(2);
+  const origin = (args.find(arg => !arg.startsWith('--')) || 'https://www.kaseyklimes.com').replace(/\/$/, '');
+  const images = collectImages();
+  const jobs = createJobs(images);
+  console.log(`${jobs.length} variants: ${images.length} images × ${imageDeviceSizes.length} widths × ${imageFormats.length} formats on ${origin}`);
+  if (args.includes('--dry-run')) return;
+  let completed = 0, failures = 0, passthroughs = 0;
+  const queue = [...jobs];
+  await Promise.all(Array.from({ length: 4 }, async () => {
+    while (queue.length) {
+      const job = queue.shift();
+      const result = await warmJob(origin, job);
+      completed++;
+      if (result.passthrough) {
+        passthroughs++;
+        console.log(`ORIGINAL ${job.src} w=${job.w} requested ${job.format}, received ${result.type}`);
+      }
+      if (!result.ok) {
+        failures++;
+        console.error(`FAIL ${job.src} w=${job.w} ${job.format}: ${result.reason}`);
+      }
+      if (completed % 50 === 0 || completed === jobs.length) console.log(`${completed}/${jobs.length} complete; ${failures} failures; ${passthroughs} original-format responses`);
+    }
+  }));
+  process.exitCode = failures ? 1 : 0;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();
