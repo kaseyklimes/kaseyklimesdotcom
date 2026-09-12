@@ -44,6 +44,8 @@ interface MasonryGridProps {
 
 
 // Date, location, and a series marker beneath every card except the shelf.
+// The explicit spaces are invisible in the flex row but keep the pieces from
+// running together ("2014–2016•Berkeley, CA") when the text is extracted.
 const CardMeta = memo(function CardMeta({ item }: { item: ContentMeta }) {
   if (item.category === 'shelf') return null;
   const seriesCount = seriesImages(item).length;
@@ -52,13 +54,13 @@ const CardMeta = memo(function CardMeta({ item }: { item: ContentMeta }) {
       <span suppressHydrationWarning>{formatDateOrRange(item.date, datePrecisionFor(item.category))}</span>
       {item.location && (
         <>
-          <span className="text-gray-300">•</span>
+          {' '}<span className="text-gray-300">•</span>{' '}
           <span>{item.location}</span>
         </>
       )}
       {seriesCount > 0 && (
         <>
-          <span className="text-gray-300">•</span>
+          {' '}<span className="text-gray-300">•</span>{' '}
           <span
             className="inline-flex items-center gap-1"
             title={`Series of ${seriesCount + 1} photos`}
@@ -99,7 +101,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
             />
           </div>
         </div>
-        <div className="mt-1">
+        <div className="mt-1" data-nosnippet="">
           <h3 className="text-lg leading-snug">{item.title}</h3>
           <p className="text-xs line-clamp-4 mt-1">{item.description}</p>
           <CardMeta item={item} />
@@ -173,7 +175,7 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
           </>
         )}
       </div>
-      <div className="mt-1">
+      <div className="mt-1" data-nosnippet="">
         <h3 className="text-lg leading-snug">{item.title}</h3>
         <p className="text-xs line-clamp-4 mt-1">{item.description}</p>
         <CardMeta item={item} />
@@ -278,7 +280,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
           </div>
         </div>
         {item.title && (
-          <div className="mt-1">
+          <div className="mt-1" data-nosnippet="">
             <h3 className="text-lg leading-snug">{item.title}</h3>
             {item.description && (
               <p className="text-xs line-clamp-4 mt-1">
