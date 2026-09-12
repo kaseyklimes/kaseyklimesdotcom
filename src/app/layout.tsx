@@ -49,6 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="alternate" type="application/rss+xml" title="Kasey Klimes — Notes" href="/feed.xml" />
         {/* Critical font preloading */}
         <link 
           rel="preload" 

@@ -21,17 +21,29 @@ export default function LoopingVideo({ src, className, label }: LoopingVideoProp
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let visible = false;
+    const updatePlayback = () => {
+      video.controls = motion.matches;
+      if (visible && !motion.matches) {
+        video.play().catch(() => { /* autoplay blocked: the first frame stays visible */ });
+      } else {
+        video.pause();
+      }
+    };
+    motion.addEventListener('change', updatePlayback);
+    updatePlayback();
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
-        if (entry.isIntersecting) {
-          video.play().catch(() => { /* autoplay blocked: the first frame stays visible */ });
-        } else {
-          video.pause();
-        }
+        visible = entry.isIntersecting;
+        updatePlayback();
       }
     }, { rootMargin: '400px 0px' });
     observer.observe(video);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener('change', updatePlayback);
+    };
   }, [src]);
 
   return (

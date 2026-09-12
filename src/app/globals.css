@@ -314,3 +314,37 @@ body {
 .report-index a span { font-size: .75rem; text-align: center; font-variant-numeric: tabular-nums; }
 .markdown-content .report-index a:hover { border-color: currentColor; }
 .report-index a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  @page { margin: 18mm; }
+  :root { --background: #fff; --foreground: #000; }
+  body { background: #fff !important; color: #000 !important; }
+  main, article { max-width: none !important; padding: 0 !important; }
+  footer, article aside, .print-hidden, article :is(button, iframe, video, audio) { display: none !important; }
+  article { font-size: 11pt; }
+  article .markdown-content { font-size: 11pt; line-height: 1.5; }
+  article :is(h1, h2, h3, h4) { break-after: avoid; }
+  article :is(p, li) { orphans: 3; widows: 3; }
+  article :is(figure, img, blockquote, tr) { break-inside: avoid; }
+  article img { max-height: 230mm; object-fit: contain; }
+  article :is(pre, .markdown-table) { overflow: visible; }
+  article pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  article .markdown-table table { min-width: 0; width: 100%; }
+  article a { color: inherit !important; text-decoration: underline; }
+  article a[href^="https://"]::after { content: ' (' attr(href) ')'; font-size: 9pt; overflow-wrap: anywhere; }
+  article a:has(img)::after { content: none; }
+}
+
+/* The server fallback must also be readable on narrow screens without JavaScript. */
+@media (max-width: 1023px) {
+  .masonry-fallback { grid-template-columns: minmax(0, 1fr) !important; }
+  .masonry-fallback > * { grid-column: 1 !important; }
+}

@@ -63,3 +63,38 @@ test('related content skips private and malformed files and fills the requested 
   assert.deepEqual(api.getRelatedContent('blog', 'c-current', 0), []);
   assert.deepEqual(api.getRelatedContent('blog', 'c-current', Infinity), []);
 });
+
+test('feed escapes XML, uses absolute links, and omits private posts', async () => {
+  write('feed-example', '---\ntitle: A & B < C\ndescription: "Quotes & <tags>"\ndate: 05-02-2023\n---\nbody');
+  const { GET } = load(path.join(root, 'src/app/feed.xml/route.ts'));
+  const response = GET();
+  const xml = await response.text();
+  assert.match(response.headers.get('content-type'), /application\/rss\+xml/);
+  assert.ok(xml.includes('A &amp; B &lt; C'));
+  assert.ok(xml.includes('https://kaseyklimes.com/blog/feed-example'));
+  assert.ok(xml.includes('<pubDate>'));
+  assert.ok(!xml.includes('b-hidden'));
+});
+
+test('sitemap omits private posts and uses frontmatter dates', () => {
+  const sitemap = load(path.join(root, 'src/app/sitemap.ts')).default();
+  assert.ok(!sitemap.some(item => item.url.includes('b-hidden')));
+  const post = sitemap.find(item => item.url.endsWith('/blog/feed-example'));
+  assert.equal(post.lastModified.getFullYear(), 2023);
+  assert.equal(post.lastModified.getMonth(), 4);
+  const { contentDate } = load(path.join(root, 'src/utils/site.ts'));
+  assert.equal(contentDate('present'), undefined);
+  assert.equal(contentDate('not a date'), undefined);
+});
+
+test('raw Markdown preserves source and rejects private, missing, and traversal paths', async () => {
+  const { GET } = load(path.join(root, 'src/app/markdown/blog/[slug]/route.ts'));
+  const get = slug => GET(new Request('https://kaseyklimes.com/blog/example.md'), { params: Promise.resolve({ slug }) });
+  const response = await get('feed-example');
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('content-type'), 'text/markdown; charset=utf-8');
+  assert.equal(await response.text(), fs.readFileSync(path.join(fixture, 'content/blog/feed-example.md'), 'utf8'));
+  for (const slug of ['b-hidden', 'missing', '../blog/feed-example']) {
+    assert.equal((await get(slug)).status, 404);
+  }
+});
