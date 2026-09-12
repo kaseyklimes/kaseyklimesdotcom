@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./fonts.css";
-
-const siteName = "Kasey Klimes";
-const siteDescription =
-  "Systems designer in Brooklyn. Founder of Primitive, decision infrastructure for software teams and their AI agents. Previously Google Maps, Rhizome R&D, Gehl.";
+import { siteDescription, siteName } from "@/utils/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://kaseyklimes.com'),

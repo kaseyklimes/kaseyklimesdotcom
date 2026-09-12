@@ -3,6 +3,7 @@ import Home from '../page';
 import { getAllContent } from '@/utils/content';
 import { filterPath, filterTag } from '@/utils/filterRoutes';
 import { categoryLabel } from '@/utils/categoryLabel';
+import { siteDescription } from '@/utils/site';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -19,7 +20,13 @@ type Props = { params: Promise<{ category: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { category } = await params;
-  return { title: `${categoryLabel(filterTag(`/${category}`) ?? 'all')} | Kasey Klimes` };
+  const label = categoryLabel(filterTag(`/${category}`) ?? 'all');
+  // The root layout's title template appends the site name.
+  return {
+    title: label,
+    description: siteDescription,
+    openGraph: { title: label, description: siteDescription, url: `/${category}` },
+  };
 }
 
 export default async function FilteredHome({ params }: Props) {
