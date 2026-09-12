@@ -103,7 +103,7 @@ export default async function ContentPage({ params }: PageProps) {
     <Layout>
       <article className={`max-w-4xl mx-auto ${category === 'work' ? 'work-detail' : ''}`}>
         {/* Back Button */}
-        <div className="mb-4 mt-4">
+        <div className="mb-4 mt-4 print-hidden">
           <Link
             href="/"
             className="inline-flex items-center text-xs hover:underline"
@@ -292,4 +292,4 @@ export default async function ContentPage({ params }: PageProps) {
       </article>
     </Layout>
   );
-} 
+}

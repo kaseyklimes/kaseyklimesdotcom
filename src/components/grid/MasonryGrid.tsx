@@ -595,7 +595,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
     // Scroll filter to 40px below viewport top
     if (filterRef.current) {
       const top = filterRef.current.getBoundingClientRect().top + window.scrollY - 40;
-      window.scrollTo({ top, behavior: 'smooth' });
+      window.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     }
   }, []);
 
@@ -645,12 +645,12 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
         Until the container has been measured (including on the server) the
         cards sit in a plain CSS grid. That puts the images in the initial HTML
         so the browser can start fetching them, and lets the first few carry
-        preload hints, before any JavaScript runs. The container stays
-        invisible until the masonry positions replace the fallback layout.
+        preload hints, before any JavaScript runs. Keep this fallback visible;
+        only hide briefly once masonry positions are available.
       */}
       <div
         ref={containerRef}
-        className="relative"
+        className={`relative ${hasPositions ? '' : 'masonry-fallback'}`}
         style={hasPositions ? {
           height: containerHeight || 'auto',
           opacity: isLayoutReady ? 1 : 0,
@@ -660,7 +660,6 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
           gridTemplateColumns: `repeat(${maxColumns}, minmax(0, 1fr))`,
           columnGap: GAP_X,
           rowGap: GAP_Y,
-          opacity: 0,
         }}
       >
         {sortedItems.map((item, index) => {

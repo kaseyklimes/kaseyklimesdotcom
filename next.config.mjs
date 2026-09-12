@@ -7,6 +7,9 @@ import { imageDeviceSizes, imageFormats } from './config/image-optimization.mjs'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   redirects: async () => [...getLegacyBlogRedirects(), ...getLegacyWorkRedirects()],
+  rewrites: async () => [
+    { source: '/blog/:slug.md', destination: '/markdown/blog/:slug' },
+  ],
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   images: {
     remotePatterns: [
@@ -58,6 +61,16 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 365,
   },
   headers: async () => [
+    {
+      source: '/:path*',
+      headers: [
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        // Observe violations in browser devtools without blocking Next's inline scripts.
+        { key: 'Content-Security-Policy-Report-Only', value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; media-src 'self' https:; frame-src https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'" },
+      ],
+    },
     {
       source: "/fonts/versioned/:path+",
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],

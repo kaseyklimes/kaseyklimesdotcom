@@ -13,7 +13,7 @@ export default {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        sans: ['Berkeley Mono', 'Untitled Sans', 'system-ui', 'monospace'],
+        sans: ['Berkeley Mono', 'system-ui', 'monospace'],
       },
       fontWeight: {
         light: '400',    // Light becomes Regular
