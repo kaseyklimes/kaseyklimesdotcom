@@ -129,9 +129,15 @@ export default async function ContentPage({ params }: PageProps) {
         <header className="mb-8">
           {category !== 'shelf' && (
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
-              <span className="text-xs">
-                {categoryLabel(content.category).toLowerCase()}
-              </span>
+              {content.category === 'photography' ? (
+                <Link href="/images" className="text-xs hover:underline">
+                  {categoryLabel(content.category).toLowerCase()}
+                </Link>
+              ) : (
+                <span className="text-xs">
+                  {categoryLabel(content.category).toLowerCase()}
+                </span>
+              )}
               {content.location && (
                 <>
                   <span className="text-xs text-gray-400">/</span>
