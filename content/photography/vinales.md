@@ -5,6 +5,8 @@ location: "Vinales, Cuba"
 stars: 1
 span: 8
 heroImage: "/images/vinales-regraded.jpg"
+series:
+  - "/images/cuba-portrait.jpg"
 description: "Deaton and I arrived in Viñales just before noon, completely oblivious to the naivete that would soon have us freaking out..."
 tags: ["photography"]
 ---
@@ -17,4 +19,4 @@ When we got to his house, we were greeted by a young and startlingly beautiful w
 
 His wife finished rolling the cigars, put one in her own mouth to light it (I guess she didn't trust me to do that right, which was fair), and then passed it to me. 
 
-I'm not really a cigar guy. They give me headaches and I don't really care for the taste. But this cigar was delicious. 
+I'm not really a cigar guy. They give me headaches and I don't really care for the taste. But this cigar was delicious.
