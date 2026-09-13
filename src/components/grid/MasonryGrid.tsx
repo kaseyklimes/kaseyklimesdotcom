@@ -3,7 +3,8 @@
 import React, { useState, useMemo, useCallback, memo, useRef, useEffect } from 'react';
 import { ContentMeta } from '@/types/content';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import PrimitiveHero from './PrimitiveHero';
 import { filterPath, filterTag } from '@/utils/filterRoutes';
 import ShelfGrid from './ShelfGrid';
 import { datePrecisionFor, formatDateOrRange, parseDateToTimestamp } from '@/utils/dateFormatting';
@@ -92,13 +93,19 @@ const GridItemContent = memo(function GridItemContent({ item, colSpan, index, vi
       <div>
         <div className="relative group p-4 bg-[#f5f5f5] dark:bg-[#141414]">
           <div className="overflow-hidden rounded-[24px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroImages[0]}
-              alt={item.title || 'Content image'}
-              className="block w-full h-auto"
-              loading={index < 4 ? "eager" : "lazy"}
-            />
+            {heroImages[0] === '/images/primitive-hero.svg' ? (
+              <PrimitiveHero label={item.title || 'Primitive'} />
+            ) : (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={heroImages[0]}
+                  alt={item.title || 'Content image'}
+                  className="block w-full h-auto"
+                  loading={index < 4 ? "eager" : "lazy"}
+                />
+              </>
+            )}
           </div>
         </div>
         <div className="mt-1" data-nosnippet="">
@@ -349,6 +356,7 @@ interface ItemPosition {
 export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps) {
   const maxColumns = useResponsiveColumns();
   const pathname = usePathname();
+  const router = useRouter();
   const selectedTag = filterTag(pathname);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -579,19 +587,22 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
   // Ref for tag filter to scroll to on click
   const filterRef = useRef<HTMLDivElement>(null);
 
-  // Shared links open at the selected collection, below the homepage introduction.
+  // Shared links and route transitions open at the collection after masonry
+  // has settled, so browser scroll anchoring cannot strand the filter offscreen.
   useEffect(() => {
-    if (window.location.pathname !== '/' && filterRef.current) {
+    if (pathname !== '/' && filterRef.current) {
       const top = filterRef.current.getBoundingClientRect().top + window.scrollY - 40;
       window.scrollTo({ top, behavior: 'instant' });
     }
-  }, []);
+  }, [pathname, isLayoutReady]);
 
   // Handle tag click with scroll
   const handleTagClick = useCallback((tag: string) => {
     const path = filterPath(tag);
     if (window.location.pathname !== path) {
-      window.history.pushState(null, '', path);
+      // Fetch the destination's content instead of retaining a stale homepage
+      // snapshot when new photos have been published since this tab was opened.
+      router.push(path, { scroll: false });
     }
     setLightboxIndex(null);
     // Scroll filter to 40px below viewport top
@@ -599,7 +610,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
       const top = filterRef.current.getBoundingClientRect().top + window.scrollY - 40;
       window.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     }
-  }, []);
+  }, [router]);
 
   const hasPositions = positions.size > 0;
 

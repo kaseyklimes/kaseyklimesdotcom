@@ -22,6 +22,16 @@ function load(file) {
   return module.exports;
 }
 const { filterGridItems, MOBILE_MIN_STARS } = load(path.join(root, 'src/utils/gridFilter.ts'));
+const { filterTag } = load(path.join(root, 'src/utils/filterRoutes.ts'));
+
+test('the published one-star Bishop series remains visible in Images on mobile and desktop', () => {
+  const { data } = require('gray-matter')(fs.readFileSync(path.join(root, 'content/photography/bishop.md'), 'utf8'));
+  const bishop = { ...data, category: 'photography', slug: 'bishop' };
+  assert.equal(bishop.stars, 1);
+  for (const mobile of [true, false]) {
+    assert.deepEqual(filterGridItems([bishop], filterTag('/images'), mobile), [bishop]);
+  }
+});
 
 const card = (slug, stars, tags, extra = {}) => ({ title: slug, slug, date: '2024', category: tags[0], stars, tags, ...extra });
 const items = [
