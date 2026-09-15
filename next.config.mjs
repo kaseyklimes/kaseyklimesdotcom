@@ -13,7 +13,6 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'image.mux.com', pathname: '/**' },
       {
         protocol: 'http',
         hostname: 'localhost',

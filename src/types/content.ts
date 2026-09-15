@@ -8,6 +8,7 @@ export interface ContentMeta {
   description?: string;
   slug: string;
   thumbnail?: string;  // Image for grid display (falls back to heroImage)
+  videoPoster?: string; // Poster image for hosted video
   heroImage?: string;  // Image for detail page
   imageDimensions?: { width: number; height: number };  // Pixel size of the grid image, from the dimensions manifest
   carousel?: string[];

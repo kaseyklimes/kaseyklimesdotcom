@@ -24,3 +24,16 @@ test('local mp4 and webm files are looping videos; images and embeds are not', (
   assert.equal(isLoopingVideo(undefined), false);
   assert.equal(getVideoInfo('/images/thisland.mp4').isVideo, false);
 });
+
+test('Forward Deployed uses the publisher video endpoint and a local poster', () => {
+  const matter = require('gray-matter');
+  const { data } = matter(fs.readFileSync(path.join(root, 'content/talks/forward-deployed-memory.md'), 'utf8'));
+  const { getVideoThumbnail } = load(path.join(root, 'src/utils/mediaDetection.ts'));
+  const video = getVideoInfo(data.heroImage, data.videoPoster);
+  assert.equal(video.type, 'substack');
+  assert.equal(video.id, data.heroImage);
+  assert.match(video.id, /^https:\/\/www.forwarddeployed.com\/api\/v1\/video\/upload\/[a-f0-9-]+\/src$/);
+  assert.equal(getVideoThumbnail(video), data.videoPoster);
+  assert.ok(fs.existsSync(path.join(root, 'public', data.videoPoster)));
+  assert.equal(isLoopingVideo(data.heroImage), false);
+});

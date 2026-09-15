@@ -12,7 +12,7 @@ interface VideoEmbedProps {
 }
 
 /**
- * A click-to-play facade for YouTube, Vimeo, and Mux embeds.
+ * A click-to-play facade for YouTube, Vimeo, and hosted videos.
  *
  * The player iframe pulls in roughly half a megabyte of script per video, so
  * it only mounts once the visitor asks for it. Until then the card shows the
@@ -28,9 +28,21 @@ export default function VideoEmbed({ videoInfo, title, sizes, priority }: VideoE
 
   const embedUrl = videoInfo.type === 'youtube'
     ? `https://www.youtube.com/embed/${videoInfo.id}?autoplay=1&rel=0`
-    : videoInfo.type === 'mux'
-      ? `https://player.mux.com/${videoInfo.id}?autoplay=true`
-      : `https://player.vimeo.com/video/${videoInfo.id}?autoplay=1`;
+    : `https://player.vimeo.com/video/${videoInfo.id}?autoplay=1`;
+
+  if (playing && videoInfo.type === 'substack') {
+    return (
+      <video
+        className="absolute top-0 left-0 w-full h-full bg-black"
+        src={videoInfo.id}
+        poster={videoInfo.poster}
+        controls
+        autoPlay
+        playsInline
+        aria-label={title}
+      />
+    );
+  }
 
   if (playing) {
     return (
@@ -56,7 +68,7 @@ export default function VideoEmbed({ videoInfo, title, sizes, priority }: VideoE
         setPlaying(true);
       }}
     >
-      {(videoInfo.type === 'youtube' || videoInfo.type === 'mux') && (
+      {(videoInfo.type === 'youtube' || !!getVideoThumbnail(videoInfo)) && (
         <Image
           src={videoInfo.type === 'youtube' ? getYouTubeThumbnail(videoInfo.id, thumbnail) : getVideoThumbnail(videoInfo)!}
           alt=""

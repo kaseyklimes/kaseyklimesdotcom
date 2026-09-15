@@ -209,8 +209,8 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
   const heroImages = React.useMemo(() => (gridImage ? [gridImage] : []), [gridImage]);
 
   const videoInfo = React.useMemo(() => (
-    heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false }
-  ), [heroImages]);
+    heroImages.length === 1 ? getVideoInfo(heroImages[0], item.videoPoster) : { isVideo: false }
+  ), [heroImages, item.videoPoster]);
 
   // Measure height after render and images load
   useEffect(() => {
