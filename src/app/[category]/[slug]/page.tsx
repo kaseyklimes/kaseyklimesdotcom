@@ -83,7 +83,7 @@ export default async function ContentPage({ params }: PageProps) {
       : [];
 
   // Get video info if there is a single hero image that is a video URL
-  const videoInfo = heroImages.length === 1 ? getVideoInfo(heroImages[0]) : { isVideo: false };
+  const videoInfo = heroImages.length === 1 ? getVideoInfo(heroImages[0], content.videoPoster) : { isVideo: false };
 
   // Remaining photos of a mini-series, stacked beneath the cover
   const series = seriesImages(content);
@@ -246,7 +246,7 @@ export default async function ContentPage({ params }: PageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {relatedContent.map((item) => {
                 const hero = item.heroImage;
-                const videoInfo = hero ? getVideoInfo(hero) : { isVideo: false };
+                const videoInfo = hero ? getVideoInfo(hero, item.videoPoster) : { isVideo: false };
                 const imageUrl = getVideoThumbnail(videoInfo) || hero;
 
                 return (
