@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 import MarkdownContent from '@/components/content/MarkdownContent';
 import { Metadata } from 'next';
 import Carousel from '@/components/ui/Carousel';
-import { getVideoInfo, getYouTubeThumbnail, isLoopingVideo } from '@/utils/mediaDetection';
+import { getVideoInfo, getVideoThumbnail, isLoopingVideo } from '@/utils/mediaDetection';
 import { datePrecisionFor, formatDateOrRange } from '@/utils/dateFormatting';
 import { seriesImages } from '@/utils/photoSeries';
 import VideoEmbed from '@/components/ui/VideoEmbed';
@@ -247,9 +247,7 @@ export default async function ContentPage({ params }: PageProps) {
               {relatedContent.map((item) => {
                 const hero = item.heroImage;
                 const videoInfo = hero ? getVideoInfo(hero) : { isVideo: false };
-                const imageUrl = videoInfo.isVideo && videoInfo.type === 'youtube' && videoInfo.id
-                  ? getYouTubeThumbnail(videoInfo.id)
-                  : hero;
+                const imageUrl = getVideoThumbnail(videoInfo) || hero;
 
                 return (
                   <PrefetchLink

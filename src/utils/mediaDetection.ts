@@ -1,6 +1,6 @@
 // Media detection utilities
 
-export type VideoType = 'youtube' | 'vimeo';
+export type VideoType = 'youtube' | 'vimeo' | 'mux';
 
 export interface VideoInfo {
   isVideo: boolean;
@@ -27,6 +27,10 @@ const vimeoPatterns = [
  */
 export function getVideoInfo(url: string): VideoInfo {
   if (!url) return { isVideo: false };
+
+  // Mux-hosted episodes use the same click-to-play player as other talks.
+  const muxMatch = url.match(/^https:\/\/player\.mux\.com\/([a-zA-Z0-9]+)(?:[?#].*)?$/);
+  if (muxMatch) return { isVideo: true, type: 'mux', id: muxMatch[1] };
 
   // Check YouTube patterns
   for (const pattern of youtubePatterns) {
@@ -62,4 +66,12 @@ export function getYouTubeThumbnail(id: string, quality: 'hqdefault' | 'maxresde
  */
 export function isLoopingVideo(src: string | undefined): boolean {
   return typeof src === 'string' && /\.(mp4|webm)(\?|#|$)/i.test(src);
+}
+
+/** Thumbnail for supported hosted video players. */
+export function getVideoThumbnail(videoInfo: VideoInfo): string | undefined {
+  if (!videoInfo.id) return undefined;
+  if (videoInfo.type === 'youtube') return getYouTubeThumbnail(videoInfo.id);
+  if (videoInfo.type === 'mux') return `https://image.mux.com/${videoInfo.id}/thumbnail.jpg`;
+  return undefined;
 }

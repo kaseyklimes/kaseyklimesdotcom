@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { VideoInfo, getYouTubeThumbnail } from '@/utils/mediaDetection';
+import { VideoInfo, getYouTubeThumbnail, getVideoThumbnail } from '@/utils/mediaDetection';
 
 interface VideoEmbedProps {
   videoInfo: VideoInfo;
@@ -12,7 +12,7 @@ interface VideoEmbedProps {
 }
 
 /**
- * A click-to-play facade for YouTube and Vimeo embeds.
+ * A click-to-play facade for YouTube, Vimeo, and Mux embeds.
  *
  * The player iframe pulls in roughly half a megabyte of script per video, so
  * it only mounts once the visitor asks for it. Until then the card shows the
@@ -28,7 +28,9 @@ export default function VideoEmbed({ videoInfo, title, sizes, priority }: VideoE
 
   const embedUrl = videoInfo.type === 'youtube'
     ? `https://www.youtube.com/embed/${videoInfo.id}?autoplay=1&rel=0`
-    : `https://player.vimeo.com/video/${videoInfo.id}?autoplay=1`;
+    : videoInfo.type === 'mux'
+      ? `https://player.mux.com/${videoInfo.id}?autoplay=true`
+      : `https://player.vimeo.com/video/${videoInfo.id}?autoplay=1`;
 
   if (playing) {
     return (
@@ -54,9 +56,9 @@ export default function VideoEmbed({ videoInfo, title, sizes, priority }: VideoE
         setPlaying(true);
       }}
     >
-      {videoInfo.type === 'youtube' && (
+      {(videoInfo.type === 'youtube' || videoInfo.type === 'mux') && (
         <Image
-          src={getYouTubeThumbnail(videoInfo.id, thumbnail)}
+          src={videoInfo.type === 'youtube' ? getYouTubeThumbnail(videoInfo.id, thumbnail) : getVideoThumbnail(videoInfo)!}
           alt=""
           fill
           className="object-cover"
