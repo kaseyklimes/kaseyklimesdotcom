@@ -25,31 +25,69 @@ const { distributeByCategory } = load(path.join(root, 'src/utils/gridOrder.ts'))
 const seq = (s) => [...s].map((c, i) => ({ category: c, i }));
 const cats = (items) => items.map(item => item.category).join('');
 
-test('leaves an already mixed list untouched', () => {
+test('leaves an already mixed single-column list untouched', () => {
   const items = seq('PBWPBW');
   assert.deepEqual(distributeByCategory(items), items);
 });
 
-test('pulls the nearest other category forward to break a run', () => {
-  assert.equal(cats(distributeByCategory(seq('PPPPBPPW'))), 'PBPWPPPP');
+test('spreads scarce alternatives instead of exhausting them at the beginning', () => {
+  const result = cats(distributeByCategory(seq('PPPPBPPW')));
+  assert.ok(!result.includes('PPP'), result);
 });
 
-test('moves an item at most window - 1 places earlier', () => {
-  // B starts at index 5. Window 3 reaches it once it is 2 places away, no sooner.
-  assert.equal(cats(distributeByCategory(seq('PPPPPB'), 3)), 'PPPBPP');
-  assert.equal(cats(distributeByCategory(seq('PPPPPB'), 6)), 'PBPPPP');
-});
-
-test('keeps each category in its original order', () => {
-  const out = distributeByCategory(seq('PPPBBBWWWPPP'));
-  for (const c of 'PBW') {
-    const idx = out.filter(item => item.category === c).map(item => item.i);
-    assert.deepEqual(idx, [...idx].sort((a, b) => a - b));
+test('preserves all items, newest first, category chronology and bounded movement at every width', () => {
+  const input = seq('WPPPPPPPPBBBTTWWBBBBBBPPPPWWWWWWWPPP');
+  for (let columns = 1; columns <= 5; columns++) {
+    const out = distributeByCategory(input, columns);
+    assert.equal(out[0], input[0]);
+    assert.deepEqual(out.map(x => x.i).sort((a,b) => a-b), input.map(x => x.i));
+    out.forEach((item, position) => assert.ok(Math.abs(item.i - position) <= 6));
+    for (const category of 'PBTW') {
+      assert.deepEqual(out.filter(x => x.category === category), input.filter(x => x.category === category));
+    }
+    assert.deepEqual(out, distributeByCategory(input, columns));
   }
 });
 
-test('a run survives only when no other category is within reach', () => {
-  const out = cats(distributeByCategory(seq('PPPPPPPPPPPPB'), 10));
-  assert.equal(out, 'PPPBPPPPPPPPP');
-  assert.equal(cats(distributeByCategory(seq('PPPPPPPPPPPPB'), 1)), 'PPPPPPPPPPPPB');
+test('handles empty and single-type filters without reordering', () => {
+  for (const input of [[], seq('P'), seq('PPPPPPPPPPPP')]) {
+    assert.deepEqual(distributeByCategory(input, 5), input);
+  }
+});
+
+test('wider grids consider more than immediate list neighbors', () => {
+  const input = seq('WPBPBPBPBTWTW');
+  const neighbors = items => items.reduce((sum, item, i) => sum +
+    items.slice(Math.max(0, i - 3), i).filter(other => other.category === item.category).length, 0);
+  assert.ok(neighbors(distributeByCategory(input, 5)) < neighbors(input));
+});
+
+test('balances the actual archive across all five column counts', () => {
+  const matter = require('gray-matter');
+  const { parseDateToTimestamp } = load(path.join(root, 'src/utils/dateFormatting.ts'));
+  const items = ['blog', 'photography', 'play', 'talks', 'work'].flatMap(category =>
+    fs.readdirSync(path.join(root, 'content', category)).filter(file => file.endsWith('.md')).map(file => ({
+      ...matter(fs.readFileSync(path.join(root, 'content', category, file), 'utf8')).data,
+      category, slug: file,
+    }))
+  ).filter(item => !item.private && !item.hideFromAll)
+    .sort((a,b) => parseDateToTimestamp(b.date) - parseDateToTimestamp(a.date) || b.stars - a.stars);
+  const longestRun = list => {
+    let longest = 0, run = 0, previous;
+    for (const item of list) {
+      run = previous === item.category ? run + 1 : 1;
+      previous = item.category;
+      longest = Math.max(longest, run);
+    }
+    return longest;
+  };
+  for (let columns = 1; columns <= 5; columns++) {
+    const input = items.filter(item => columns > 1 || item.stars >= 2);
+    const output = distributeByCategory(input, columns);
+    assert.ok(longestRun(output) < longestRun(input));
+    output.forEach((item, index) => assert.ok(Math.abs(input.indexOf(item) - index) <= 6));
+    for (const category of new Set(input.map(item => item.category))) {
+      assert.deepEqual(output.filter(item => item.category === category), input.filter(item => item.category === category));
+    }
+  }
 });

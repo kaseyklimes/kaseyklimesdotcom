@@ -251,7 +251,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
   // Special case for shelf grid
   if (item.category === 'shelf' && item.items) {
     return (
-      <div ref={itemRef} style={itemStyle}>
+      <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} style={itemStyle}>
         <ShelfGrid items={item.items} />
       </div>
     );
@@ -266,7 +266,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
     const aspectRatio = iframeNaturalWidth / iframeNaturalHeight;
 
     return (
-      <div ref={itemRef} style={itemStyle}>
+      <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} style={itemStyle}>
         <div className="w-full relative overflow-hidden" style={{ aspectRatio }}>
           <div style={{
             position: 'absolute',
@@ -304,7 +304,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
   const contentProps = { item, colSpan, index, videoInfo, heroImages };
 
   return (
-    <div ref={itemRef} style={itemStyle}>
+    <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} style={itemStyle}>
       {item.clickThroughUrl ? (
         <a href={item.clickThroughUrl} target="_blank" rel="noopener noreferrer">
           <GridItemContent {...contentProps} />
@@ -417,7 +417,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
     const shelfStart = byDate.findIndex(item => item.category === 'shelf');
     const main = shelfStart === -1 ? byDate : byDate.slice(0, shelfStart);
     const shelf = shelfStart === -1 ? [] : byDate.slice(shelfStart);
-    return [...distributeByCategory(main), ...shelf];
+    return [...distributeByCategory(main, maxColumns), ...shelf];
   }, [items, selectedTag, maxColumns]);
 
   // Photos available for the full-screen viewer, in grid order.
@@ -477,6 +477,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
     const columnHeights = new Array(maxColumns).fill(0);
     const positions = new Map<string, ItemPosition>();
     const placed = new Set<string>();
+    const columnCategories: (string | undefined)[] = new Array(maxColumns);
 
     // Helper to place an item and update column heights
     const placeItem = (item: ContentMeta) => {
@@ -499,6 +500,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
       const newHeight = top + height + GAP_Y;
       for (let c = startCol; c < startCol + colSpan; c++) {
         columnHeights[c] = newHeight;
+        columnCategories[c] = item.category;
       }
     };
 
@@ -510,7 +512,7 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
     };
 
     // Process items with lookahead for gap filling
-    const LOOKAHEAD_LIMIT = 8; // How far ahead to look for gap fillers
+    const LOOKAHEAD_LIMIT = 3; // How far ahead to look for gap fillers
     const GAP_THRESHOLD = 100; // Minimum gap (px) to trigger lookahead
 
     for (let i = 0; i < sortedItems.length; i++) {
@@ -531,13 +533,20 @@ export default function MasonryGrid({ items, filterRowExtras }: MasonryGridProps
           const futureItem = sortedItems[j];
           const futureKey = `${futureItem.category}-${futureItem.slug}`;
 
-          if (placed.has(futureKey)) continue;
+          if (placed.has(futureKey) || futureItem.category === 'shelf') continue;
+          // Gap filling must not reverse chronology within a content type.
+          if (sortedItems.slice(i, j).some(previous =>
+            previous.category === futureItem.category &&
+            !placed.has(`${previous.category}-${previous.slug}`)
+          )) continue;
 
           const futureColSpan = getColSpan(futureItem, maxColumns);
 
           // Only pull forward items that are smaller and would fit in a short column
           if (futureColSpan < colSpan) {
-            const { top: futureTop } = findBestColumnsForItem(columnHeights, futureColSpan);
+            const { startCol, top: futureTop } = findBestColumnsForItem(columnHeights, futureColSpan);
+            // Don't undo the mixed order by stacking matching gap fillers.
+            if (columnCategories.slice(startCol, startCol + futureColSpan).includes(futureItem.category)) continue;
 
             // Place it if it would go in a shorter position than our current item
             if (futureTop < top) {
