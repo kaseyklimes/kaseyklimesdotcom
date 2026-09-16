@@ -2,7 +2,7 @@
 title: "A State of (Digital) Nature: Cancel culture & the gamification of political discourse"
 category: blog
 date: 07-20-2020
-stars: 2
+stars: 1
 span: 9
 tags: ["blog"]
 description: It's easy to watch the unraveling of our political discourse and believe that, somehow, people have simply lost the moral character they once possessed. But people haven't changed. What's changed are the environmental rules that govern our interactions...
