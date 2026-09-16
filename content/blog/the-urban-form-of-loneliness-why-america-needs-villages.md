@@ -2,7 +2,7 @@
 title: "The Urban Form of Loneliness: Why America Needs Villages"
 category: blog
 date: 10-27-2023
-stars: 1
+stars: 2
 span: 8
 tags: ["blog"]
 description: "This is the village in Germany where my parents met in the 1980s. It is called Imsbach, population: 971. The longest walk you can take..."

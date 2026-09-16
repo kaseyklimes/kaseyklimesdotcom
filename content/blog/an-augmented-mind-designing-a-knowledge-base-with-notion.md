@@ -2,7 +2,7 @@
 title: "An Augmented Mind: Designing a Knowledge Base with Notion"
 category: blog
 date: 10-16-2019
-stars: 2
+stars: 1
 span: 9
 tags: ["blog"]
 description: In 1945 Vannevar Bush proposed the Memex, a machine that would provide an "enlarged intimate supplement to one's memory" by compressing and storing all of on...

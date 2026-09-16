@@ -2,7 +2,7 @@
 title: Designing an Economy Like an Ecologist
 category: blog
 date: 03-03-2023
-stars: 1
+stars: 2
 tags: ["blog"]
 description: What do grey wolves have to do with economic policy?
 heroImage: /images/dcf5b527-7128-4195-a9db-e92dbe50c0ef_2000x1252-2.jpg

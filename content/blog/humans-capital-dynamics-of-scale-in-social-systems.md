@@ -2,7 +2,7 @@
 title: "Humans & Capital: Dynamics of scale in social systems"
 category: blog
 date: 04-08-2019
-stars: 1
+stars: 2
 span: 8
 tags: ["blog"]
 description: A strange thing happens when human systems grow. They have a tendency to be guided less by relationships between humans and more by relationships between cap...
