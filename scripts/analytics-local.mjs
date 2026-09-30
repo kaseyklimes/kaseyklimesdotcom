@@ -111,8 +111,15 @@ if (process.argv.includes("--seed")) {
         "/photography/azores1",
         "/shelf/understanding-comics",
       ][(n + day) % 4];
-      const pages = ["/", path];
-      for (let i = 0; i < (n % 5 === 0 ? 1 : 2); i++) {
+      const pages =
+        n % 5 === 0
+          ? [path]
+          : n % 3 === 0
+            ? ["/", path, "/work/google", "/shelf/understanding-comics"]
+            : n % 3 === 1
+              ? ["/", path, path]
+              : ["/", path];
+      for (let i = 0; i < pages.length; i++) {
         const view = randomUUID(),
           base = {
             id: randomUUID(),

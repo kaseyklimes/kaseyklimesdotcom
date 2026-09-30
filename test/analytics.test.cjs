@@ -23,7 +23,9 @@ function load(name) {
         ? {}
         : name === "next/headers"
           ? {}
-          : require(name),
+          : name.startsWith("./")
+            ? load(name.slice(2))
+            : require(name),
     module,
     module.exports,
   );
@@ -287,4 +289,197 @@ test("today and yesterday use UTC calendar days", () => {
   assert.equal(yesterday.from, "2026-09-28");
   assert.equal(yesterday.to, "2026-09-28");
   assert.equal(yesterday.days, 1);
+});
+
+test("journey summaries preserve context, actual order, and destination attention", () => {
+  const second = {
+    ...base,
+    view: randomUUID(),
+    path: "/work/project",
+    at: now + 1000,
+  };
+  const third = {
+    ...base,
+    view: randomUUID(),
+    path: "/blog/second",
+    at: now + 2000,
+  };
+  const fourth = {
+    ...base,
+    view: randomUUID(),
+    path: "/shelf/book",
+    at: now + 3000,
+  };
+  const e = [
+    fourth,
+    third,
+    base,
+    second,
+    { ...base, type: "engagement", seconds: 12 },
+    { ...second, type: "engagement", seconds: 30 },
+    { ...second, type: "engagement", seconds: 40 },
+    { ...fourth, type: "engagement", seconds: 8 },
+  ];
+  const r = summarize(e, 7, { category: "Notes" }, now + 4000).journeyFlow;
+  assert.equal(r.totalSessions, 1);
+  assert.deepEqual(r.routes[0], {
+    source: base.source,
+    first: base.path,
+    next: second.path,
+    last: fourth.path,
+    sessions: 1,
+    engagedSessions: 1,
+    seconds: 60,
+    firstEngaged: 1,
+    nextEngaged: 1,
+    lastEngaged: 0,
+    firstSeconds: 12,
+    nextSeconds: 40,
+    lastSeconds: 8,
+    continued: 1,
+    additionalViews: 1,
+  });
+  assert.equal(r.contentFilter, "Notes");
+});
+test("single-page and repeat-page journeys do not invent transitions", () => {
+  const one = summarize([base], 7, {}, now).journeyFlow.routes[0];
+  assert.equal(one.next, null);
+  assert.equal(one.last, base.path);
+  assert.equal(one.continued, 0);
+  const repeat = { ...base, view: randomUUID(), at: now + 1000 };
+  const two = summarize([base, repeat], 7, {}, now + 2000).journeyFlow
+    .routes[0];
+  assert.equal(two.next, base.path);
+  assert.equal(two.last, base.path);
+  assert.equal(two.sessions, 1);
+  assert.equal(two.continued, 0);
+});
+test("journey range and acquisition filters retain boundaries and aggregate anonymous combinations", () => {
+  const before = { ...base, at: Date.UTC(2026, 8, 22, 23, 58) };
+  const inRange = {
+    ...base,
+    view: randomUUID(),
+    at: Date.UTC(2026, 8, 23, 0, 2),
+    path: "/work/new",
+    source: "internal",
+  };
+  const another = {
+    ...inRange,
+    session: randomUUID(),
+    view: randomUUID(),
+    source: base.source,
+  };
+  const r = summarize(
+    [before, inRange, another],
+    7,
+    { source: base.source },
+    now,
+  ).journeyFlow;
+  assert.equal(r.continuedSessions, 1);
+  assert.equal(r.totalSessions, 2);
+  assert.equal(r.routes.length, 1);
+  assert.equal(r.routes[0].first, "/work/new");
+  assert.equal(r.routes[0].sessions, 2);
+  assert.ok(!JSON.stringify(r).includes(base.session));
+  assert.ok(!JSON.stringify(r).includes(base.view));
+  assert.equal(
+    summarize([base], 7, { country: "GB" }, now).journeyFlow.routes.length,
+    0,
+  );
+});
+test("large route sets explicitly report omitted sessions", () => {
+  const events = Array.from({ length: 305 }, (_, i) => ({
+    ...base,
+    session: randomUUID(),
+    view: randomUUID(),
+    path: `/work/p${i}`,
+  }));
+  const r = summarize(events, 7, {}, now).journeyFlow;
+  assert.equal(r.routes.length, 300);
+  assert.equal(r.omittedSessions, 5);
+  assert.equal(r.totalSessions, 305);
+  assert.equal(
+    r.routes.reduce((n, r) => n + r.sessions, 0) + r.omittedSessions,
+    305,
+  );
+});
+const { buildJourneyFlow } = load("journey-flow");
+test("flow grouping, expansion, and geometry conserve sessions and attention", () => {
+  const events = [];
+  for (let i = 0; i < 30; i++) {
+    const start = {
+      ...base,
+      session: randomUUID(),
+      view: randomUUID(),
+      source: `source-${i % 8}`,
+      path: `/work/p${i % 7}`,
+    };
+    const next = {
+      ...start,
+      view: randomUUID(),
+      path: "/blog/hello",
+      at: now + 1000,
+    };
+    events.push(start, { ...start, type: "engagement", seconds: 12 });
+    if (i % 3) events.push(next, { ...next, type: "engagement", seconds: 30 });
+  }
+  const data = summarize(events, 7, {}, now + 2000).journeyFlow;
+  for (const expanded of [[], ["Work"], ["Work", "Notes"]]) {
+    const g = buildJourneyFlow(data.routes, expanded, {
+      "/blog/hello": "Hello",
+    });
+    assert.equal(g.sessions, 30);
+    for (let stage = 0; stage < 4; stage++)
+      assert.equal(
+        g.nodes
+          .filter((n) => n.stage === stage)
+          .reduce((sum, n) => sum + n.sessions, 0),
+        30,
+      );
+    for (let stage = 0; stage < 3; stage++)
+      assert.equal(
+        g.links
+          .filter((l) => l.stage === stage)
+          .reduce((sum, l) => sum + l.sessions, 0),
+        30,
+      );
+    assert.equal(
+      g.links
+        .filter((l) => l.stage === 1)
+        .reduce((sum, l) => sum + l.measured, 0),
+      20,
+    );
+    for (const n of g.nodes) {
+      assert.ok(n.height > 0);
+      assert.ok(n.y >= 40);
+      assert.ok(n.y + n.height <= g.height);
+      for (const side of ["from", "to"]) {
+        const edges = g.links.filter((l) => l[side] === n.id);
+        if (edges.length)
+          assert.ok(
+            Math.abs(edges.reduce((sum, l) => sum + l.width, 0) - n.height) <
+              1e-8,
+          );
+      }
+    }
+    assert.ok(g.links.every((l) => !l.path.includes("NaN")));
+    assert.ok(g.nodes.some((n) => n.label === "Other sources"));
+    if (expanded.includes("Work"))
+      assert.ok(g.nodes.some((n) => n.label === "Other work pages"));
+    else assert.ok(g.nodes.some((n) => n.label === "Work" && n.expandable));
+  }
+  const empty = buildJourneyFlow([], [], {});
+  assert.equal(empty.sessions, 0);
+  assert.equal(empty.links.length, 0);
+});
+test("journeys disclose ambiguous simultaneous observations instead of inventing order", () => {
+  const r = summarize(
+    [base, { ...base, view: randomUUID(), path: "/work/other" }],
+    7,
+    {},
+    now,
+  ).journeyFlow;
+  assert.equal(r.routes.length, 0);
+  assert.equal(r.ambiguousSessions, 1);
+  assert.equal(r.totalSessions, 1);
 });

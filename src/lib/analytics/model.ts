@@ -139,6 +139,23 @@ export function category(path: string) {
         play: "Play",
       }[path.split("/")[1]] || "Other";
 }
+export type JourneyRoute = {
+  source: string;
+  first: string;
+  next: string | null;
+  last: string;
+  sessions: number;
+  engagedSessions: number;
+  seconds: number;
+  firstEngaged: number;
+  nextEngaged: number;
+  lastEngaged: number;
+  firstSeconds: number;
+  nextSeconds: number;
+  lastSeconds: number;
+  continued: number;
+  additionalViews: number;
+};
 export function summarize(
   events: AnalyticsEvent[],
   days: number,
@@ -311,6 +328,75 @@ export function summarize(
         journeys.push(`${list[i - 1].path} → ${list[i].path}`);
     if (list.length) exits.push(list[list.length - 1].path);
   }
+  // Keep full in-range paths for sessions matching the filters. A content
+  // filter selects sessions; it must never splice out their intervening pages.
+  const journeyAttention = new Map<string, number>();
+  for (const e of events) {
+    if (e.type === "engagement" && e.at >= start && e.at <= now)
+      journeyAttention.set(
+        e.view,
+        Math.max(journeyAttention.get(e.view) || 0, e.seconds),
+      );
+  }
+  const routeMap = new Map<string, JourneyRoute>();
+  let continuedSessions = 0,
+    ambiguousSessions = 0;
+  for (const list of sessionViews.values()) {
+    if (list.some((e, i) => i > 0 && e.at === list[i - 1].at)) {
+      ambiguousSessions++;
+      continue;
+    }
+    const entry = list[0],
+      next = list[1],
+      last = list[list.length - 1];
+    const source = first.get(entry.session)!.source || "Direct / unknown";
+    const key = JSON.stringify([
+      source,
+      entry.path,
+      next?.path || null,
+      last.path,
+    ]);
+    const row = routeMap.get(key) || {
+      source,
+      first: entry.path,
+      next: next?.path || null,
+      last: last.path,
+      sessions: 0,
+      engagedSessions: 0,
+      seconds: 0,
+      firstEngaged: 0,
+      nextEngaged: 0,
+      lastEngaged: 0,
+      firstSeconds: 0,
+      nextSeconds: 0,
+      lastSeconds: 0,
+      continued: 0,
+      additionalViews: 0,
+    };
+    const attention = (e: AnalyticsEvent | undefined) =>
+      e ? journeyAttention.get(e.view) || 0 : 0;
+    const seconds = list.map(attention);
+    row.sessions++;
+    row.engagedSessions += +seconds.some((s) => s >= 10);
+    row.seconds += seconds.reduce((sum, n) => sum + n, 0);
+    row.firstEngaged += +(attention(entry) >= 10);
+    row.nextEngaged += +(attention(next) >= 10);
+    row.lastEngaged += +(attention(last) >= 10);
+    row.firstSeconds += attention(entry);
+    row.nextSeconds += attention(next);
+    row.lastSeconds += attention(last);
+    row.continued += +(list.length > 2);
+    row.additionalViews += Math.max(0, list.length - 3);
+    routeMap.set(key, row);
+    continuedSessions += +(first.get(entry.session)!.at < start);
+  }
+  const routes = [...routeMap.values()].sort(
+    (a, b) =>
+      b.sessions - a.sessions ||
+      JSON.stringify([a.source, a.first, a.next, a.last]).localeCompare(
+        JSON.stringify([b.source, b.first, b.next, b.last]),
+      ),
+  );
   const cards = new Map<
     string,
     { target: string; seen: Set<string>; clicked: Set<string> }
@@ -435,6 +521,14 @@ export function summarize(
     entries: rank(acquisition.map((e) => e.path)),
     exits: rank(exits),
     journeys: rank(journeys),
+    journeyFlow: {
+      routes: routes.slice(0, 300),
+      totalSessions: sessions.size,
+      omittedSessions: routes.slice(300).reduce((n, r) => n + r.sessions, 0),
+      continuedSessions,
+      ambiguousSessions,
+      contentFilter: filters.category || null,
+    },
     interests,
     cohorts: cohortFor("source"),
     audienceCohorts: {

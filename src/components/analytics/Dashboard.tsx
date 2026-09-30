@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import TrafficChart from "./TrafficChart";
 import RateMark from "./RateMark";
+import JourneyFlow from "./JourneyFlow";
 import { RANGE_OPTIONS } from "@/lib/analytics/range";
 import type { resolveRange } from "@/lib/analytics/range";
 import type { summarize } from "@/lib/analytics/model";
@@ -764,6 +765,17 @@ export default function Dashboard() {
           )}
           {tab === "Journeys" && (
             <div className="dashboard-grid">
+              <Panel
+                title="Where attention travels"
+                note="Follow matching sessions from arrival through their observed pages."
+                className="wide"
+              >
+                <JourneyFlow
+                  key={report.generatedAt}
+                  data={report.journeyFlow}
+                  titles={report.titles}
+                />
+              </Panel>
               <Panel
                 title="The next step"
                 note="Consecutive page transitions within the selected content and date range."
