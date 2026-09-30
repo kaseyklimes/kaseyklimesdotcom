@@ -629,7 +629,7 @@
 }
 .insights .traffic-column {
   flex: 1;
-  min-width: 12px;
+  min-width: 0;
   border: 0;
   border-radius: 0;
   min-height: 0;
