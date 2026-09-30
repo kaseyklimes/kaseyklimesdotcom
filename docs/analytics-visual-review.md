@@ -25,3 +25,17 @@ Reviewed against the live website and an isolated fixture spanning 420 days. Fix
 Simple charts are intentional: ranked bars and the transition table make exact comparisons easier than a map or Sankey for this site's likely traffic volume. The heatmap earns its complexity by comparing audiences against multiple content categories simultaneously. Confidence intervals are used only where a rate based on limited exposure can otherwise be misleading.
 
 Verification included real browser review at desktop and a narrow mobile viewport, populated and empty data states, all-time selection, source filtering, keyboard-accessible controls, and comparison of displayed metrics with the fixture aggregates. The remaining data limits are stated in the dashboard: sessions are not people, time/scroll are proxies for attention, audience categories are observed context, and relationships are not causal effects.
+
+## Interactive journeys
+
+| Before | After |
+| --- | --- |
+| Only a consecutive-transition table | A session-weighted flow diagram connects source, first in-range page, next observed page, and last-observed summary; the original transition table remains available |
+| Volume alone conveyed interest | A fixed 0–100% sequential engagement scale, exact engaged/view denominators, and active-time details distinguish attention from traffic |
+| Categories offered no path drill-down | Select a category and expand it into named pages; top-four page and top-six source grouping keeps less common observations in explicit “Other” groups |
+| A merged diagram could suggest paths belonging to different sessions | Focus rebuilds the entire diagram from only the actual matching session combinations; content filters retain intervening pages |
+| Final destinations could imply a direct jump or confirmed exit | Dashed endpoint-summary bands, explicit repeated-page handling, and omitted-intermediate counts distinguish last observed pages from consecutive steps |
+| Small or incomplete samples were easy to overlook | Low-sample notices, pre-range session context, explicit top-300 route omissions, and exclusion of timestamp ties make coverage clear |
+| Thin bands were difficult to inspect on small screens | Keyboard-operable SVG controls, a desktop flow table, and a mobile connection list offer the same metrics and selection actions; wide diagrams scroll inside their container |
+
+Validation: model tests cover chronological order, preserved content-filter context, cumulative engagement, repeated and single-page visits, date boundaries, anonymous aggregation, simultaneous observations, and route limits. Geometry tests verify conserved session totals and band widths across every column before and after category expansion. Browser review used isolated long-range fixtures with short, long, and repeated-page visits. Live collection and authorization are unchanged.
