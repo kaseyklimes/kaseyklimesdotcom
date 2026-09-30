@@ -1,0 +1,804 @@
+.insights {
+  --ink: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 64%, var(--background));
+  --line: color-mix(in srgb, var(--foreground) 16%, var(--background));
+  --surface: color-mix(in srgb, var(--foreground) 4%, var(--background));
+  --chart: color-mix(in srgb, var(--foreground) 72%, var(--background));
+  --chart-secondary: color-mix(
+    in srgb,
+    var(--foreground) 24%,
+    var(--background)
+  );
+  --heat-rgb: 34, 34, 34;
+  --green: var(--foreground);
+  --paper: var(--background);
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100vh;
+  padding: 28px max(24px, calc((100vw - 1240px) / 2));
+  font-family: "Berkeley Mono", system-ui, monospace;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+.insights * {
+  box-sizing: border-box;
+}
+.insights a {
+  color: inherit;
+  text-decoration: none;
+}
+.insights a:hover {
+  text-decoration: underline;
+}
+.insights .topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 22px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+.insights .topline > a {
+  font-weight: 700;
+}
+.insights .topline span {
+  font-weight: 400;
+}
+.insights .topline > div {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.insights .private-dot:before {
+  content: "●";
+  color: var(--green);
+  margin-right: 8px;
+}
+.insights .intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 44px 0 30px;
+}
+.insights .eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--green);
+  font-weight: 700;
+}
+.insights h1 {
+  font-family: inherit;
+  font-size: clamp(26px, 4vw, 36px);
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 14px 0 16px;
+  text-wrap: balance;
+  font-weight: 400;
+}
+.insights .intro p,
+.insights .login p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.insights .actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.insights button,
+.insights select,
+.insights input {
+  font: inherit;
+  min-height: 42px;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 9px 13px;
+  color: var(--ink);
+  font-size: 13px;
+}
+.insights button {
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    transform 0.15s;
+}
+.insights button:hover {
+  background: var(--surface);
+}
+.insights button:active {
+  transform: scale(0.96);
+}
+.insights button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.insights :is(a, button, select, input, summary):focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+.insights .text-button {
+  background: none;
+  border-color: transparent;
+  padding: 8px 0;
+}
+.insights .controls {
+  display: flex;
+  gap: 14px;
+  align-items: end;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 2px;
+}
+.insights .controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+.insights .controls select {
+  width: 100%;
+  text-overflow: ellipsis;
+}
+.insights .tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid var(--line);
+  margin: 26px 0;
+}
+.insights .tabs button {
+  border: 0;
+  border-radius: 0;
+  background: none !important;
+  padding: 14px 0;
+  color: var(--muted);
+}
+.insights .tabs button[aria-current] {
+  color: var(--ink);
+  box-shadow: 0 2px 0 var(--green);
+  font-weight: 600;
+}
+.insights .metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 32px 0;
+  gap: 20px;
+}
+.insights .metrics > div {
+  border-left: 1px solid var(--line);
+  padding: 0 20px;
+}
+.insights .metrics span {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.insights .metrics strong {
+  font-size: 32px;
+  display: block;
+  font-weight: 400;
+  margin: 8px 0;
+  letter-spacing: 0;
+}
+.insights .metrics em {
+  font-size: 22px;
+  font-style: normal;
+  margin-left: 4px;
+  color: var(--muted);
+}
+.insights .metrics small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.insights .dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.insights .panel {
+  background: var(--paper);
+  border-radius: 2px;
+  padding: 28px;
+  box-shadow: none;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+.insights .panel.wide {
+  grid-column: 1/-1;
+}
+.insights .panel header {
+  margin-bottom: 24px;
+}
+.insights .panel h2 {
+  font-size: 16px;
+  letter-spacing: 0;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.insights .panel header p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 6px;
+  max-width: 850px;
+}
+.insights .bars {
+  display: grid;
+  gap: 20px;
+}
+.insights .bar-row > div:first-child {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.insights .bar-row span {
+  overflow-wrap: anywhere;
+}
+.insights .bar-row strong {
+  font-weight: 500;
+}
+.insights .track {
+  height: 7px;
+  background: var(--surface);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.insights .track i {
+  display: block;
+  height: 100%;
+  background: var(--chart);
+  border-radius: 2px;
+}
+.insights .chart-legend {
+  display: flex;
+  gap: 18px;
+  font-size: 11px;
+  color: var(--chart);
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+.insights .chart-legend span + span {
+  color: var(--chart-secondary);
+}
+.insights .timeline {
+  display: flex;
+  gap: clamp(3px, 1vw, 16px);
+  height: 205px;
+  align-items: flex-end;
+}
+.insights .day {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+}
+.insights .day-bars {
+  height: 175px;
+  width: 100%;
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--line);
+}
+.insights .day-bars i {
+  background: var(--chart);
+  display: block;
+  width: 50%;
+  border-radius: 3px 3px 0 0;
+  min-height: 0;
+}
+.insights .day-bars i + i {
+  background: var(--chart-secondary);
+}
+.insights .day small {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 12px;
+  white-space: nowrap;
+}
+.insights .timeline:has(.day:nth-child(15)) .day:nth-child(even) small {
+  visibility: hidden;
+}
+.insights details {
+  margin-top: 22px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.insights summary {
+  cursor: pointer;
+  padding: 10px 0;
+  min-height: 40px;
+}
+.insights .table-wrap {
+  overflow-x: auto;
+}
+.insights table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.insights th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 500;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.insights td {
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.insights td:first-child {
+  white-space: normal;
+  min-width: 200px;
+  max-width: 480px;
+  text-transform: none;
+}
+.insights td small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 5px;
+  text-transform: none;
+}
+.insights .pill {
+  background: var(--surface);
+  padding: 5px 8px;
+  border-radius: 2px;
+}
+.insights .heatmap td:not(:first-child) {
+  text-align: center;
+  border: 5px solid var(--paper);
+  min-width: 95px;
+  border-radius: 2px;
+}
+.insights .heatmap th:not(:first-child) {
+  text-align: center;
+}
+.insights .heatmap strong {
+  font-weight: 500;
+  font-size: 20px;
+}
+.insights .heatmap td small {
+  color: var(--muted);
+}
+.insights .notice {
+  padding: 22px 26px;
+  border-radius: 2px;
+  background: var(--surface);
+  font-size: 14px;
+  margin: 24px 0;
+  line-height: 1.6;
+}
+.insights .notice p {
+  margin-top: 5px;
+  color: var(--muted);
+}
+.insights .notice.error {
+  background: var(--surface);
+}
+.insights .status,
+.insights .empty-small {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 18px 0;
+}
+.insights .footnote,
+.insights .dashboard-footer {
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.insights .footnote {
+  margin-top: 20px;
+}
+.insights .dashboard-footer {
+  padding: 28px 0;
+  max-width: 880px;
+}
+.insights .dashboard-footer p + p {
+  margin-top: 9px;
+}
+.insights .dashboard-footer a {
+  text-decoration: underline;
+}
+.insights .login section {
+  max-width: 430px;
+  margin: 100px auto;
+}
+.insights .login form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 30px 0;
+}
+.insights .login form button {
+  background: var(--green);
+  color: var(--paper);
+}
+.insights .login form label {
+  font-size: 12px;
+}
+.insights .login small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.insights .login input {
+  min-height: 48px;
+}
+.insights .login > a {
+  font-size: 12px;
+}
+@media (max-width: 760px) {
+  .insights {
+    padding: 20px 16px;
+  }
+  .insights .topline > div {
+    gap: 12px;
+  }
+  .insights .topline > a span {
+    display: none;
+  }
+  .insights .intro {
+    display: block;
+    padding-top: 34px;
+  }
+  .insights .actions {
+    margin-top: 22px;
+  }
+  .insights .controls {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+  }
+  .insights .controls label {
+    flex: 1 1 40%;
+  }
+  .insights .tabs {
+    gap: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .insights .tabs button {
+    font-size: 12px;
+  }
+  .insights .metrics {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 26px;
+  }
+  .insights .metrics > div {
+    padding-left: 12px;
+  }
+  .insights .metrics strong {
+    font-size: 28px;
+  }
+  .insights .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .insights .panel {
+    padding: 20px;
+  }
+  .insights .day small {
+    font-size: 8px;
+  }
+  .insights .timeline:has(.day:nth-child(15)) .day small {
+    visibility: hidden;
+  }
+  .insights .timeline:has(.day:nth-child(15)) .day:nth-child(5n + 1) small {
+    visibility: visible;
+  }
+  .insights .heatmap td:not(:first-child) {
+    min-width: 72px;
+  }
+  .insights .login section {
+    margin: 64px auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .insights button {
+    transition: none;
+  }
+  .insights button:active {
+    transform: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .insights {
+    --heat-rgb: 255, 255, 255;
+    color-scheme: dark;
+  }
+}
+.insights .range-caption {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 16px 0;
+}
+.insights .custom-range {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+.insights .custom-range label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+}
+.insights .table-control,
+.insights .matrix-toolbar,
+.insights .chart-toolbar {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.insights .table-control select,
+.insights .chart-toolbar select,
+.insights .matrix-toolbar select {
+  margin-left: 8px;
+  max-width: 220px;
+}
+.insights .chart-toolbar,
+.insights .matrix-toolbar {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.insights .chart-toolbar .chart-legend {
+  margin: 0;
+}
+.insights .chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.insights .chart-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: var(--chart);
+}
+.insights .chart-legend span + span i {
+  background: var(--chart-secondary);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 2px,
+    var(--muted) 2px,
+    var(--muted) 3px
+  );
+}
+.insights .traffic-value {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  min-height: 40px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.insights .traffic-value strong {
+  font-weight: 400;
+  color: var(--ink);
+}
+.insights .traffic-frame {
+  display: flex;
+  gap: 12px;
+}
+.insights .traffic-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+  width: 46px;
+  flex-shrink: 0;
+  height: 180px;
+  font-size: 10px;
+  color: var(--muted);
+  transform: translateY(-6px);
+}
+.insights .traffic-scroll {
+  overflow-x: auto;
+  flex: 1;
+  min-width: 0;
+}
+.insights .traffic-plot {
+  display: flex;
+  gap: 8px;
+  height: 214px;
+  background:
+    linear-gradient(var(--line), var(--line)) 0 0/100% 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) 0 90px/100% 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) 0 180px/100% 1px no-repeat;
+}
+.insights .traffic-column {
+  flex: 1;
+  min-width: 12px;
+  border: 0;
+  border-radius: 0;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  background: none;
+  transform: none;
+}
+.insights .traffic-column:hover,
+.insights .traffic-column.selected {
+  background: var(--surface);
+}
+.insights .traffic-bars {
+  width: 100%;
+  display: flex;
+  gap: 3px;
+  align-items: end;
+  height: 180px;
+  flex-shrink: 0;
+}
+.insights .traffic-bars i {
+  width: 50%;
+  display: block;
+  background: var(--chart);
+}
+.insights .traffic-bars i + i {
+  background: var(--chart-secondary);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 3px,
+    var(--muted) 3px,
+    var(--muted) 4px
+  );
+}
+.insights .traffic-date {
+  display: block;
+  margin-top: 10px;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 9px;
+}
+.insights .rate-mark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.insights .rate-scale {
+  display: block;
+  position: relative;
+  width: 80px;
+  height: 14px;
+  background: linear-gradient(var(--line), var(--line)) center/100% 1px
+    no-repeat;
+}
+.insights .rate-scale i {
+  position: absolute;
+  height: 4px;
+  top: 5px;
+  background: var(--muted);
+}
+.insights .rate-scale b {
+  position: absolute;
+  width: 5px;
+  height: 9px;
+  top: 2px;
+  background: var(--ink);
+  transform: translateX(-50%);
+}
+.insights .matrix-toolbar > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.insights .matrix-gradient {
+  display: inline-block;
+  width: 70px;
+  height: 12px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(var(--heat-rgb), 0.25)
+  );
+}
+.insights .list-toggle {
+  margin-top: 16px;
+}
+.insights .heatmap td small {
+  white-space: normal;
+  line-height: 1.6;
+}
+.insights .table-control select {
+  font-size: 11px;
+}
+@media (max-width: 760px) {
+  .insights .traffic-axis {
+    width: 28px;
+    font-size: 9px;
+  }
+  .insights .traffic-plot {
+    gap: 3px;
+  }
+  .insights .traffic-bars {
+    gap: 1px;
+  }
+  .insights .traffic-date {
+    font-size: 8px;
+  }
+  .insights .traffic-value {
+    gap: 6px;
+    min-height: 58px;
+    flex-direction: column;
+  }
+  .insights .chart-toolbar {
+    align-items: start;
+  }
+  .insights .custom-range {
+    gap: 10px;
+  }
+  .insights .custom-range input {
+    width: 100%;
+    min-width: 0;
+  }
+  .insights .custom-range label {
+    min-width: 0;
+    flex: 1;
+  }
+  .insights .matrix-toolbar select {
+    max-width: 160px;
+  }
+}
+.insights .chart-legend span + span {
+  color: var(--muted);
+}
+.insights .heatmap td small {
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .insights .controls select {
+    font-size: 11px;
+    padding: 8px;
+  }
+  .insights .traffic-date-desktop { display: none; }
+  .insights .traffic-date-mobile { display: block; }
+}
+
+.insights .not-tracked .traffic-bars::after {
+  content: "—";
+  display: block;
+  text-align: center;
+  width: 100%;
+  color: var(--muted);
+  padding-bottom: 8px;
+}
+.insights .not-tracked .traffic-bars i {
+  display: none;
+}
+
+.insights .traffic-date-mobile { display: none; }
+.insights .traffic-column:first-child .traffic-date { align-self: flex-start; }
+.insights .traffic-column:last-child .traffic-date { align-self: flex-end; }
+@media (max-width: 760px) {
+  .insights .traffic-date-mobile { display: block; }
+}
+@media (max-width: 380px) {
+  .insights .controls label { flex-basis: 100%; }
+}

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
@@ -9,6 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="max-w-7xl mx-auto px-4">
           <p className="text-xs">
             © {new Date().getFullYear()} Kasey Klimes
+            {' · '}<Link href="/privacy" className="underline">Privacy</Link>
           </p>
         </div>
       </footer>
