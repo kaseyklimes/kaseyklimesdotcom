@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./fonts.css";
+import Tracker from "@/components/analytics/Tracker";
 import { siteDescription, siteName } from "@/utils/site";
 
 export const metadata: Metadata = {
@@ -34,8 +35,7 @@ export const viewport: Viewport = {
   themeColor: '#ffffff',
 };
 
-// Force static rendering for better performance
-export const dynamic = 'force-static';
+// Public pages remain statically generated; private analytics must read request cookies.
 export const revalidate = 3600; // Revalidate every hour
 
 export default function RootLayout({
@@ -82,6 +82,7 @@ export default function RootLayout({
         style={{ isolation: 'isolate' }}
       >
         {children}
+        <Tracker />
       </body>
     </html>
   );

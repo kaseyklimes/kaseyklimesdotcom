@@ -1,7 +1,6 @@
 import { getLegacyBlogRedirects } from './config/legacy-blog-redirects.mjs';
 import { getLegacyWorkRedirects } from './config/legacy-work-redirects.mjs';
 import createMDX from '@next/mdx';
-import remarkGfm from 'remark-gfm';
 import { imageDeviceSizes, imageFormats } from './config/image-optimization.mjs';
 
 /** @type {import('next').NextConfig} */
@@ -61,6 +60,15 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 365,
   },
   headers: async () => [
+    { source: '/insights/:path*', headers: [
+      { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
+      { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+      { key: 'X-Frame-Options', value: 'DENY' },
+    ] },
+    { source: '/api/analytics/:path*', headers: [
+      { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
+      { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+    ] },
     {
       source: '/:path*',
       headers: [
@@ -90,7 +98,7 @@ const nextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: ['remark-gfm'],
     rehypePlugins: [],
     providerImportSource: "@mdx-js/react",
   },

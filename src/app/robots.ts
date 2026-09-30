@@ -2,5 +2,5 @@ import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/utils/site';
 
 export default function robots(): MetadataRoute.Robots {
-  return { rules: { userAgent: '*', allow: '/' }, sitemap: absoluteUrl('/sitemap.xml') };
+  return { rules: { userAgent: '*', allow: '/', disallow: ['/insights', '/api/analytics/'] }, sitemap: absoluteUrl('/sitemap.xml') };
 }

@@ -18,7 +18,7 @@ function ShelfGridItem({ item, index }: { item: ContentMeta; index: number }) {
   };
 
   return (
-    <Link href={`/shelf/${item.slug}`} className="block">
+    <Link href={`/shelf/${item.slug}`} className="block" data-grid-category="shelf" data-grid-slug={item.slug}>
       <div>
         {item.heroImage && (
           <div className="relative w-full mb-2 image-container">

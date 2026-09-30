@@ -216,3 +216,7 @@ The website implements several performance optimizations:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Private analytics
+
+Owner-only website analytics lives at `/insights`. See [analytics setup and operations](docs/analytics.md) for secure configuration, metric definitions, privacy controls, retention, and release checks.
