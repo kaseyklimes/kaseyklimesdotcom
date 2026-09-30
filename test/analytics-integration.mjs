@@ -181,3 +181,96 @@ assert.equal(r.status, 400);
 console.log(
   "PASS: all extended ranges, custom dates, and invalid date rejection.",
 );
+// Presentation snapshots and navigation tokens survive compaction and replays.
+const parent = {
+  ...e,
+  id: randomUUID(),
+  view: randomUUID(),
+  session: randomUUID(),
+  path: "/",
+  source: "presentation-integration",
+  at: Date.now() - 4000,
+};
+const presentation = {
+  schema: 2,
+  build: "a".repeat(40),
+  content: "b".repeat(16),
+  thumbnail: "c".repeat(16),
+  stars: 3,
+  position: 2,
+  columns: 5,
+  span: 3,
+  width: 720,
+  height: 480,
+  viewportWidth: 1400,
+  viewportHeight: 900,
+  initialViewport: true,
+  filter: "/",
+};
+const exposure = {
+  ...parent,
+  id: randomUUID(),
+  type: "impression",
+  target: "/work/funnel-test",
+  exposure: randomUUID(),
+  presentation,
+  at: parent.at + 1000,
+};
+const click = {
+  ...parent,
+  id: randomUUID(),
+  type: "card_click",
+  target: exposure.target,
+  exposure: exposure.exposure,
+  navigation: randomUUID(),
+  at: parent.at + 2000,
+};
+const destination = {
+  ...parent,
+  id: randomUUID(),
+  view: randomUUID(),
+  path: exposure.target,
+  referral: { view: parent.view, navigation: click.navigation },
+  at: parent.at + 3000,
+};
+// Arrival and engagement can reach storage before the originating view/exposure.
+for (const batch of [
+  [{ ...destination, referral: undefined, type: "engagement", seconds: 25, depth: 80 }, destination],
+  [click, exposure, parent],
+  [click, exposure, parent],
+]) {
+  const r = await post("/api/analytics/collect", batch);
+  assert.equal(r.status, 204);
+}
+let data = await (
+  await request(
+    "/api/analytics/report?days=7&source=presentation-integration",
+    { headers: { cookie } },
+  )
+).json();
+assert.deepEqual(data.presentationFunnel.totals, {
+  seen: 1,
+  clicked: 1,
+  arrived: 1,
+  engaged: 1,
+});
+assert.deepEqual(data.presentationFunnel.rows[0].presentation, presentation);
+assert.equal(data.presentationFunnel.rows[0].seconds, 25);
+// A replay cannot replace the originally captured stars/thumbnail.
+await post("/api/analytics/collect", [
+  {
+    ...exposure,
+    presentation: { ...presentation, stars: 1, thumbnail: "d".repeat(16) },
+  },
+]);
+data = await (
+  await request(
+    "/api/analytics/report?days=7&source=presentation-integration",
+    { headers: { cookie } },
+  )
+).json();
+assert.deepEqual(data.presentationFunnel.rows[0].presentation, presentation);
+assert.equal(data.presentationFunnel.legacyExposures, 0);
+console.log(
+  "PASS: immutable presentation snapshots, explicit funnel attribution, out-of-order arrival, and retry deduplication through real Redis.",
+);

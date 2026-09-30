@@ -202,6 +202,14 @@ interface GridItemProps {
 
 const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, style, onHeightMeasured }: GridItemProps) {
   const itemRef = useRef<HTMLDivElement>(null);
+  const analytics = {
+    'data-analytics-card': item.items ? undefined : 'true',
+    'data-analytics-stars': item.stars,
+    'data-analytics-columns': maxColumns,
+    'data-analytics-span': Math.min(item.stars, maxColumns),
+    'data-analytics-content': item.analyticsContentRevision,
+    'data-analytics-thumbnail': item.analyticsThumbnailRevision,
+  };
   const colSpan = Math.min(item.stars, maxColumns); // Limit column span to available columns
 
   // Use thumbnail for grid display, fall back to heroImage
@@ -251,7 +259,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
   // Special case for shelf grid
   if (item.category === 'shelf' && item.items) {
     return (
-      <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} style={itemStyle}>
+      <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} {...analytics} style={itemStyle}>
         <ShelfGrid items={item.items} />
       </div>
     );
@@ -266,7 +274,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
     const aspectRatio = iframeNaturalWidth / iframeNaturalHeight;
 
     return (
-      <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} style={itemStyle}>
+      <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} {...analytics} style={itemStyle}>
         <div className="w-full relative overflow-hidden" style={{ aspectRatio }}>
           <div style={{
             position: 'absolute',
@@ -304,7 +312,7 @@ const GridItem = memo(function GridItem({ item, itemKey, maxColumns, index, styl
   const contentProps = { item, colSpan, index, videoInfo, heroImages };
 
   return (
-    <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} style={itemStyle}>
+    <div ref={itemRef} data-grid-category={item.category} data-grid-slug={item.slug} {...analytics} style={itemStyle}>
       {item.clickThroughUrl ? (
         <a href={item.clickThroughUrl} target="_blank" rel="noopener noreferrer">
           <GridItemContent {...contentProps} />

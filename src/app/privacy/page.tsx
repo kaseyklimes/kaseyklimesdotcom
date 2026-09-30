@@ -13,7 +13,12 @@ export default function PrivacyPage() {
         This website uses first-party analytics to understand which content
         people find useful. It records pages viewed, visible content cards, link
         clicks, gallery and media interactions, approximate active reading time,
-        and scroll depth.
+        and scroll depth. Card exposures also retain the content and thumbnail
+        version, star rating, grid position, card size, active grid filter, and
+        rounded viewport dimensions. A short-lived identifier in tab session
+        storage connects a card click to its destination page and measured
+        attention; it is consumed on the next page and expires after two
+        minutes.
       </p>
       <p className="mt-5">
         Visits are grouped by a random identifier in session storage, scoped to

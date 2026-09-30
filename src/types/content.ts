@@ -1,6 +1,9 @@
 export type ContentCategory = 'blog' | 'work' | 'play' | 'talks' | 'photography' | 'shelf';
 
 export interface ContentMeta {
+  analyticsContentRevision?: string;
+  analyticsThumbnailRevision?: string;
+  analyticsHeroRevision?: string;
   title: string;
   date: string;
   category: string;

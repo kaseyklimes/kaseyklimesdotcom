@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import TrafficChart from "./TrafficChart";
 import RateMark from "./RateMark";
 import JourneyFlow from "./JourneyFlow";
+import PresentationFunnel from "./PresentationFunnel";
 import { RANGE_OPTIONS } from "@/lib/analytics/range";
 import type { resolveRange } from "@/lib/analytics/range";
 import type { summarize } from "@/lib/analytics/model";
@@ -515,8 +516,19 @@ export default function Dashboard() {
                 </div>
               </Panel>
               <Panel
+                title="Exposure → engaged visit"
+                note="Which presentations produce attention, not just clicks."
+                className="wide"
+              >
+                <PresentationFunnel
+                  key={report.generatedAt}
+                  data={report.presentationFunnel}
+                  titles={report.titles}
+                />
+              </Panel>
+              <Panel
                 title="Seen → selected"
-                note="A card impression requires 50% visibility for 1 second. Click-through counts only clicks with a recorded impression."
+                note="Historical per-view card CTR, including older tracking. New exposures use half the viewport-capped card area for 1 second; older exposures required half the full card. Clicks require a recorded impression."
                 className="wide"
               >
                 <label className="table-control">

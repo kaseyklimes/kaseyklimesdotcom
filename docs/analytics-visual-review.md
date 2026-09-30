@@ -39,3 +39,16 @@ Verification included real browser review at desktop and a narrow mobile viewpor
 | Thin bands were difficult to inspect on small screens | Keyboard-operable SVG controls, a desktop flow table, and a mobile connection list offer the same metrics and selection actions; wide diagrams scroll inside their container |
 
 Validation: model tests cover chronological order, preserved content-filter context, cumulative engagement, repeated and single-page visits, date boundaries, anonymous aggregation, simultaneous observations, and route limits. Geometry tests verify conserved session totals and band widths across every column before and after category expansion. Browser review used isolated long-range fixtures with short, long, and repeated-page visits. Live collection and authorization are unchanged.
+
+## Historical presentations and engaged visits
+
+| Before | After |
+| --- | --- |
+| Today's stars and thumbnails could be mistaken for historical evidence | Per-card history preserves observed stars, position, responsive geometry, viewport context, and immutable content/media/build identifiers |
+| Click-through ended before destination attention | Four explicit stages separate qualified exposure, click, confirmed arrival, and 10-second engaged arrival; continuation and active time remain adjacent |
+| Small conversion samples could look conclusive | Counts and 95% Wilson intervals accompany engaged arrivals per 100 exposures, with low-sample labels and 20-exposure rate sorting |
+| Old measurement might silently mix with the new funnel | Unversioned exposures are explicitly excluded; historical CTR remains available with its measurement change disclosed |
+| History could overwhelm the primary comparison | A per-card Inspect control expands a contextual table; version identifiers use progressive disclosure and wide tables scroll within mobile containers |
+| Reused rate tooltip described clicks | Rate markers now accept a metric-specific outcome description for accurate accessible/tool-tip text |
+
+Reviewed desktop and narrow mobile layouts in the production build using isolated Redis fixtures. Browser collection verified actual viewport-qualified exposures and an explicit same-tab click/arrival with measured destination attention. Integration tests cover immutable snapshots, out-of-order delivery and retries; model tests cover unmatched navigation, date/filter boundaries, oversized cards, variant separation and first-arrival attribution. The four-stage summary and aligned counts are intentionally simpler than a tapered funnel that could exaggerate small differences or imply unobserved transitions.

@@ -6,6 +6,18 @@ export const DAILY_LIMIT = 20000;
 export const STORAGE_BUDGET_BYTES = 128 * 1024 * 1024;
 export type ViewSnapshot = AnalyticsEvent & {
   hasView: boolean;
+  presentations?: Record<
+    string,
+    {
+      target: string;
+      at: number;
+      presentation: NonNullable<AnalyticsEvent["presentation"]>;
+    }
+  >;
+  navigations?: Record<
+    string,
+    { target: string; at: number; exposure?: string }
+  >;
   impressions: Record<string, boolean>;
   cardClicks: Record<string, boolean>;
   clicks: Record<string, boolean>;
@@ -14,11 +26,11 @@ export type ViewSnapshot = AnalyticsEvent & {
 export function configured() {
   return Boolean(
     (process.env.ANALYTICS_REDIS_URL || process.env.KV_REST_API_URL) &&
-    (process.env.ANALYTICS_REDIS_TOKEN || process.env.KV_REST_API_TOKEN) &&
-    (process.env.ANALYTICS_SESSION_SECRET?.length || 0) >= 32 &&
-    /^[a-f0-9]{32}:[a-f0-9]{128}$/.test(
-      process.env.ANALYTICS_PASSWORD_HASH || "",
-    ),
+      (process.env.ANALYTICS_REDIS_TOKEN || process.env.KV_REST_API_TOKEN) &&
+      (process.env.ANALYTICS_SESSION_SECRET?.length || 0) >= 32 &&
+      /^[a-f0-9]{32}:[a-f0-9]{128}$/.test(
+        process.env.ANALYTICS_PASSWORD_HASH || "",
+      ),
   );
 }
 export async function redis<T = unknown>(
@@ -86,13 +98,31 @@ export async function save(events: AnalyticsEvent[]) {
        v.impressions={}; v.cardClicks={}; v.clicks={}; v.interactions={};
      end;
      if v.session==e.session and v.path==e.path then
-       if e.type=='view' then v.hasView=true; v.at=math.min(v.at,e.at)
+       if e.type=='view' then v.hasView=true; v.at=math.min(v.at,e.at); if e.referral and not v.referral then v.referral=e.referral end
        elseif e.type=='engagement' then v.seconds=math.max(v.seconds,e.seconds); v.depth=math.max(v.depth,e.depth)
-       elseif e.type=='impression' then v.impressions[e.target]=true
-       elseif e.type=='card_click' then v.cardClicks[e.target]=true
+       elseif e.type=='impression' then
+         v.impressions[e.target]=true;
+         if e.exposure and e.presentation then
+           v.presentations=v.presentations or {}; v.presentationCount=v.presentationCount or 0;
+           if not v.presentations[e.exposure] then
+             if v.presentationCount<200 then
+               v.presentations[e.exposure]={target=e.target,at=e.at,presentation=e.presentation}; v.presentationCount=v.presentationCount+1;
+             else redis.call('HSET',KEYS[5],ARGV[3],'per-view presentation limit') end;
+           end;
+         end
+       elseif e.type=='card_click' then
+         v.cardClicks[e.target]=true;
+         if e.navigation then
+           v.navigations=v.navigations or {}; v.navigationCount=v.navigationCount or 0;
+           if not v.navigations[e.navigation] then
+             if v.navigationCount<100 then
+               v.navigations[e.navigation]={target=e.target,at=e.at,exposure=e.exposure}; v.navigationCount=v.navigationCount+1;
+             else redis.call('HSET',KEYS[5],ARGV[3],'per-view navigation limit') end;
+           end;
+         end
        elseif e.type=='click' then v.clicks[e.target]=true
        elseif e.type=='interaction' then v.interactions[e.target]=true end;
-       v.target=''; local encoded=cjson.encode(v); local delta=string.len(encoded)-(raw and string.len(raw) or -300);
+       v.target=''; v.exposure=nil; v.navigation=nil; v.presentation=nil; local encoded=cjson.encode(v); local delta=string.len(encoded)-(raw and string.len(raw) or -300);
        if bytes+delta <= tonumber(ARGV[1]) then
          redis.call('HSET',KEYS[1],e.view,encoded); redis.call('ZADD',KEYS[2],v.at,e.view);
          bytes=bytes+delta; accepted=accepted+1;
@@ -142,18 +172,69 @@ export async function readEvents(start: number, end: number) {
       if (!raw) continue;
       const view = JSON.parse(raw) as ViewSnapshot;
       if (!view.hasView) continue;
-      events.push({ ...view, type: "view", target: "", seconds: 0, depth: 0 });
+      const base: AnalyticsEvent = {
+        id: view.id,
+        session: view.session,
+        view: view.view,
+        type: "view",
+        path: view.path,
+        target: "",
+        at: view.at,
+        seconds: 0,
+        depth: 0,
+        source: view.source,
+        medium: view.medium,
+        campaign: view.campaign,
+        country: view.country,
+        device: view.device,
+      };
+      events.push({
+        ...base,
+        ...(view.referral ? { referral: view.referral } : {}),
+      });
       if (view.seconds || view.depth)
-        events.push({ ...view, type: "engagement", target: "" });
+        events.push({
+          ...base,
+          type: "engagement",
+          seconds: view.seconds,
+          depth: view.depth,
+        });
       for (const [field, type] of [
         ["impressions", "impression"],
         ["cardClicks", "card_click"],
         ["clicks", "click"],
         ["interactions", "interaction"],
       ] as const) {
-        for (const target of Object.keys(view[field]))
-          events.push({ ...view, type, target, seconds: 0, depth: 0 });
+        for (const target of Object.keys(view[field])) {
+          // New presentation impressions replace their legacy boolean counterpart.
+          if (
+            type === "impression" &&
+            Object.values(view.presentations || {}).some(
+              (p) => p.target === target,
+            )
+          )
+            continue;
+          events.push({ ...base, type, target });
+        }
       }
+      for (const [exposure, p] of Object.entries(view.presentations || {}))
+        events.push({
+          ...base,
+          type: "impression",
+          target: p.target,
+          at: p.at,
+          exposure,
+          presentation: p.presentation,
+        });
+      for (const [navigation, n] of Object.entries(view.navigations || {}))
+        events.push({
+          ...base,
+          type: "card_click",
+          target: n.target,
+          at: n.at,
+          navigation,
+          ...(n.exposure ? { exposure: n.exposure } : {}),
+        });
     }
   }
   const warnings = await redis<string[]>(
