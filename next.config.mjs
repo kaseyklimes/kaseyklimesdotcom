@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { getLegacyBlogRedirects } from './config/legacy-blog-redirects.mjs';
 import { getLegacyWorkRedirects } from './config/legacy-work-redirects.mjs';
 import createMDX from '@next/mdx';
@@ -5,6 +7,11 @@ import { imageDeviceSizes, imageFormats } from './config/image-optimization.mjs'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    NEXT_PUBLIC_ANALYTICS_BUILD: process.env.VERCEL_GIT_COMMIT_SHA || createHash('sha256').update(
+      ['src/components/grid/MasonryGrid.tsx','src/components/grid/ShelfGrid.tsx','src/app/globals.css'].map(file=>readFileSync(new URL(file,import.meta.url),'utf8')).join('\n')
+    ).digest('hex').slice(0,40),
+  },
   redirects: async () => [...getLegacyBlogRedirects(), ...getLegacyWorkRedirects()],
   rewrites: async () => [
     { source: '/blog/:slug.md', destination: '/markdown/blog/:slug' },

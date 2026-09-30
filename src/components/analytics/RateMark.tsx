@@ -15,9 +15,11 @@ export function wilson(success: number, total: number) {
 export default function RateMark({
   success,
   total,
+  outcome = "exposed views clicked",
 }: {
   success: number;
   total: number;
+  outcome?: string;
 }) {
   if (!total) return <span>—</span>;
   const rate = (100 * success) / total,
@@ -25,7 +27,7 @@ export default function RateMark({
   return (
     <span
       className="rate-mark"
-      title={`${success} of ${total} exposed views clicked. 95% Wilson interval: ${low.toFixed(1)}–${high.toFixed(1)}%.`}
+      title={`${success} of ${total} ${outcome}. 95% Wilson interval: ${low.toFixed(1)}–${high.toFixed(1)}%.`}
     >
       <span>
         {rate.toFixed(1)}%{total < 20 ? <small>Low sample</small> : null}

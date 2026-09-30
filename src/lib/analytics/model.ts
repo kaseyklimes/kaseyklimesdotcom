@@ -1,3 +1,8 @@
+import {
+  normalizePresentation,
+  summarizePresentation,
+  type Presentation,
+} from "./presentation";
 export const EVENT_TYPES = [
   "view",
   "engagement",
@@ -22,6 +27,10 @@ export type AnalyticsEvent = {
   at: number;
   seconds: number;
   depth: number;
+  exposure?: string;
+  navigation?: string;
+  presentation?: Presentation;
+  referral?: { view: string; navigation: string };
 };
 const ID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 export function publicPath(value: unknown): string | null {
@@ -82,7 +91,42 @@ export function normalizeEvent(
       return null;
     target = String(e.target);
   }
+  let presentation: Presentation | undefined;
+  if (e.presentation !== undefined) {
+    const validated = normalizePresentation(e.presentation);
+    if (e.type !== "impression" || !validated || !ID.test(String(e.exposure)))
+      return null;
+    presentation = validated;
+  }
+  if (
+    e.exposure !== undefined &&
+    (!ID.test(String(e.exposure)) ||
+      !["impression", "card_click"].includes(String(e.type)))
+  )
+    return null;
+  if (
+    e.navigation !== undefined &&
+    (e.type !== "card_click" || !ID.test(String(e.navigation)))
+  )
+    return null;
+  let referral: AnalyticsEvent["referral"];
+  if (e.referral !== undefined) {
+    const r = e.referral as Record<string, unknown>;
+    if (
+      e.type !== "view" ||
+      !r ||
+      !ID.test(String(r.view)) ||
+      !ID.test(String(r.navigation)) ||
+      r.view === e.view
+    )
+      return null;
+    referral = { view: String(r.view), navigation: String(r.navigation) };
+  }
   return {
+    ...(presentation ? { presentation } : {}),
+    ...(e.exposure ? { exposure: String(e.exposure) } : {}),
+    ...(e.navigation ? { navigation: String(e.navigation) } : {}),
+    ...(referral ? { referral } : {}),
     id: String(e.id),
     session: String(e.session),
     view: String(e.view),
@@ -530,6 +574,13 @@ export function summarize(
       contentFilter: filters.category || null,
     },
     interests,
+    presentationFunnel: summarizePresentation(
+      events,
+      start,
+      now,
+      filters,
+      category,
+    ),
     cohorts: cohortFor("source"),
     audienceCohorts: {
       source: cohortFor("source"),

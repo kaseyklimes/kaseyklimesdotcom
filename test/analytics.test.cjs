@@ -483,3 +483,255 @@ test("journeys disclose ambiguous simultaneous observations instead of inventing
   assert.equal(r.ambiguousSessions, 1);
   assert.equal(r.totalSessions, 1);
 });
+const { normalizePresentation, qualifiesExposure } = load("presentation");
+const presentation = {
+  schema: 2,
+  build: "a".repeat(40),
+  content: "b".repeat(16),
+  thumbnail: "c".repeat(16),
+  stars: 3,
+  position: 2,
+  columns: 5,
+  span: 3,
+  width: 720,
+  height: 480,
+  viewportWidth: 1400,
+  viewportHeight: 900,
+  initialViewport: true,
+  filter: "/",
+};
+function funnelFixture() {
+  const origin = { ...base, path: "/", view: randomUUID(), at: now };
+  const exposure = {
+    ...origin,
+    type: "impression",
+    target: "/work/project",
+    exposure: randomUUID(),
+    presentation,
+    at: now + 1000,
+  };
+  const click = {
+    ...origin,
+    type: "card_click",
+    target: exposure.target,
+    exposure: exposure.exposure,
+    navigation: randomUUID(),
+    at: now + 2000,
+  };
+  const arrival = {
+    ...base,
+    path: exposure.target,
+    view: randomUUID(),
+    referral: { view: origin.view, navigation: click.navigation },
+    at: now + 3000,
+  };
+  return { origin, exposure, click, arrival };
+}
+test("presentation snapshots validate bounded fields and discard unknown data", () => {
+  assert.deepEqual(
+    normalizePresentation({ ...presentation, privateText: "not persisted" }),
+    presentation,
+  );
+  for (const changes of [
+    { stars: 6 },
+    { position: 0 },
+    { span: 6 },
+    { width: NaN },
+    { filter: "/?secret=1" },
+    { build: "arbitrary" },
+    { schema: 1 },
+  ])
+    assert.equal(normalizePresentation({ ...presentation, ...changes }), null);
+  const { exposure } = funnelFixture();
+  assert.deepEqual(
+    normalizeEvent(exposure, base, now).presentation,
+    presentation,
+  );
+  assert.equal(
+    normalizeEvent(
+      {
+        ...exposure,
+        presentation: { ...presentation, filter: "/api/private" },
+        exposure: "bad",
+      },
+      base,
+      now,
+    ),
+    null,
+  );
+  assert.equal(
+    normalizeEvent(
+      { ...base, referral: { view: base.view, navigation: randomUUID() } },
+      base,
+      now,
+    ),
+    null,
+  );
+});
+test("oversized cards qualify using viewport-capped area without counting offscreen cards", () => {
+  assert.equal(
+    qualifiesExposure(
+      { left: 0, right: 500, top: 0, bottom: 2000, width: 500, height: 2000 },
+      800,
+      800,
+    ),
+    true,
+  );
+  assert.equal(
+    qualifiesExposure(
+      { left: 0, right: 500, top: 700, bottom: 2700, width: 500, height: 2000 },
+      800,
+      800,
+    ),
+    false,
+  );
+  assert.equal(
+    qualifiesExposure(
+      { left: 900, right: 1400, top: 0, bottom: 200, width: 500, height: 200 },
+      800,
+      800,
+    ),
+    false,
+  );
+  assert.equal(
+    qualifiesExposure(
+      { left: 0, right: 500, top: 0, bottom: 200, width: 500, height: 200 },
+      800,
+      800,
+    ),
+    true,
+  );
+});
+test("explicit funnel deduplicates retries and links exposure to cumulative attention and exploration", () => {
+  const { origin, exposure, click, arrival } = funnelFixture();
+  const events = [
+    origin,
+    exposure,
+    exposure,
+    click,
+    click,
+    arrival,
+    { ...arrival, type: "engagement", seconds: 5 },
+    { ...arrival, type: "engagement", seconds: 25 },
+    { ...arrival, view: randomUUID(), referral: undefined, at: now + 4000 },
+    {
+      ...arrival,
+      view: randomUUID(),
+      referral: undefined,
+      path: "/blog/next",
+      at: now + 5000,
+    },
+  ];
+  const r = summarize(events, 7, {}, now + 6000).presentationFunnel;
+  assert.deepEqual(r.totals, { seen: 1, clicked: 1, arrived: 1, engaged: 1 });
+  assert.equal(r.rows[0].continued, 1);
+  assert.equal(r.rows[0].seconds, 25);
+  assert.equal(r.rows[0].presentation.stars, 3);
+  assert.equal(r.legacyExposures, 0);
+  assert.ok(!JSON.stringify(r).includes(origin.view));
+  const filtered = summarize(
+    events,
+    7,
+    { category: "Work" },
+    now + 6000,
+  ).presentationFunnel;
+  assert.equal(
+    filtered.totals.engaged,
+    1,
+    "category selects the card, retaining homepage exposure",
+  );
+  assert.equal(
+    summarize(events, 7, { country: "GB" }, now + 6000).presentationFunnel
+      .totals.seen,
+    0,
+  );
+});
+test("direct, wrong-target, cross-session, stale and unmatched arrivals receive no credit", () => {
+  for (const change of [
+    { referral: undefined },
+    { path: "/work/other" },
+    { session: randomUUID() },
+    { at: now + 123000 },
+    { at: now + 1500 },
+    { referral: { view: randomUUID(), navigation: randomUUID() } },
+  ]) {
+    const { origin, exposure, click, arrival } = funnelFixture();
+    const v = { ...arrival, ...change };
+    const r = summarize(
+      [origin, exposure, click, v, { ...v, type: "engagement", seconds: 30 }],
+      7,
+      {},
+      now + 180000,
+    ).presentationFunnel;
+    assert.deepEqual(r.totals, { seen: 1, clicked: 1, arrived: 0, engaged: 0 });
+  }
+  const { origin, exposure, click, arrival } = funnelFixture();
+  assert.equal(
+    summarize(
+      [origin, exposure, { ...click, exposure: randomUUID() }, arrival],
+      7,
+      {},
+      now + 5000,
+    ).presentationFunnel.totals.clicked,
+    0,
+  );
+});
+test("presentation variants remain separate and first arrival defines each exposure outcome", () => {
+  const { origin, exposure, click, arrival } = funnelFixture();
+  const second = {
+    ...exposure,
+    exposure: randomUUID(),
+    presentation: { ...presentation, stars: 1, position: 9 },
+    at: now + 4000,
+  };
+  const r = summarize(
+    [
+      origin,
+      exposure,
+      click,
+      arrival,
+      second,
+      { ...arrival, view: randomUUID(), at: now + 5000 },
+      { ...arrival, type: "engagement", seconds: 8 },
+    ],
+    7,
+    {},
+    now + 6000,
+    {
+      [arrival.path]: {
+        title: "Changed",
+        stars: 5,
+        tags: [],
+        format: "Article",
+        emphasis: "5",
+      },
+    },
+  ).presentationFunnel;
+  assert.deepEqual(r.totals, { seen: 2, clicked: 1, arrived: 1, engaged: 0 });
+  assert.equal(r.rows.length, 2);
+  assert.equal(r.rows[0].presentation.stars, 3);
+});
+test("funnel respects reporting boundaries and labels older unversioned impressions", () => {
+  const { origin, exposure, click, arrival } = funnelFixture();
+  const r = summarize(
+    [
+      origin,
+      exposure,
+      click,
+      arrival,
+      { ...origin, type: "impression", target: "/blog/old" },
+    ],
+    7,
+    {},
+    now + 2500,
+  ).presentationFunnel;
+  assert.deepEqual(r.totals, { seen: 1, clicked: 1, arrived: 0, engaged: 0 });
+  assert.equal(r.legacyExposures, 1);
+});
+
+test("funnel destination attention is cumulative even when its heartbeat follows the selected range", () => {
+  const { origin, exposure, click, arrival } = funnelFixture();
+  const r = summarize([origin, exposure, click, arrival, { ...arrival, type: "engagement", at: now + 9000, seconds: 20 }], 7, {}, now + 5000).presentationFunnel;
+  assert.equal(r.totals.engaged, 1);
+  assert.equal(r.rows[0].seconds, 20);
+});

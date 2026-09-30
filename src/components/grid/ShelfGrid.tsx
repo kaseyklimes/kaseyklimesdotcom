@@ -10,7 +10,7 @@ interface ShelfGridProps {
   items: ContentMeta[];
 }
 
-function ShelfGridItem({ item, index }: { item: ContentMeta; index: number }) {
+function ShelfGridItem({ item, index, columns }: { item: ContentMeta; index: number; columns: number }) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleImageLoad = () => {
@@ -18,7 +18,7 @@ function ShelfGridItem({ item, index }: { item: ContentMeta; index: number }) {
   };
 
   return (
-    <Link href={`/shelf/${item.slug}`} className="block" data-grid-category="shelf" data-grid-slug={item.slug}>
+    <Link href={`/shelf/${item.slug}`} className="block" data-grid-category="shelf" data-grid-slug={item.slug} data-analytics-card="true" data-analytics-stars={item.stars} data-analytics-columns={columns} data-analytics-span={1} data-analytics-content={item.analyticsContentRevision} data-analytics-thumbnail={item.analyticsHeroRevision}>
       <div>
         {item.heroImage && (
           <div className="relative w-full mb-2 image-container">
@@ -99,6 +99,7 @@ export default function ShelfGrid({ items }: ShelfGridProps) {
             <ShelfGridItem
               key={item.slug}
               item={item}
+              columns={maxColumns}
               index={itemIndex * maxColumns + columnIndex}
             />
           ))}

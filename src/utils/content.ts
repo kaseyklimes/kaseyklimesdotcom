@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { createHash } from 'node:crypto';
 import path from 'path';
 import matter from 'gray-matter';
 import { cache } from 'react';
@@ -28,6 +29,9 @@ export const getContentBySlug = cache((category: ContentCategory, slug: string):
       slug,
       content,
       hasContent: content.trim().length > 0,
+      analyticsContentRevision: createHash('sha256').update(fileContents).digest('hex').slice(0,16),
+      analyticsHeroRevision: createHash('sha256').update(JSON.stringify([data.heroImage || '', data.videoPoster || ''])).digest('hex').slice(0,16),
+      analyticsThumbnailRevision: createHash('sha256').update(JSON.stringify([data.thumbnail || data.heroImage || '', data.videoPoster || '', data.iframeUrl || ''])).digest('hex').slice(0,16),
     };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
