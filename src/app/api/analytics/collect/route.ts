@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { normalizeEvent, type AnalyticsEvent } from "@/lib/analytics/model";
 import { configured, limited, save } from "@/lib/analytics/store";
 import { sameOrigin, validSession, COOKIE } from "@/lib/analytics/auth";
+import { visitorIP, excludedIP } from "@/lib/analytics/exclusions";
 export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   if (!sameOrigin(request)) return new NextResponse(null, { status: 403 });
@@ -13,18 +14,16 @@ export async function POST(request: NextRequest) {
     validSession(request.cookies.get(COOKIE)?.value)
   )
     return new NextResponse(null, { status: 204 });
+  const clientIP = visitorIP(request.headers);
+  if (excludedIP(clientIP)) return new NextResponse(null, { status: 204 });
   const ua = request.headers.get("user-agent") || "";
   if (/bot|crawler|spider|headless|preview|facebookexternalhit/i.test(ua))
     return new NextResponse(null, { status: 204 });
   try {
     if (Number(request.headers.get("content-length") || 0) > 16000)
       return new NextResponse(null, { status: 413 });
-    // Vercel overwrites this header. IPs are HMACed only for short-lived rate limits.
-    const ip = process.env.VERCEL
-      ? request.headers.get("x-vercel-forwarded-for") ||
-        request.headers.get("x-forwarded-for") ||
-        "unknown"
-      : "local";
+    // Excluded addresses never reach rate limiting or analytics storage.
+    const ip = clientIP || (process.env.VERCEL ? "unknown" : "local");
     if (await limited(ip, "collect", 120, 60))
       return new NextResponse(null, { status: 429 });
     const text = await boundedText(request, 16000);
