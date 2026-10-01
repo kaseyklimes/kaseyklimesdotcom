@@ -28,7 +28,8 @@ export default function PrivacyPage() {
         address, form inputs, precise location, or full referring URLs. Outbound
         links are reduced to destination domains. IP addresses are not stored in
         analytics events; a temporary cryptographic hash is used for abuse
-        prevention.
+        prevention. Owner-selected IP exclusions are kept as keyed hashes in
+        private server configuration, separate from visitor analytics.
       </p>
       <p className="mt-5">
         Analytics is accessible only to the website owner. Per-view summaries

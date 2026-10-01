@@ -735,3 +735,66 @@ test("funnel destination attention is cumulative even when its heartbeat follows
   assert.equal(r.totals.engaged, 1);
   assert.equal(r.rows[0].seconds, 20);
 });
+
+test("owner IP exclusion normalizes IPv4 and IPv6 without accepting lists or malformed addresses", () => {
+  const { canonicalIP, exclusionHash, excludedIP } = load("exclusions");
+  const secret = "x".repeat(48);
+  assert.equal(canonicalIP(" 192.0.2.7 "), "192.0.2.7");
+  assert.equal(canonicalIP("2001:0DB8:0000:0000:0000:0000:0000:0001"), "2001:db8::1");
+  assert.equal(canonicalIP("::ffff:192.0.2.7"), "192.0.2.7");
+  assert.equal(canonicalIP("::ffff:c000:207"), "192.0.2.7");
+  for (const value of [null, "", "unknown", "192.0.2.7, 192.0.2.8", "192.0.2.7:443", "fe80::1%eth0", "example.com", "192.0.2.999"])
+    assert.equal(canonicalIP(value), null);
+  const hash = exclusionHash("192.0.2.7", secret);
+  assert.match(hash, /^[a-f0-9]{64}$/);
+  assert.equal(excludedIP("::ffff:192.0.2.7", hash, secret), true);
+  assert.equal(excludedIP("192.0.2.8", hash, secret), false);
+  assert.equal(excludedIP(null, hash, secret), false);
+  assert.equal(excludedIP("192.0.2.7", hash, "wrong".repeat(10)), false);
+  assert.equal(excludedIP("192.0.2.7", hash, ""), false);
+  assert.equal(excludedIP("192.0.2.7", "", secret), false);
+  const ipv6 = exclusionHash("2001:db8::1", secret);
+  assert.equal(excludedIP("2001:0DB8::1", `${hash},\n${ipv6}`, secret), true);
+});
+test("owner IP exclusion trusts only the Vercel platform header on Vercel", () => {
+  const { visitorIP } = load("exclusions");
+  const headers = new Headers({ "x-vercel-forwarded-for": "192.0.2.7", "x-forwarded-for": "192.0.2.8" });
+  assert.equal(visitorIP(headers, true), "192.0.2.7");
+  assert.equal(visitorIP(headers, false), null);
+  assert.equal(visitorIP(new Headers({ "x-forwarded-for": "192.0.2.7", "x-real-ip": "192.0.2.7" }), true), null);
+  assert.equal(visitorIP(new Headers({ "x-vercel-forwarded-for": "192.0.2.7, 192.0.2.8" }), true), null);
+});
+
+test("collector drops excluded IPs before parsing, rate limiting or storage, but retains ordinary visitors", async () => {
+  const { exclusionHash } = load("exclusions");
+  const previous = Object.fromEntries(["VERCEL", "ANALYTICS_SESSION_SECRET", "ANALYTICS_EXCLUDED_IP_HASHES"].map(k => [k, process.env[k]]));
+  let limitedCalls = 0, savedEvents = 0;
+  try {
+    process.env.VERCEL = "1";
+    process.env.ANALYTICS_SESSION_SECRET = "private-test-secret".repeat(3);
+    process.env.ANALYTICS_EXCLUDED_IP_HASHES = exclusionHash("192.0.2.7", process.env.ANALYTICS_SESSION_SECRET);
+    const file = path.join(__dirname, "../src/app/api/analytics/collect/route.ts"), module = { exports: {} };
+    const output = ts.transpileModule(fs.readFileSync(file, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
+    const mockedRequire = name => {
+      if (name === "next/server") return { NextResponse: Response };
+      if (name === "@/lib/analytics/auth") return { sameOrigin: () => true, validSession: () => false, COOKIE: "owner" };
+      if (name === "@/lib/analytics/store") return { configured: () => true, limited: async () => { limitedCalls++; return false; }, save: async events => { savedEvents += events.length; } };
+      if (name.startsWith("@/lib/analytics/")) return load(name.split("/").pop());
+      return require(name);
+    };
+    vm.runInThisContext(`(function(require,module,exports){${output}\n})`, { filename: file })(mockedRequire, module, module.exports);
+    const req = (headers, body) => {
+      const r = new Request("https://example.test/api/analytics/collect", { method: "POST", headers: { "user-agent": "Real browser", ...headers }, body });
+      r.cookies = { get: () => undefined };
+      return r;
+    };
+    assert.equal((await module.exports.POST(req({ "x-vercel-forwarded-for": "192.0.2.7" }, "invalid JSON"))).status, 204);
+    assert.equal(limitedCalls, 0);
+    assert.equal(savedEvents, 0);
+    assert.equal((await module.exports.POST(req({ "x-vercel-forwarded-for": "192.0.2.8", "x-forwarded-for": "192.0.2.7" }, "invalid JSON"))).status, 400);
+    assert.equal((await module.exports.POST(req({ "x-vercel-forwarded-for": "192.0.2.8" }, JSON.stringify([{ ...base, at: Date.now() }])))).status, 204);
+    assert.equal(savedEvents, 1);
+  } finally {
+    for (const [k,v] of Object.entries(previous)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+  }
+});
