@@ -148,9 +148,16 @@ export default function Tracker() {
     const activity = () => {
       lastActivity = performance.now();
     };
+    // Engagement is cumulative, so an unchanged total adds nothing. Skipping it
+    // keeps idle and background tabs from spending the storage request quota.
+    let reported = "0:0";
     const checkpoint = () => {
       measure();
-      send("engagement");
+      const totals = `${Math.round(seconds)}:${depth}`;
+      if (totals !== reported) {
+        reported = totals;
+        send("engagement");
+      }
       flush();
     };
     const visibility = () => {
