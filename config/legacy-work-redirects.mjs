@@ -26,6 +26,9 @@ export const legacyWorkRedirects = {
   '/photography/tho': '/play/tho',
   '/photography/modernstudy': '/play/modernstudy',
   '/photography/advice': '/blog/early-career-advice-for-graduates',
+  // Paths ChatGPT links to that never existed.
+  '/east-midtown': '/work/east-midtown',
+  '/christopher-alexander-a-pattern-language': '/shelf/patternlanguage',
 };
 
 export function getLegacyWorkRedirects() {
@@ -33,7 +36,7 @@ export function getLegacyWorkRedirects() {
     readdirSync(new URL(`../content/${category}/`, import.meta.url))
       .filter(file => file.endsWith('.md'))
       .map(file => `/${category}/${file.slice(0, -3)}`);
-  const targets = new Set(['/', ...slugs('work'), ...slugs('blog'), ...slugs('play'), ...slugs('talks')]);
+  const targets = new Set(['/', ...slugs('work'), ...slugs('blog'), ...slugs('play'), ...slugs('talks'), ...slugs('shelf')]);
 
   return Object.entries(legacyWorkRedirects).map(([source, destination]) => {
     if (!targets.has(destination)) throw new Error(`Missing work redirect target: ${destination}`);
